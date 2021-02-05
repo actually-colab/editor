@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ES2016",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "models/*": ["models/*"],
+      "middleware/*": ["middleware/*"],
+      "input-schemas/*": ["input-schemas/*"],
+      "routes/*": ["routes/*"],
+      "responses/*": ["responses/*"],
+    }
+  },
+  "include": ["src"]
+}

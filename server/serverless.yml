@@ -1,0 +1,38 @@
+service: shallot-test
+
+plugins:
+  - serverless-stage-manager
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage,'api'}
+  region: us-east-1
+
+  environment:
+    EXECUTION_STAGE: ${self:provider.stage}
+    AWS_DEPLOYMENT_REGION: ${self:provider.region}
+
+custom:
+  stages:
+    - api
+
+  serverless-offline:
+    httpPort: 4000
+    stage: ${self:provider.stage}
+
+  webpack:
+    webpackConfig: 'webpack.config.ts'
+    packager: 'yarn'
+    includeModules: true
+
+functions:
+  test:
+    handler: src/index.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
