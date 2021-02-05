@@ -33,6 +33,17 @@ functions:
     handler: src/index.handler
     events:
       - http:
-          path: /
+          path: /test
           method: get
           cors: true
+  
+  socket-connection:
+    handler: src/socket/connection.handler
+
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
