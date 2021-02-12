@@ -83,6 +83,14 @@ functions:
           path: /notebooks
           method: get
           cors: true
+
+  POST-notebook:
+    handler: src/rest/post-notebook.handler
+    events:
+      - http:
+          path: /notebook
+          method: post
+          cors: true
   
   socket-connection:
     handler: src/socket/connection.handler
