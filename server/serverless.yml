@@ -4,11 +4,12 @@ plugins:
   - serverless-stage-manager
   - serverless-webpack
   - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage,'demo'}
+  stage: ${opt:stage,'dev'}
   region: us-east-1
 
   environment:
@@ -17,7 +18,19 @@ provider:
 
 custom:
   stages:
-    - demo
+    - dev
+
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
 
   serverless-offline:
     httpPort: 4000
@@ -47,3 +60,61 @@ functions:
           route: $disconnect
       - websocket:
           route: $default
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: User
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    notebooksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Notebook
+        AttributeDefinitions:
+          - AttributeName: nb_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: nb_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    cellsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Cell
+        AttributeDefinitions:
+          - AttributeName: cell_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cell_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    outputsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Output
+        AttributeDefinitions:
+          - AttributeName: output_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: output_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

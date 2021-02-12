@@ -3,6 +3,7 @@ yarn-error.log
 npm-debug.*
 
 .webpack
+.dynamodb
 
 coverage
 
