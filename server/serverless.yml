@@ -12,13 +12,38 @@ provider:
   stage: ${opt:stage,'dev'}
   region: us-east-1
 
+  iamRoleStatements:
+  - Effect: 'Allow'
+    Action:
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource:
+      - "Fn::GetAtt": [usersTable, Arn]
+      - "Fn::GetAtt": [notebooksTable, Arn]
+      - "Fn::GetAtt": [cellsTable, Arn]
+      - "Fn::GetAtt": [outputsTable, Arn]
+
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
+    AC_USERS_TABLE_NAME: ${self:custom.usersTableName}
+    AC_NOTEBOOKS_TABLE_NAME: ${self:custom.notebooksTableName}
+    AC_CELLS_TABLE_NAME: ${self:custom.cellsTableName}
+    AC_OUTPUTS_TABLE_NAME: ${self:custom.outputsTableName}
 
 custom:
   stages:
     - dev
+
+  # DynamoDB Tables
+  usersTableName: ${self:service}-${self:provider.stage}-User
+  notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
+  cellsTableName: ${self:service}-${self:provider.stage}-Cell
+  outputsTableName: ${self:service}-${self:provider.stage}-Output
 
   dynamodb:
     stages:
@@ -66,7 +91,7 @@ resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: User
+        TableName: ${self:custom.usersTableName}
         AttributeDefinitions:
           - AttributeName: uid
             AttributeType: S
@@ -80,7 +105,7 @@ resources:
     notebooksTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Notebook
+        TableName: ${self:custom.notebooksTableName}
         AttributeDefinitions:
           - AttributeName: nb_id
             AttributeType: S
@@ -94,7 +119,7 @@ resources:
     cellsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Cell
+        TableName: ${self:custom.cellsTableName}
         AttributeDefinitions:
           - AttributeName: cell_id
             AttributeType: S
@@ -108,7 +133,7 @@ resources:
     outputsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Output
+        TableName: ${self:custom.outputsTableName}
         AttributeDefinitions:
           - AttributeName: output_id
             AttributeType: S
