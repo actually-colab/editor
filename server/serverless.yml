@@ -56,6 +56,7 @@ custom:
       migrate: true
       seed: true
       convertEmptyValues: true
+      dbPath: "./.dynamodb/db"
 
   serverless-offline:
     httpPort: 4000
@@ -72,6 +73,14 @@ functions:
     events:
       - http:
           path: /test
+          method: get
+          cors: true
+
+  GET-notebooks:
+    handler: src/rest/get-notebooks.handler
+    events:
+      - http:
+          path: /notebooks
           method: get
           cors: true
   
@@ -109,9 +118,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: nb_id
             AttributeType: S
+          - AttributeName: uid
+            AttributeType: S
         KeySchema:
           - AttributeName: nb_id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: uid
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
