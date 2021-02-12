@@ -1,4 +1,4 @@
-service: shallot-test
+service: actually-colab-editor
 
 plugins:
   - serverless-stage-manager
@@ -8,7 +8,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage,'api'}
+  stage: ${opt:stage,'demo'}
   region: us-east-1
 
   environment:
@@ -17,7 +17,7 @@ provider:
 
 custom:
   stages:
-    - api
+    - demo
 
   serverless-offline:
     httpPort: 4000
@@ -33,6 +33,17 @@ functions:
     handler: src/index.handler
     events:
       - http:
-          path: /
+          path: /test
           method: get
           cors: true
+  
+  socket-connection:
+    handler: src/socket/connection.handler
+
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
