@@ -4,20 +4,58 @@ plugins:
   - serverless-stage-manager
   - serverless-webpack
   - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage,'demo'}
+  stage: ${opt:stage,'dev'}
   region: us-east-1
+
+  iamRoleStatements:
+  - Effect: 'Allow'
+    Action:
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource:
+      - "Fn::GetAtt": [usersTable, Arn]
+      - "Fn::GetAtt": [notebooksTable, Arn]
+      - "Fn::GetAtt": [cellsTable, Arn]
+      - "Fn::GetAtt": [outputsTable, Arn]
 
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
+    AC_USERS_TABLE_NAME: ${self:custom.usersTableName}
+    AC_NOTEBOOKS_TABLE_NAME: ${self:custom.notebooksTableName}
+    AC_CELLS_TABLE_NAME: ${self:custom.cellsTableName}
+    AC_OUTPUTS_TABLE_NAME: ${self:custom.outputsTableName}
 
 custom:
   stages:
-    - demo
+    - dev
+
+  # DynamoDB Tables
+  usersTableName: ${self:service}-${self:provider.stage}-User
+  notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
+  cellsTableName: ${self:service}-${self:provider.stage}-Cell
+  outputsTableName: ${self:service}-${self:provider.stage}-Output
+
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
 
   serverless-offline:
     httpPort: 4000
@@ -47,3 +85,61 @@ functions:
           route: $disconnect
       - websocket:
           route: $default
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.usersTableName}
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    notebooksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.notebooksTableName}
+        AttributeDefinitions:
+          - AttributeName: nb_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: nb_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    cellsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.cellsTableName}
+        AttributeDefinitions:
+          - AttributeName: cell_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cell_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    outputsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.outputsTableName}
+        AttributeDefinitions:
+          - AttributeName: output_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: output_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
