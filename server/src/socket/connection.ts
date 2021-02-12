@@ -1,4 +1,4 @@
-import { Handler, APIGatewayEvent } from 'aws-lambda';
+import type { Handler, APIGatewayEvent } from 'aws-lambda';
 
 const SocketEventTypes = Object.freeze({
   Connect: 'Connect',
