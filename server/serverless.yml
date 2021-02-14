@@ -91,6 +91,14 @@ functions:
           path: /notebook
           method: post
           cors: true
+
+  Share-notebook:
+    handler: src/rest/share-notebook.handler
+    events:
+      - http:
+          path: /notebook/{nb_id}/share
+          method: post
+          cors: true
   
   socket-connection:
     handler: src/socket/connection.handler
@@ -131,6 +139,8 @@ resources:
         KeySchema:
           - AttributeName: nb_id
             KeyType: HASH
+          - AttributeName: uid
+            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: UserIdIndex
             KeySchema:

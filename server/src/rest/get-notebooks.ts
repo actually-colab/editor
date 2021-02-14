@@ -11,13 +11,13 @@ import createHTTPError from 'http-errors';
 import db from '../db/connection';
 import tablenames from '../db/tablenames';
 
-type TEvent = TShallotHttpEvent<{ username: string }>;
+type TEvent = TShallotHttpEvent<{ uid: string }>;
 
 const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
   queryStringParameters,
 }) => {
-  if (queryStringParameters?.username == null) {
-    throw new createHTTPError.BadRequest('Must specify username!');
+  if (queryStringParameters?.uid == null) {
+    throw new createHTTPError.BadRequest('Must specify queryStringParameters.uid');
   }
 
   const notebooks = (
@@ -27,7 +27,7 @@ const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
         IndexName: 'UserIdIndex',
         KeyConditionExpression: 'uid = :uid',
         ExpressionAttributeValues: {
-          ':uid': queryStringParameters.username,
+          ':uid': queryStringParameters.uid,
         },
       })
       .promise()

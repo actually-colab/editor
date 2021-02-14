@@ -8,38 +8,33 @@ import createHTTPError from 'http-errors';
 
 import { v4 as uuid } from 'uuid';
 
-import db from '../db/connection';
-import tablenames from '../db/tablenames';
+import { grantAccess } from '../db/models/Notebook';
 
 interface RNotebook {
   name: string;
 }
 
-type TEvent = TShallotHttpEvent<{ username: string }, unknown, unknown, RNotebook>;
+type TEvent = TShallotHttpEvent<{ uid: string }, unknown, unknown, RNotebook>;
 
 const _handler: ShallotRawHandler<TEvent, never> = async ({
   queryStringParameters,
   body,
 }) => {
-  if (queryStringParameters?.username == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.username');
+  if (queryStringParameters?.uid == null) {
+    throw new createHTTPError.BadRequest('Must specify queryStringParameters.uid');
   }
 
   if (body?.name == null) {
     throw new createHTTPError.BadRequest('Must specify body.name');
   }
 
-  await db.docClient
-    .put({
-      Item: {
-        nb_id: uuid(),
-        uid: queryStringParameters.username,
-        name: body?.name ?? '',
-        access_level: 'Full Access',
-      },
-      TableName: tablenames.notebooksTableName,
-    })
-    .promise();
+  const nbId = uuid();
+  await grantAccess(
+    nbId,
+    queryStringParameters.uid,
+    'Full Access',
+    body?.name ?? 'New Notebook'
+  );
 
   return { message: 'success' };
 };
