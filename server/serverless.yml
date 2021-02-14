@@ -152,9 +152,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: cell_id
             AttributeType: S
+          - AttributeName: nb_id
+            AttributeType: S
         KeySchema:
           - AttributeName: cell_id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: NotebookIdIndex
+            KeySchema:
+              - AttributeName: nb_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -166,9 +178,32 @@ resources:
         AttributeDefinitions:
           - AttributeName: output_id
             AttributeType: S
+          - AttributeName: cell_id
+            AttributeType: S
+          - AttributeName: uid
+            AttributeType: S
         KeySchema:
           - AttributeName: output_id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: CellIdIndex
+            KeySchema:
+              - AttributeName: cell_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: uid
+                KeyType: HASH
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
