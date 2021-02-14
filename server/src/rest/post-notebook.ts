@@ -39,4 +39,6 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
   return { message: 'success' };
 };
 
-export const handler = ShallotAWSRestWrapper(_handler);
+export const handler = ShallotAWSRestWrapper(_handler, undefined, {
+  HttpErrorHandlerOpts: { catchAllErrors: true },
+});

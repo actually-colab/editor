@@ -644,10 +644,10 @@
   dependencies:
     http-errors "^1.8.0"
 
-"@shallot/http-error-handler@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@shallot/http-error-handler/-/http-error-handler-1.0.1.tgz#7d303a489cb061433f8634eb032767fe9578d420"
-  integrity sha512-bhvmgw54/9OZpgPmOh4WLdccXKLgVTSgqe4gNg2bi2km8aO7k/ozPl6xizn5lICGjmYI0IQ4OCEPhJPhzMtmHw==
+"@shallot/http-error-handler@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@shallot/http-error-handler/-/http-error-handler-1.0.2.tgz#95cce43fdef300e979c2f907f9385c5ca9b46f02"
+  integrity sha512-0yz7UZxPwGevTAS/UO037jTnLMAU6nKa8/B7jDyBCk+r1qy30C9dJtuyCQ4AOZVTsBlA79qRuLG6oEHEOGAiXQ==
   dependencies:
     http-errors "^1.8.0"
 
@@ -659,13 +659,13 @@
     content-type "^1.0.4"
     http-errors "^1.8.0"
 
-"@shallot/rest-wrapper@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@shallot/rest-wrapper/-/rest-wrapper-1.1.1.tgz#147a957e770a9a6a94fcbd0d5b97651faf15331e"
-  integrity sha512-52F15wQqzWJRBcwlUS1EuZYIijTGRxFe24xDFNBkNtHegLhT2cR8SwF+WeIeogtZWvq7Po9U3mt/pRe7hL/P/Q==
+"@shallot/rest-wrapper@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@shallot/rest-wrapper/-/rest-wrapper-1.1.2.tgz#ef09e2415c5da067f7bde879c817c3f686928269"
+  integrity sha512-v6ko9EIGWaLOKYObBXGDoJ8VLDlBRu2j996rF/U46X8VBOvaGBEJAhehL7Jkg6wZBRt8uKClVN5KSputduxpzg==
   dependencies:
     "@shallot/http-cors" "^1.0.1"
-    "@shallot/http-error-handler" "^1.0.1"
+    "@shallot/http-error-handler" "^1.0.2"
     "@shallot/http-json-body-parser" "^1.0.1"
     shallot "^1.2.2"
 

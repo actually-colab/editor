@@ -36,4 +36,6 @@ const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
   return { message: 'success', data: notebooks };
 };
 
-export const handler = ShallotAWSRestWrapper(_handler);
+export const handler = ShallotAWSRestWrapper(_handler, undefined, {
+  HttpErrorHandlerOpts: { catchAllErrors: true },
+});
