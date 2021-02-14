@@ -3,24 +3,21 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
+import type { DNotebook } from '../db/models/Notebook';
+
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import db from '../db/connection';
-import tablenames from '../db/tables';
+import tablenames from '../db/tablenames';
 
-type TEvent = TShallotHttpEvent<{ username: string }>;
-
-interface DNotebook {
-  uid: string;
-  nb_id: string;
-}
+type TEvent = TShallotHttpEvent<{ uid: string }>;
 
 const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
   queryStringParameters,
 }) => {
-  if (queryStringParameters?.username == null) {
-    throw new createHTTPError.BadRequest('Must specify username!');
+  if (queryStringParameters?.uid == null) {
+    throw new createHTTPError.BadRequest('Must specify queryStringParameters.uid');
   }
 
   const notebooks = (
@@ -30,7 +27,7 @@ const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
         IndexName: 'UserIdIndex',
         KeyConditionExpression: 'uid = :uid',
         ExpressionAttributeValues: {
-          ':uid': queryStringParameters.username,
+          ':uid': queryStringParameters.uid,
         },
       })
       .promise()
