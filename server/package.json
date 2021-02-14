@@ -15,7 +15,7 @@
     "start": "npm run offline"
   },
   "dependencies": {
-    "@shallot/rest-wrapper": "^1.1.1",
+    "@shallot/rest-wrapper": "^1.1.2",
     "aws-sdk": "^2.842.0",
     "http-errors": "^1.8.0",
     "uuid": "^8.3.2"
