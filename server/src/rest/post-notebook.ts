@@ -9,15 +9,13 @@ import createHTTPError from 'http-errors';
 import { v4 as uuid } from 'uuid';
 
 import db from '../db/connection';
-import tablenames from '../db/tables';
+import tablenames from '../db/tablenames';
 
-interface DNotebook {
-  uid?: string;
-  nb_id?: string;
+interface RNotebook {
   name: string;
 }
 
-type TEvent = TShallotHttpEvent<{ username: string }, unknown, unknown, DNotebook>;
+type TEvent = TShallotHttpEvent<{ username: string }, unknown, unknown, RNotebook>;
 
 const _handler: ShallotRawHandler<TEvent, never> = async ({
   queryStringParameters,
@@ -37,6 +35,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
         nb_id: uuid(),
         uid: queryStringParameters.username,
         name: body?.name ?? '',
+        access_level: 'Full Access',
       },
       TableName: tablenames.notebooksTableName,
     })

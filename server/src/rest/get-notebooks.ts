@@ -3,18 +3,15 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
+import type { DNotebook } from '../db/models/Notebook';
+
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import db from '../db/connection';
-import tablenames from '../db/tables';
+import tablenames from '../db/tablenames';
 
 type TEvent = TShallotHttpEvent<{ username: string }>;
-
-interface DNotebook {
-  uid: string;
-  nb_id: string;
-}
 
 const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
   queryStringParameters,
