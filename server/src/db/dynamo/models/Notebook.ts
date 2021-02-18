@@ -1,4 +1,4 @@
-import db from '../connection';
+import dynamodb from '../connection';
 import tablenames from '../tablenames';
 
 export type NotebookAccessLevel = 'Full Access' | 'Read Only';
@@ -12,7 +12,7 @@ export interface DNotebook {
 
 export const getAccessLevels = async (uid: string): Promise<DNotebook[]> => {
   return ((
-    await db.docClient
+    await dynamodb.docClient
       .batchGet({
         RequestItems: {
           [tablenames.notebooksTableName]: {
@@ -34,7 +34,7 @@ export const grantAccess = async (
   accessLevel: NotebookAccessLevel,
   name: string
 ): Promise<void> => {
-  await db.docClient
+  await dynamodb.docClient
     .put({
       Item: {
         nb_id: nbId,

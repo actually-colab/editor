@@ -8,7 +8,7 @@ import type { NotebookAccessLevel, DNotebook } from '../db/dynamo/models/Noteboo
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import db from '../db/dynamo/connection';
+import dynamodb from '../db/dynamo/connection';
 import tablenames from '../db/dynamo/tablenames';
 import { grantAccess } from '../db/dynamo/models/Notebook';
 
@@ -47,7 +47,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
 
   // Assert that the request user has full access
   const requestingUserNotebook = (
-    await db.docClient
+    await dynamodb.docClient
       .get({
         Key: {
           uid: queryStringParameters.uid,

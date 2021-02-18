@@ -30,20 +30,33 @@ provider:
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
-    AC_USERS_TABLE_NAME: ${self:custom.usersTableName}
-    AC_NOTEBOOKS_TABLE_NAME: ${self:custom.notebooksTableName}
-    AC_CELLS_TABLE_NAME: ${self:custom.cellsTableName}
-    AC_OUTPUTS_TABLE_NAME: ${self:custom.outputsTableName}
+
+    AC_DDB_USERS_TABLE_NAME: ${self:custom.dynamoTableNames.usersTableName}
+    AC_DDB_NOTEBOOKS_TABLE_NAME: ${self:custom.dynamoTableNames.notebooksTableName}
+    AC_DDB_CELLS_TABLE_NAME: ${self:custom.dynamoTableNames.cellsTableName}
+    AC_DDB_OUTPUTS_TABLE_NAME: ${self:custom.dynamoTableNames.outputsTableName}
+
+    AC_PGSQL_HOST: "localhost"
+    AC_PGSQL_USER: "admin"
+    AC_PGSQL_PASSWORD: "password"
+    AC_PGSQL_DATABASE: AC-${self:provider.stage}
+    AC_PGSQL_USERS_TABLE_NAME: ${self:custom.pgsqlTableNames.usersTableName}
+    AC_PGSQL_NOTEBOOKS_TABLE_NAME: ${self:custom.pgsqlTableNames.notebooksTableName}
 
 custom:
   stages:
     - dev
 
   # DynamoDB Tables
-  usersTableName: ${self:service}-${self:provider.stage}-User
-  notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
-  cellsTableName: ${self:service}-${self:provider.stage}-Cell
-  outputsTableName: ${self:service}-${self:provider.stage}-Output
+  dynamoTableNames:
+    usersTableName: ${self:service}-${self:provider.stage}-User
+    notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
+    cellsTableName: ${self:service}-${self:provider.stage}-Cell
+    outputsTableName: ${self:service}-${self:provider.stage}-Output
+
+  pgsqlTableNames:
+    usersTableName: User
+    notebooksTableName: Notebook
 
   dynamodb:
     stages:

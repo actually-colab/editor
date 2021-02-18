@@ -8,7 +8,7 @@ import type { DNotebook } from '../db/dynamo/models/Notebook';
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import db from '../db/dynamo/connection';
+import dynamodb from '../db/dynamo/connection';
 import tablenames from '../db/dynamo/tablenames';
 
 type TEvent = TShallotHttpEvent<{ uid: string }>;
@@ -21,7 +21,7 @@ const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
   }
 
   const notebooks = (
-    await db.docClient
+    await dynamodb.docClient
       .query({
         TableName: tablenames.notebooksTableName,
         IndexName: 'UserIdIndex',
