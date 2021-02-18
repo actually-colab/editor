@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "offline": "NODE_ENV='development' sls offline start",
-    "start": "npm run offline"
+    "start": "npm run offline",
+    "start:pgsql": "cd ./sql-db && docker-compose up"
   },
   "dependencies": {
     "@shallot/rest-wrapper": "^1.1.2",
