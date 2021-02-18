@@ -38,13 +38,13 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
     .select(
       'nb.*',
       `json_agg(
-      json_build_object(
-        'uid', u.uid, 
-        'email', u.email, 
-        'name', u.name, 
-        'access_level', nba.access_level
-      )
-    ) AS users`
+        json_build_object(
+          'uid', u.uid, 
+          'email', u.email, 
+          'name', u.name, 
+          'access_level', nba.access_level
+        )
+      ) AS users`
     )
     .from({ nb: tablenames.notebooksTableName })
     .innerJoin(
