@@ -2,7 +2,8 @@ import type { DUser } from './User';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
-import { DNotebookAccessLevel } from './NotebookAccessLevel';
+
+import { grantAccess } from './NotebookAccessLevel';
 
 export interface DNotebook {
   nb_id: number;
@@ -19,7 +20,7 @@ export const createNotebook = async (
     await pgsql<DNotebook>(tablenames.notebooksTableName).insert(notebook).returning('*')
   )[0];
 
-  await pgsql<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName).insert({
+  await grantAccess({
     uid,
     nb_id: notebookRecord.nb_id,
     access_level: 'Full Access',

@@ -11,3 +11,11 @@ export interface DNotebookAccessLevel {
   uid: DUser['uid'];
   access_level: NotebookAccessLevel;
 }
+
+export const grantAccess = async (
+  nb_access_level: DNotebookAccessLevel
+): Promise<void> => {
+  await pgsql<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName).insert(
+    nb_access_level
+  );
+};
