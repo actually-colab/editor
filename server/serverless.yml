@@ -57,6 +57,7 @@ custom:
   pgsqlTableNames:
     usersTableName: User
     notebooksTableName: Notebook
+    notebookAccessLevelsTableName: NotebookAccessLevel
 
   dynamodb:
     stages:
