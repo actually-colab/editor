@@ -3,14 +3,14 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { NotebookAccessLevel, DNotebook } from '../db/models/Notebook';
+import type { NotebookAccessLevel, DNotebook } from '../db/dynamo/models/Notebook';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import db from '../db/connection';
-import tablenames from '../db/tablenames';
-import { grantAccess } from '../db/models/Notebook';
+import db from '../db/dynamo/connection';
+import tablenames from '../db/dynamo/tablenames';
+import { grantAccess } from '../db/dynamo/models/Notebook';
 
 interface RShareNotebook {
   uid: string;

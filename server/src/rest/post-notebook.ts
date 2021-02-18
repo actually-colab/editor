@@ -8,7 +8,7 @@ import createHTTPError from 'http-errors';
 
 import { v4 as uuid } from 'uuid';
 
-import { grantAccess } from '../db/models/Notebook';
+import { grantAccess } from '../db/dynamo/models/Notebook';
 
 interface RNotebook {
   name: string;
