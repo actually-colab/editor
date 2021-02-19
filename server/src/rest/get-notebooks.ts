@@ -4,22 +4,22 @@ import type {
 } from '@shallot/rest-wrapper/dist/aws';
 
 import type { Notebook } from '../db/pgsql/models/Notebook';
+import type { DUser } from 'db/pgsql/models/User';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { getNotebooksForUser } from '../db/pgsql/models/Notebook';
 
-type TEvent = TShallotHttpEvent<{ email: string }>;
-
-const _handler: ShallotRawHandler<TEvent, Notebook[]> = async ({
-  queryStringParameters,
+const _handler: ShallotRawHandler<TShallotHttpEvent, Notebook[]> = async ({
+  requestContext: { authorizer },
 }) => {
-  if (queryStringParameters?.email == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.email');
+  const user = authorizer as DUser | null;
+  if (user?.email == null) {
+    throw new createHTTPError.InternalServerError();
   }
 
-  const notebooks = await getNotebooksForUser(queryStringParameters.email);
+  const notebooks = await getNotebooksForUser(user.email);
 
   return { message: 'success', data: notebooks };
 };

@@ -3,6 +3,8 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
+import type { DUser } from '../db/pgsql/models/User';
+
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
@@ -15,18 +17,19 @@ interface RNotebook {
 type TEvent = TShallotHttpEvent<{ email: string }, unknown, unknown, RNotebook>;
 
 const _handler: ShallotRawHandler<TEvent, never> = async ({
-  queryStringParameters,
   body,
+  requestContext: { authorizer },
 }) => {
-  if (queryStringParameters?.email == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.email');
+  const user = authorizer as DUser | null;
+  if (user?.email == null) {
+    throw new createHTTPError.InternalServerError();
   }
 
   if (body?.name == null) {
     throw new createHTTPError.BadRequest('Must specify body.name');
   }
 
-  await createNotebook({ name: body.name }, queryStringParameters.email);
+  await createNotebook({ name: body.name }, user.email);
 
   // TODO: Return notebook id https://github.com/actually-colab/editor/issues/40
 

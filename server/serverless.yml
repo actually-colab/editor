@@ -83,6 +83,17 @@ functions:
           method: get
           cors: true
 
+  authorizer:
+    handler: src/authorizer/authorizer.handler
+
+  login:
+    handler: src/authorizer/login.handler
+    events:
+      - http:
+          path: /login
+          method: post 
+          cors: true
+
   GET-notebooks:
     handler: src/rest/get-notebooks.handler
     events:
@@ -90,6 +101,10 @@ functions:
           path: /notebooks
           method: get
           cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
 
   POST-notebook:
     handler: src/rest/post-notebook.handler
@@ -98,14 +113,22 @@ functions:
           path: /notebook
           method: post
           cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
 
-  Share-notebook:
+  share-notebook:
     handler: src/rest/share-notebook.handler
     events:
       - http:
           path: /notebook/{nb_id}/share
           method: post
           cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
   
   socket-connection:
     handler: src/socket/connection.handler
