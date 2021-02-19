@@ -3,35 +3,23 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { DNotebook } from '../db/dynamo/models/Notebook';
+import type { Notebook } from '../db/pgsql/models/Notebook';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import dynamodb from '../db/dynamo/connection';
-import tablenames from '../db/dynamo/tablenames';
+import { getNotebooksForUser } from '../db/pgsql/models/Notebook';
 
-type TEvent = TShallotHttpEvent<{ uid: string }>;
+type TEvent = TShallotHttpEvent<{ email: string }>;
 
-const _handler: ShallotRawHandler<TEvent, DNotebook[]> = async ({
+const _handler: ShallotRawHandler<TEvent, Notebook[]> = async ({
   queryStringParameters,
 }) => {
-  if (queryStringParameters?.uid == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.uid');
+  if (queryStringParameters?.email == null) {
+    throw new createHTTPError.BadRequest('Must specify queryStringParameters.email');
   }
 
-  const notebooks = (
-    await dynamodb.docClient
-      .query({
-        TableName: tablenames.notebooksTableName,
-        IndexName: 'UserIdIndex',
-        KeyConditionExpression: 'uid = :uid',
-        ExpressionAttributeValues: {
-          ':uid': queryStringParameters.uid,
-        },
-      })
-      .promise()
-  ).Items as DNotebook[];
+  const notebooks = await getNotebooksForUser(queryStringParameters.email);
 
   return { message: 'success', data: notebooks };
 };
