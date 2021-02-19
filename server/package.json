@@ -13,7 +13,7 @@
   "scripts": {
     "install": "brew install postgresql && yarn sls dynamodb install && mkdir -p ./.dynamodb/db",
     "offline": "NODE_ENV='development' yarn sls offline start",
-    "start": "yarn start:pgsql && yarn offline",
+    "start": "yarn start:pgsql 2>/dev/null && yarn offline",
     "start:pgsql": "cd ./sql-db && docker-compose up -d --build && sleep 3 && yarn pgsql:init",
     "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./sql-db/init-db.sql -w"
   },
