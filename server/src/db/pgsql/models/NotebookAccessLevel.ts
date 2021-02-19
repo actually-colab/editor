@@ -31,3 +31,16 @@ export const grantAccessByEmail = async (
 
   await grantAccessByUID({ uid, nb_id, access_level });
 };
+
+export const getUserAccessLevel = async (
+  email: DUser['email'],
+  nb_id: DNotebookAccessLevel['nb_id']
+): Promise<DNotebookAccessLevel['access_level']> => {
+  return (
+    await pgsql
+      .select('nba.access_level')
+      .from({ nba: tablenames.notebookAccessLevelsTableName })
+      .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+      .where({ 'u.email': email, 'nba.nb_id': nb_id })
+  )[0].access_level;
+};
