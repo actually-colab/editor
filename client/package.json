@@ -1,13 +1,13 @@
 {
-  "name": "bt-typescript-npm-starter",
-  "version": "1.0.0",
-  "description": "A starter repo for Typescript modules",
+  "name": "@actually-colab/editor-client",
+  "version": "0.0.1",
+  "description": "API Client for Actually Colab's editor",
   "keywords": [
     "typescript"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/baileytincher/typescript-npm-starter",
+  "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey.tincher@btin.io>",
   "license": "MIT",
   "private": false,
