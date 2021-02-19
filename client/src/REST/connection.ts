@@ -17,12 +17,20 @@ axiosRetry(axiosInstance, { retries: 3, shouldResetTimeout: true });
  * @param email the user's email address
  * @param name optional, sets the name of the user
  */
-export const devLogin = async (email: DUser['email'], name?: string): Promise<DUser> => {
-  const data = (await axiosInstance.post('/login', { email, tokenType: 'dev', name }))
-    ?.data?.data;
+export const devLogin = async (
+  email: DUser['email'],
+  name?: string
+): Promise<{ sessionToken: string; user: DUser }> => {
+  const data = (
+    await axiosInstance.post<{ data: { sessionToken: string; user: DUser } }>('/login', {
+      email,
+      tokenType: 'dev',
+      name,
+    })
+  )?.data?.data;
   if (data?.sessionToken != null) {
     axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.sessionToken}`;
-    return data.user;
+    return data;
   }
 
   throw new Error('Login failed');
