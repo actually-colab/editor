@@ -12,10 +12,22 @@ export interface DNotebookAccessLevel {
   access_level: NotebookAccessLevel;
 }
 
-export const grantAccess = async (
-  nb_access_level: DNotebookAccessLevel
+export const grantAccessByUID = async (
+  nb_access_level: Partial<DNotebookAccessLevel>
 ): Promise<void> => {
   await pgsql<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName).insert(
     nb_access_level
   );
+};
+
+export const grantAccessByEmail = async (
+  email: DUser['email'],
+  nb_id: DNotebookAccessLevel['nb_id'],
+  access_level: DNotebookAccessLevel['access_level']
+): Promise<void> => {
+  const uid: DUser['uid'] = (
+    await pgsql<DUser>(tablenames.usersTableName).select('uid').where({ email })
+  )[0].uid;
+
+  await grantAccessByUID({ uid, nb_id, access_level });
 };

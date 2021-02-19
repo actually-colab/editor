@@ -47,7 +47,6 @@ custom:
   stages:
     - dev
 
-  # DynamoDB Tables
   dynamoTableNames:
     usersTableName: ${self:service}-${self:provider.stage}-User
     notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
