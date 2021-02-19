@@ -6,7 +6,7 @@ import type {
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import { createUser, getUser } from '../db/pgsql/models/User';
+import { createUser, DUser, getUser } from '../db/pgsql/models/User';
 import { getDevToken } from './token';
 
 interface DevLogin {
@@ -23,8 +23,11 @@ interface GoogleLogin {
 type TEvent = TShallotHttpEvent<unknown, unknown, unknown, DevLogin | GoogleLogin>;
 type TResult = { accessToken: string };
 
-const _handler: ShallotRawHandler<TEvent, { accessToken: string }> = async ({ body }) => {
+const _handler: ShallotRawHandler<TEvent, { accessToken: string; user: DUser }> = async ({
+  body,
+}) => {
   let accessToken: TResult['accessToken'];
+  let user: DUser | null;
   switch (body?.tokenType) {
     case 'google': {
       throw new createHTTPError.BadRequest('google login method not implemented');
@@ -34,7 +37,7 @@ const _handler: ShallotRawHandler<TEvent, { accessToken: string }> = async ({ bo
         throw new createHTTPError.Unauthorized('Cannot use dev token in prod');
       }
 
-      let user = await getUser(body.email);
+      user = await getUser(body.email);
 
       if (user == null) {
         user = await createUser({ email: body.email, name: body.name });
@@ -48,7 +51,7 @@ const _handler: ShallotRawHandler<TEvent, { accessToken: string }> = async ({ bo
     }
   }
 
-  return { message: 'success', data: { accessToken } };
+  return { message: 'success', data: { accessToken, user } };
 };
 
 export const handler = ShallotAWSRestWrapper(_handler, undefined, {
