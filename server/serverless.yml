@@ -82,6 +82,13 @@ functions:
           path: /test
           method: get
           cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
+  authorizer:
+    handler: src/authorizer/authorizer.handler
 
   login:
     handler: src/authorizer/login.handler
