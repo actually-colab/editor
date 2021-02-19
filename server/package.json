@@ -11,10 +11,11 @@
     "rest"
   ],
   "scripts": {
-    "install": "yarn sls dynamodb install && mkdir -p ./.dynamodb/db",
+    "install": "brew install postgresql && yarn sls dynamodb install && mkdir -p ./.dynamodb/db",
     "offline": "NODE_ENV='development' yarn sls offline start",
-    "start": "yarn offline",
-    "start:pgsql": "cd ./sql-db && docker-compose up -d --build"
+    "start": "yarn start:pgsql && yarn offline",
+    "start:pgsql": "cd ./sql-db && docker-compose up -d --build && yarn pgsql:init",
+    "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./sql-db/init-db.sql -w"
   },
   "dependencies": {
     "@shallot/rest-wrapper": "^1.1.2",
