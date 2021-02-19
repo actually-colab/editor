@@ -11,8 +11,9 @@
     "rest"
   ],
   "scripts": {
+    "install": "yarn sls dynamodb install && mkdir -p ./.dynamodb/db",
     "offline": "NODE_ENV='development' yarn sls offline start",
-    "start": "npm run offline",
+    "start": "yarn offline",
     "start:pgsql": "cd ./sql-db && docker-compose up -d --build"
   },
   "dependencies": {
