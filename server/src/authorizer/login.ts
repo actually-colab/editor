@@ -21,12 +21,10 @@ interface GoogleLogin {
 }
 
 type TEvent = TShallotHttpEvent<unknown, unknown, unknown, DevLogin | GoogleLogin>;
-type TResult = { accessToken: string };
+type TResult = { sessionToken: string; user: DUser };
 
-const _handler: ShallotRawHandler<TEvent, { accessToken: string; user: DUser }> = async ({
-  body,
-}) => {
-  let accessToken: TResult['accessToken'];
+const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
+  let sessionToken: TResult['sessionToken'];
   let user: DUser | null;
   switch (body?.tokenType) {
     case 'google': {
@@ -43,7 +41,7 @@ const _handler: ShallotRawHandler<TEvent, { accessToken: string; user: DUser }> 
         user = await createUser({ email: body.email, name: body.name });
       }
 
-      accessToken = getDevToken(body.email);
+      sessionToken = getDevToken(body.email);
       break;
     }
     default: {
@@ -51,7 +49,7 @@ const _handler: ShallotRawHandler<TEvent, { accessToken: string; user: DUser }> 
     }
   }
 
-  return { message: 'success', data: { accessToken, user } };
+  return { message: 'success', data: { sessionToken, user } };
 };
 
 export const handler = ShallotAWSRestWrapper(_handler, undefined, {
