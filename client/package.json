@@ -1,6 +1,6 @@
 {
   "name": "@actually-colab/editor-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "API Client for Actually Colab's editor",
   "keywords": [
     "typescript"
