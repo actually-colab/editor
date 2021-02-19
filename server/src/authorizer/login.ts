@@ -7,6 +7,7 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { createUser, getUser } from '../db/pgsql/models/User';
+import { getDevToken } from './token';
 
 interface DevLogin {
   tokenType: 'dev';
@@ -29,13 +30,17 @@ const _handler: ShallotRawHandler<TEvent, { accessToken: string }> = async ({ bo
       throw new createHTTPError.BadRequest('google login method not implemented');
     }
     case 'dev': {
+      if (process.env.IS_OFFLINE == null) {
+        throw new createHTTPError.Unauthorized('Cannot use dev token in prod');
+      }
+
       let user = await getUser(body.email);
 
       if (user == null) {
         user = await createUser({ email: body.email, name: body.name });
       }
 
-      accessToken = 'todo';
+      accessToken = getDevToken(body.email);
       break;
     }
     default: {

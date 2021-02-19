@@ -83,6 +83,14 @@ functions:
           method: get
           cors: true
 
+  login:
+    handler: src/authorizer/login.handler
+    events:
+      - http:
+          path: /login
+          method: post 
+          cors: true
+
   GET-notebooks:
     handler: src/rest/get-notebooks.handler
     events:

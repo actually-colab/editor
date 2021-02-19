@@ -19,6 +19,7 @@
     "@shallot/rest-wrapper": "^1.1.2",
     "aws-sdk": "^2.842.0",
     "http-errors": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.17",
     "pg": "^8.5.1",
     "uuid": "^8.3.2"
@@ -27,6 +28,7 @@
     "@types/aws-lambda": "^8.10.67",
     "@types/aws-sdk": "^2.7.0",
     "@types/http-errors": "^1.8.0",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/knex": "^0.16.1",
     "@types/node": "^14.14.14",
     "@types/uuid": "^8.3.0",
