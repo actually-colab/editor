@@ -22,8 +22,6 @@ provider:
       - dynamodb:UpdateItem
       - dynamodb:DeleteItem
     Resource:
-      - "Fn::GetAtt": [usersTable, Arn]
-      - "Fn::GetAtt": [notebooksTable, Arn]
       - "Fn::GetAtt": [cellsTable, Arn]
       - "Fn::GetAtt": [outputsTable, Arn]
 
@@ -31,8 +29,6 @@ provider:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
 
-    AC_DDB_USERS_TABLE_NAME: ${self:custom.dynamoTableNames.usersTableName}
-    AC_DDB_NOTEBOOKS_TABLE_NAME: ${self:custom.dynamoTableNames.notebooksTableName}
     AC_DDB_CELLS_TABLE_NAME: ${self:custom.dynamoTableNames.cellsTableName}
     AC_DDB_OUTPUTS_TABLE_NAME: ${self:custom.dynamoTableNames.outputsTableName}
 
@@ -48,8 +44,6 @@ custom:
     - dev
 
   dynamoTableNames:
-    usersTableName: ${self:service}-${self:provider.stage}-User
-    notebooksTableName: ${self:service}-${self:provider.stage}-Notebook
     cellsTableName: ${self:service}-${self:provider.stage}-Cell
     outputsTableName: ${self:service}-${self:provider.stage}-Output
 
@@ -126,48 +120,6 @@ functions:
 
 resources:
   Resources:
-    usersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.usersTableName}
-        AttributeDefinitions:
-          - AttributeName: uid
-            AttributeType: S
-        KeySchema:
-          - AttributeName: uid
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-    notebooksTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.notebooksTableName}
-        AttributeDefinitions:
-          - AttributeName: nb_id
-            AttributeType: S
-          - AttributeName: uid
-            AttributeType: S
-        KeySchema:
-          - AttributeName: nb_id
-            KeyType: HASH
-          - AttributeName: uid
-            KeyType: RANGE
-        GlobalSecondaryIndexes:
-          - IndexName: UserIdIndex
-            KeySchema:
-              - AttributeName: uid
-                KeyType: HASH
-            Projection:
-              ProjectionType: 'ALL'
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
     cellsTable:
       Type: AWS::DynamoDB::Table
       Properties:
