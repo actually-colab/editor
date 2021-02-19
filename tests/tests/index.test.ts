@@ -1,6 +1,6 @@
 import { test, describe, expect } from '@jest/globals';
 
-import { devLogin, getNotebooksForUser } from '../src';
+import { devLogin, getNotebooksForUser } from '@actually-colab/editor-client';
 
 describe('', () => {
   test('', async () => {
