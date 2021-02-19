@@ -28,6 +28,8 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
 
   await createNotebook({ name: body.name }, queryStringParameters.email);
 
+  // TODO: Return notebook id https://github.com/actually-colab/editor/issues/40
+
   return { message: 'success' };
 };
 

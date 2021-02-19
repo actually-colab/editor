@@ -59,7 +59,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
 
   await grantAccessByEmail(body.email, pathParameters.nb_id, body.access_level);
 
-  // TODO: Send an email to the user
+  // TODO: Send an email to the user https://github.com/actually-colab/editor/issues/27
 
   return { message: 'success' };
 };
