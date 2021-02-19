@@ -11,7 +11,7 @@
     "rest"
   ],
   "scripts": {
-    "offline": "NODE_ENV='development' sls offline start",
+    "offline": "NODE_ENV='development' yarn sls offline start",
     "start": "npm run offline",
     "start:pgsql": "cd ./sql-db && docker-compose up -d --build"
   },
