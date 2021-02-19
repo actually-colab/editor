@@ -27,12 +27,13 @@ type TEvent = TShallotHttpEvent<
 >;
 
 const _handler: ShallotRawHandler<TEvent, never> = async ({
-  queryStringParameters,
+  requestContext: { authorizer },
   pathParameters,
   body,
 }) => {
-  if (queryStringParameters?.email == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.email');
+  const user = authorizer as DUser | null;
+  if (user?.email == null) {
+    throw new createHTTPError.InternalServerError();
   }
 
   if (pathParameters?.nb_id == null) {
@@ -49,7 +50,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
 
   // Assert that the request user has full access
   const requestingUserAccessLevel = await getUserAccessLevel(
-    queryStringParameters.email,
+    user.email,
     pathParameters.nb_id
   );
 

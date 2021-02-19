@@ -16,7 +16,7 @@ const _handler: ShallotRawHandler<TShallotHttpEvent, Notebook[]> = async ({
 }) => {
   const user = authorizer as DUser | null;
   if (user?.email == null) {
-    throw new createHTTPError.BadRequest('Must specify queryStringParameters.email');
+    throw new createHTTPError.InternalServerError();
   }
 
   const notebooks = await getNotebooksForUser(user.email);
