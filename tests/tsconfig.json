@@ -11,5 +11,5 @@
     "noUnusedParameters": true,
     "strict": true
   },
-  "include": ["tests"]
+  "include": ["tests", "start-offline.ts"]
 }
