@@ -4,6 +4,7 @@ import tablenames from '../tablenames';
 export type NotebookAccessLevel = 'Full Access' | 'Read Only';
 
 export interface DUser {
+  [k: string]: number | string | boolean;
   uid: number;
   name: string;
   email: string;
