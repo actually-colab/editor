@@ -8,4 +8,5 @@ export default knex({
     password: process.env.AC_PGSQL_PASSWORD,
     database: process.env.AC_PGSQL_DATABASE,
   },
+  debug: process.env.IS_OFFLINE != null,
 });

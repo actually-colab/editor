@@ -6,7 +6,7 @@ import type {
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import { createNotebook } from 'db/pgsql/models/Notebook';
+import { createNotebook } from '../db/pgsql/models/Notebook';
 
 interface RNotebook {
   name: string;

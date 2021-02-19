@@ -13,13 +13,14 @@
   "scripts": {
     "offline": "NODE_ENV='development' sls offline start",
     "start": "npm run offline",
-    "start:pgsql": "cd ./sql-db && docker-compose up"
+    "start:pgsql": "cd ./sql-db && docker-compose up -d --build"
   },
   "dependencies": {
     "@shallot/rest-wrapper": "^1.1.2",
     "aws-sdk": "^2.842.0",
     "http-errors": "^1.8.0",
     "knex": "^0.21.17",
+    "pg": "^8.5.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

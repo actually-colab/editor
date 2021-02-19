@@ -3,7 +3,7 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { DUser } from 'db/pgsql/models/User';
+import type { DUser } from '../db/pgsql/models/User';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';

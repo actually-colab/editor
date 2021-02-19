@@ -33,14 +33,14 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
   return pgsql
     .select(
       'nb.*',
-      `json_agg(
+      pgsql.raw(`json_agg(
         json_build_object(
           'uid', u.uid, 
           'email', u.email, 
           'name', u.name, 
           'access_level', nba.access_level
         )
-      ) AS users`
+      ) AS users`)
     )
     .from({ nb: tablenames.notebooksTableName })
     .innerJoin(
@@ -57,5 +57,6 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
         .from({ sub_nba: tablenames.notebookAccessLevelsTableName })
         .innerJoin({ sub_u: tablenames.usersTableName }, 'sub_u.uid', '=', 'sub_nba.uid')
         .where({ 'sub_u.email': email })
-    );
+    )
+    .groupBy('nb.nb_id');
 };
