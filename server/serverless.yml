@@ -69,7 +69,6 @@ custom:
       dbPath: "./.dynamodb/db"
 
   serverless-offline:
-    httpPort: 4000
     stage: ${self:provider.stage}
 
   webpack:

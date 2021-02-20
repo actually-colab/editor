@@ -4,7 +4,7 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:4000/dev',
+  baseURL: 'http://localhost:3000/dev',
   timeout: 1000,
   headers: {},
 });
