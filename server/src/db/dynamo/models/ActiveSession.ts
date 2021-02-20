@@ -19,3 +19,17 @@ export const connect = async (newSession: DActiveSession): Promise<void> => {
     TableName: tablenames.activeSessionsTableName,
   });
 };
+
+export const disconnect = async (
+  connectionId: DActiveSession['connectionId'],
+  time_disconnected: DActiveSession['time_disconnected']
+): Promise<void> => {
+  await dynamo.docClient.put({
+    Item: {
+      connectionId,
+      time_disconnected,
+      last_event: time_disconnected,
+    },
+    TableName: tablenames.activeSessionsTableName,
+  });
+};

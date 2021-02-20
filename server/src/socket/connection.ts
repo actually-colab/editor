@@ -1,6 +1,6 @@
 import type { Handler, APIGatewayProxyEvent } from 'aws-lambda';
 import { DUser } from 'db/pgsql/models/User';
-import type { DActiveSession } from '../db/dynamo/models/ActiveSession';
+import { DActiveSession, disconnect } from '../db/dynamo/models/ActiveSession';
 
 import { connect } from '../db/dynamo/models/ActiveSession';
 
@@ -28,7 +28,7 @@ type APIGatewayWebSocketEvent = APIGatewayProxyEvent & {
 
 export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
   switch (event.requestContext.eventType) {
-    case SocketEventTypes.Connect:
+    case SocketEventTypes.Connect: {
       const newSession: DActiveSession = {
         connectionId: event.requestContext.connectionId,
         uid: event.requestContext.authorizer.uid,
@@ -39,9 +39,14 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
       await connect(newSession);
 
       return success;
-
-    case SocketEventTypes.Disconnect:
+    }
+    case SocketEventTypes.Disconnect: {
+      await disconnect(
+        event.requestContext.connectionId,
+        event.requestContext.requestTimeEpoch
+      );
       return success;
+    }
     default:
       return error;
   }
