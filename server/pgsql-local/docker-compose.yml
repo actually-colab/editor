@@ -1,9 +1,9 @@
 # LOCAL DEVELOPMENT USE ONLY
-version: '3.1'
+version: '3.8'
 
 services:
 
-  db:
+  pgsql-db:
     image: postgres
     restart: always
     environment:
@@ -13,7 +13,7 @@ services:
     ports:
       - 5432:5432
 
-  adminer:
+  pgsql-adminer-console:
     image: adminer
     restart: always
     ports:
