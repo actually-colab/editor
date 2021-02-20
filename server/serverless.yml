@@ -138,6 +138,10 @@ functions:
     events:
       - websocket:
           route: $connect
+          authorizer:
+            name: authorizer
+            identitySource: route.request.header.Authorization
+          
       - websocket:
           route: $disconnect
       - websocket:
