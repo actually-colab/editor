@@ -186,7 +186,7 @@ resources:
           - AttributeName: cell_id
             AttributeType: S
           - AttributeName: nb_id
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: cell_id
             KeyType: HASH
@@ -214,7 +214,7 @@ resources:
           - AttributeName: cell_id
             AttributeType: S
           - AttributeName: uid
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: output_id
             KeyType: HASH
