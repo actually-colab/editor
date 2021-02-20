@@ -48,7 +48,7 @@ custom:
   dynamoTableNames:
     cellsTableName: ${self:service}-${self:provider.stage}-Cell
     outputsTableName: ${self:service}-${self:provider.stage}-Output
-    activeSessionsTableName: ${self:service}-${self:provider.stage}-ActiveSessions
+    activeSessionsTableName: ${self:service}-${self:provider.stage}-ActiveSession
 
   pgsqlTableNames:
     usersTableName: User
