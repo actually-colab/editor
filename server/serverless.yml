@@ -24,6 +24,7 @@ provider:
     Resource:
       - "Fn::GetAtt": [cellsTable, Arn]
       - "Fn::GetAtt": [outputsTable, Arn]
+      - "Fn::GetAtt": [activeSessionsTable, Arn]
 
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
@@ -31,6 +32,7 @@ provider:
 
     AC_DDB_CELLS_TABLE_NAME: ${self:custom.dynamoTableNames.cellsTableName}
     AC_DDB_OUTPUTS_TABLE_NAME: ${self:custom.dynamoTableNames.outputsTableName}
+    AC_DDB_ACTIVE_SESSIONS_TABLE_NAME: ${self:custom.dynamoTableNames.activeSessionsTableName}
 
     AC_PGSQL_HOST: localhost
     AC_PGSQL_USER: admin
@@ -46,6 +48,7 @@ custom:
   dynamoTableNames:
     cellsTableName: ${self:service}-${self:provider.stage}-Cell
     outputsTableName: ${self:service}-${self:provider.stage}-Output
+    activeSessionsTableName: ${self:service}-${self:provider.stage}-ActiveSession
 
   pgsqlTableNames:
     usersTableName: User
@@ -66,7 +69,6 @@ custom:
       dbPath: "./.dynamodb/db"
 
   serverless-offline:
-    httpPort: 4000
     stage: ${self:provider.stage}
 
   webpack:
@@ -136,6 +138,10 @@ functions:
     events:
       - websocket:
           route: $connect
+          authorizer:
+            name: authorizer
+            identitySource: route.request.header.Authorization
+          
       - websocket:
           route: $disconnect
       - websocket:
@@ -143,6 +149,38 @@ functions:
 
 resources:
   Resources:
+    activeSessionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamoTableNames.activeSessionsTableName}
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: nb_id
+            AttributeType: N
+          - AttributeName: time_disconnected
+            AttributeType: N
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+          - AttributeName: nb_id
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: SessionIndex
+            KeySchema:
+              - AttributeName: nb_id
+                KeyType: HASH
+              - AttributeName: time_disconnected
+                KeyType: RANGE
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
     cellsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -151,7 +189,7 @@ resources:
           - AttributeName: cell_id
             AttributeType: S
           - AttributeName: nb_id
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: cell_id
             KeyType: HASH
@@ -179,7 +217,7 @@ resources:
           - AttributeName: cell_id
             AttributeType: S
           - AttributeName: uid
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: output_id
             KeyType: HASH

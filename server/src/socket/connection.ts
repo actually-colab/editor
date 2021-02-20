@@ -1,8 +1,14 @@
-import type { Handler, APIGatewayEvent } from 'aws-lambda';
+import type { Handler, APIGatewayProxyEvent } from 'aws-lambda';
+import type { DUser } from 'db/pgsql/models/User';
+import type { DActiveSession } from '../db/dynamo/models/ActiveSession';
+
+import { getUserFromToken } from '../authorizer/token';
+import { connect, disconnect } from '../db/dynamo/models/ActiveSession';
+import { forceDisconnect } from './client-management';
 
 const SocketEventTypes = Object.freeze({
-  Connect: 'Connect',
-  Disconnect: 'Disconnect',
+  Connect: 'CONNECT',
+  Disconnect: 'DISCONNECT',
 });
 
 const success = {
@@ -13,12 +19,53 @@ const error = {
   statusCode: 400,
 };
 
-export const handler: Handler = async (event: APIGatewayEvent) => {
+export type WebSocketRequestContext = APIGatewayProxyEvent['requestContext'] & {
+  connectionId: string;
+  authorizer: DUser;
+};
+
+type APIGatewayWebSocketEvent = APIGatewayProxyEvent & {
+  requestContext: WebSocketRequestContext;
+};
+
+export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
   switch (event.requestContext.eventType) {
-    case SocketEventTypes.Connect:
+    case SocketEventTypes.Connect: {
+      // SLS Offline doesn't support Lambda Authorizers :,(
+      if (process.env.IS_OFFLINE != null) {
+        if (event.headers.Authorization == null) {
+          await forceDisconnect(event.requestContext);
+          return { statusCode: 401 };
+        }
+
+        const user = await getUserFromToken(event.headers.Authorization);
+        if (user == null) {
+          await forceDisconnect(event.requestContext);
+          return { statusCode: 401 };
+        }
+
+        event.requestContext.authorizer = user;
+      }
+
+      const newSession: DActiveSession = {
+        connectionId: event.requestContext.connectionId,
+        uid: event.requestContext.authorizer.uid,
+        time_connected: event.requestContext.requestTimeEpoch,
+        last_event: event.requestContext.requestTimeEpoch,
+      };
+
+      await connect(newSession);
+
       return success;
-    case SocketEventTypes.Disconnect:
+    }
+    case SocketEventTypes.Disconnect: {
+      await disconnect(
+        event.requestContext.connectionId,
+        event.requestContext.requestTimeEpoch
+      );
+
       return success;
+    }
     default:
       return error;
   }

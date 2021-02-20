@@ -13,9 +13,11 @@
   "scripts": {
     "install": "brew install postgresql && yarn sls dynamodb install && mkdir -p ./.dynamodb/db",
     "offline": "NODE_ENV='development' yarn sls offline start",
-    "start": "yarn start:pgsql 2>/dev/null && yarn offline",
-    "start:pgsql": "cd ./sql-db && docker-compose up -d --build && sleep 3 && yarn pgsql:init",
-    "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./sql-db/init-db.sql -w"
+    "start": "yarn start:pgsql && yarn offline",
+    "start:pgsql": "yarn pgsql:up && sleep 3 && yarn pgsql:init",
+    "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./pgsql-local/init-db.sql -w",
+    "pgsql:up": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml up -d --build",
+    "pgsql:down": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml down"
   },
   "dependencies": {
     "@shallot/rest-wrapper": "^1.1.2",
@@ -50,6 +52,7 @@
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3",
     "webpack": "^5.11.0",
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "wscat": "^4.0.1"
   }
 }
