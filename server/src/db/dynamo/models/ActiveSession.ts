@@ -33,3 +33,18 @@ export const disconnect = async (
     TableName: tablenames.activeSessionsTableName,
   });
 };
+
+export const getSessionById = async (
+  connectionId: DActiveSession['connectionId']
+): Promise<DActiveSession | null> => {
+  const res = await dynamo.docClient
+    .get({
+      TableName: tablenames.activeSessionsTableName,
+      Key: {
+        connectionId,
+      },
+    })
+    .promise();
+
+  return res.Item as DActiveSession | null;
+};

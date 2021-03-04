@@ -12,7 +12,7 @@ export type WebSocketRequestContext = APIGatewayProxyEvent['requestContext'] & {
   authorizer: DUser;
 };
 
-type APIGatewayWebSocketEvent = APIGatewayProxyEvent & {
+export type APIGatewayWebSocketEvent = APIGatewayProxyEvent & {
   requestContext: WebSocketRequestContext;
 };
 

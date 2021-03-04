@@ -1,6 +1,7 @@
-import { DUser, getUser } from '../db/pgsql/models/User';
+import { DUser, getUser, getUserById } from '../db/pgsql/models/User';
 
 import jwt from 'jsonwebtoken';
+import { DActiveSession, getSessionById } from 'db/dynamo/models/ActiveSession';
 
 interface TokenPayload {
   email: DUser['email'];
@@ -39,4 +40,15 @@ export const getUserFromToken = async (
   }
 
   return getUser(tokenPayload.email);
+};
+
+export const getUserFromConnectionId = async (
+  connectionId: DActiveSession['connectionId']
+): Promise<DUser | null> => {
+  const session = await getSessionById(connectionId);
+  if (session == null) {
+    return null;
+  }
+
+  return getUserById(session.uid);
 };
