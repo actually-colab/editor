@@ -4,7 +4,7 @@ import type { APIGatewayProxyResult } from 'aws-lambda';
 import HttpError from 'http-errors';
 import { APIGatewayWebSocketEvent } from '../wrapper';
 import { getUserFromConnectionId } from 'authorizer/token';
-import { forceDisconnect } from 'socket/client-management';
+import { forceDisconnect } from '../../client-management';
 
 /**
  * Shallot middleware that attaches user object to request.

@@ -2,10 +2,11 @@ import { ShallotAWSHttpErrorHandler } from '@shallot/http-error-handler';
 import { TShallotErrorHandlerOptions } from '@shallot/http-error-handler/dist/aws';
 import { ShallotAWSHttpJsonBodyParser } from '@shallot/http-json-body-parser';
 import { TShallotJSONBodyParserOptions } from '@shallot/http-json-body-parser/dist/aws';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
-import type { DUser } from 'db/pgsql/models/User';
+import type { APIGatewayProxyEvent, Handler } from 'aws-lambda';
+import type { DUser } from '../../db/pgsql/models/User';
 
 import { ShallotAWS } from 'shallot';
+import ShallotSocketAuthorizer from './custom/authorizer';
 
 export type WebSocketRequestContext = APIGatewayProxyEvent['requestContext'] & {
   connectionId: string;
@@ -22,7 +23,7 @@ export type ResultDataBase = ParsedJSON | Array<ParsedJSON> | unknown;
 
 export type ShallotRawHandler<
   TEvent extends TShallotSocketEvent = TShallotSocketEvent
-> = Handler<TEvent, APIGatewayProxyResult>;
+> = Handler<TEvent, void>;
 
 export type TShallotSocketEvent<
   TQueryStringParameters extends RequestDataBase = unknown,
@@ -45,6 +46,7 @@ export type TShallotSocketEvent<
 type TShallotSocketHandler = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handler: ShallotRawHandler<any>,
+  parseJsonBody?: boolean,
   successStatusCode?: number,
   middlewareOpts?: {
     HttpErrorHandlerOpts?: TShallotErrorHandlerOptions;
@@ -54,6 +56,7 @@ type TShallotSocketHandler = (
 
 const ShallotSocketWrapper: TShallotSocketHandler = (
   handler,
+  parseJsonBody = true,
   successStatusCode = 200,
   middlewareOpts = {}
 ) => {
@@ -65,9 +68,15 @@ const ShallotSocketWrapper: TShallotSocketHandler = (
     };
   };
 
-  return ShallotAWS(wrappedResponseHandler)
-    .use(ShallotAWSHttpJsonBodyParser(middlewareOpts.HttpJsonBodyParserOpts))
+  const wrapper = ShallotAWS(wrappedResponseHandler)
+    .use(ShallotSocketAuthorizer())
     .use(ShallotAWSHttpErrorHandler(middlewareOpts.HttpErrorHandlerOpts));
+
+  if (parseJsonBody) {
+    wrapper.use(ShallotAWSHttpJsonBodyParser(middlewareOpts.HttpJsonBodyParserOpts));
+  }
+
+  return wrapper;
 };
 
 export default ShallotSocketWrapper;

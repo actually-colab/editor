@@ -147,6 +147,13 @@ functions:
       - websocket:
           route: $default
 
+  socket-edit-cell:
+    handler: src/socket/cell/edit-cell.handler
+
+    events:
+      - websocket:
+          route: edit_cell
+
 resources:
   Resources:
     activeSessionsTable:
