@@ -2,10 +2,12 @@ import { DCell, editCell } from '../../db/dynamo/models/Cell';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
+  WebSocketRequestContext,
 } from '../middleware/wrapper';
 
 import createHttpError from 'http-errors';
-import { getSessionById } from '../../db/dynamo/models/ActiveSession';
+import { getActiveSessions, getSessionById } from '../../db/dynamo/models/ActiveSession';
+import { getManagementApi } from '../client-management';
 
 interface TEditCellEventBody {
   cell_id: DCell['cell_id'];
@@ -19,6 +21,30 @@ type TEditCellEvent = TShallotSocketEvent<
   undefined,
   TEditCellEventBody
 >;
+
+const sendCellEditedEvent = async (
+  context: WebSocketRequestContext,
+  cell: TEditCellEventBody
+): Promise<void> => {
+  const cellEditedEventBody = {
+    eventType: 'cell_edited',
+    cell,
+  };
+
+  const connectionIds = await getActiveSessions(cell.nb_id);
+
+  const apigApi = getManagementApi(context);
+  await Promise.all(
+    connectionIds.map((connectionId) =>
+      apigApi
+        .postToConnection({
+          ConnectionId: connectionId,
+          Data: cellEditedEventBody,
+        })
+        .promise()
+    )
+  );
+};
 
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
   if (body?.cell_id == null || body.nb_id == null || body.contents == null) {
@@ -35,6 +61,8 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
 
   // TODO: Check cell lock
   await editCell(session, body);
+
+  sendCellEditedEvent(requestContext, body);
 };
 
 export const handler = ShallotSocketWrapper(_handler);

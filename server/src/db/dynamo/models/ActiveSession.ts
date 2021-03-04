@@ -48,3 +48,29 @@ export const getSessionById = async (
 
   return res.Item as DActiveSession | null;
 };
+
+export const getActiveSessions = async (
+  nb_id: DActiveSession['nb_id']
+): Promise<Array<DActiveSession['connectionId']>> => {
+  const res = await dynamo.docClient
+    .batchGet({
+      RequestItems: {
+        [tablenames.activeSessionsTableName]: {
+          Keys: [
+            {
+              nb_id,
+            },
+          ],
+          AttributesToGet: ['connectionId'],
+        },
+      },
+    })
+    .promise();
+
+  const data = (res.Responses?.[tablenames.activeSessionsTableName] ?? []) as Array<{
+    connectionId: DActiveSession['connectionId'];
+  }>;
+  const connectionIds = data.map((x) => x.connectionId);
+
+  return connectionIds;
+};
