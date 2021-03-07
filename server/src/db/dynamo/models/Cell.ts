@@ -17,19 +17,21 @@ export const editCell = async (
   session: DActiveSession,
   cell: Partial<DCell>
 ): Promise<void> => {
-  await dynamo.docClient.put({
-    Item: {
-      connectionId: session.connectionId,
-      last_event: Date.now(),
-    },
-    TableName: tablenames.activeSessionsTableName,
-  });
+  await dynamo.docClient
+    .put({
+      Item: {
+        ...session,
+        last_event: Date.now(),
+      },
+      TableName: tablenames.activeSessionsTableName,
+    })
+    .promise();
 
-  await dynamo.docClient.put({
-    Item: {
-      ...cell,
-      time_modified: Date.now(),
-    },
-    TableName: tablenames.activeSessionsTableName,
-  });
+  const cellItem = { ...cell, time_modified: Date.now() };
+  await dynamo.docClient
+    .put({
+      Item: cellItem,
+      TableName: tablenames.cellsTableName,
+    })
+    .promise();
 };

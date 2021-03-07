@@ -14,24 +14,29 @@ export interface DActiveSession {
 }
 
 export const connect = async (newSession: DActiveSession): Promise<void> => {
-  await dynamo.docClient.put({
-    Item: newSession,
-    TableName: tablenames.activeSessionsTableName,
-  });
+  await dynamo.docClient
+    .put({
+      Item: newSession,
+      TableName: tablenames.activeSessionsTableName,
+    })
+    .promise();
 };
 
 export const disconnect = async (
   connectionId: DActiveSession['connectionId'],
   time_disconnected: DActiveSession['time_disconnected']
 ): Promise<void> => {
-  await dynamo.docClient.put({
-    Item: {
-      connectionId,
-      time_disconnected,
-      last_event: time_disconnected,
-    },
-    TableName: tablenames.activeSessionsTableName,
-  });
+  await dynamo.docClient
+    .put({
+      Item: {
+        connectionId,
+        nb_id: 1, // todo
+        time_disconnected,
+        last_event: time_disconnected,
+      },
+      TableName: tablenames.activeSessionsTableName,
+    })
+    .promise();
 };
 
 export const getSessionById = async (
@@ -55,18 +60,17 @@ export const getSessionById = async (
 export const getActiveSessions = async (
   nb_id: DActiveSession['nb_id']
 ): Promise<Array<DActiveSession['connectionId']>> => {
-  console.log(3);
   const res = await dynamo.docClient
     .query({
       TableName: tablenames.activeSessionsTableName,
-      ProjectionExpression: 'nb_id, connectionId',
-      KeyConditionExpression: 'nb_id = :nb_id',
+      IndexName: 'SessionIndex',
+      KeyConditionExpression: 'nb_id = :nb_id and time_disconnected = :time_disconnected',
       ExpressionAttributeValues: {
         ':nb_id': nb_id,
+        ':time_disconnected': -1,
       },
     })
     .promise();
-  console.log(4);
 
   const data = (res.Items ?? []) as Array<{
     connectionId: DActiveSession['connectionId'];

@@ -10,9 +10,11 @@ import { getActiveSessions, getSessionById } from '../../db/dynamo/models/Active
 import { getManagementApi } from '../client-management';
 
 interface TEditCellEventBody {
-  cell_id: DCell['cell_id'];
-  nb_id: DCell['nb_id'];
-  contents: string;
+  data: {
+    cell_id: DCell['cell_id'];
+    nb_id: DCell['nb_id'];
+    contents: string;
+  };
 }
 
 type TEditCellEvent = TShallotSocketEvent<
@@ -24,31 +26,36 @@ type TEditCellEvent = TShallotSocketEvent<
 
 const sendCellEditedEvent = async (
   context: WebSocketRequestContext,
-  cell: TEditCellEventBody
+  cell: TEditCellEventBody['data']
 ): Promise<void> => {
-  const cellEditedEventBody = {
+  const cellEditedEventBody = JSON.stringify({
     eventType: 'cell_edited',
     cell,
-  };
+  });
 
   const connectionIds = await getActiveSessions(cell.nb_id);
 
   const apigApi = getManagementApi(context);
   await Promise.all(
-    connectionIds.map((connectionId) =>
-      apigApi
-        .postToConnection({
-          ConnectionId: connectionId,
-          Data: cellEditedEventBody,
-        })
-        .promise()
-    )
+    connectionIds.map(async (connectionId) => {
+      try {
+        await apigApi
+          .postToConnection({
+            ConnectionId: connectionId,
+            Data: cellEditedEventBody,
+          })
+          .promise();
+      } catch (err) {
+        console.error('Could not reach', connectionId);
+      }
+    })
   );
 };
 
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
-  console.log('edit_cell event');
-  if (body?.cell_id == null || body.nb_id == null || body.contents == null) {
+  const data = body?.data;
+  if (data?.cell_id == null || data.nb_id == null || data.contents == null) {
+    console.error('data:', data);
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
@@ -56,16 +63,16 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
   // const user = requestContext.authorizer;
   const session = await getSessionById(requestContext.connectionId);
 
-  if (session == null || session.nb_id != body.nb_id) {
+  if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
   // TODO: Check cell lock
-  await editCell(session, body);
+  await editCell(session, data);
 
-  sendCellEditedEvent(requestContext, body);
+  sendCellEditedEvent(requestContext, data);
 };
 
-export const handler = ShallotSocketWrapper(_handler, undefined, undefined, {
+export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
 });

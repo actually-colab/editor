@@ -1,6 +1,6 @@
 import { ShallotAWSHttpErrorHandler } from '@shallot/http-error-handler';
 import { TShallotErrorHandlerOptions } from '@shallot/http-error-handler/dist/aws';
-import { ShallotAWSHttpJsonBodyParser } from '@shallot/http-json-body-parser';
+import ShallotAWSSocketJsonBodyParser from './custom/json-body-parser';
 import { TShallotJSONBodyParserOptions } from '@shallot/http-json-body-parser/dist/aws';
 import type { APIGatewayProxyEvent, Handler } from 'aws-lambda';
 import type { DUser } from '../../db/pgsql/models/User';
@@ -46,7 +46,6 @@ export type TShallotSocketEvent<
 type TShallotSocketHandler = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handler: ShallotRawHandler<any>,
-  parseJsonBody?: boolean,
   successStatusCode?: number,
   middlewareOpts?: {
     HttpErrorHandlerOpts?: TShallotErrorHandlerOptions;
@@ -56,7 +55,6 @@ type TShallotSocketHandler = (
 
 const ShallotSocketWrapper: TShallotSocketHandler = (
   handler,
-  parseJsonBody = true,
   successStatusCode = 200,
   middlewareOpts = {}
 ) => {
@@ -69,12 +67,9 @@ const ShallotSocketWrapper: TShallotSocketHandler = (
   };
 
   const wrapper = ShallotAWS(wrappedResponseHandler)
+    .use(ShallotAWSSocketJsonBodyParser(middlewareOpts.HttpJsonBodyParserOpts))
     .use(ShallotSocketAuthorizer())
     .use(ShallotAWSHttpErrorHandler(middlewareOpts.HttpErrorHandlerOpts));
-
-  if (parseJsonBody) {
-    wrapper.use(ShallotAWSHttpJsonBodyParser(middlewareOpts.HttpJsonBodyParserOpts));
-  }
 
   return wrapper;
 };
