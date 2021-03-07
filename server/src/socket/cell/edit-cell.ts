@@ -47,6 +47,7 @@ const sendCellEditedEvent = async (
 };
 
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
+  console.log('edit_cell event');
   if (body?.cell_id == null || body.nb_id == null || body.contents == null) {
     throw new createHttpError.BadRequest('Invalid request body');
   }
@@ -65,4 +66,6 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
   sendCellEditedEvent(requestContext, body);
 };
 
-export const handler = ShallotSocketWrapper(_handler);
+export const handler = ShallotSocketWrapper(_handler, undefined, undefined, {
+  HttpErrorHandlerOpts: { catchAllErrors: true },
+});

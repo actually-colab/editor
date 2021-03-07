@@ -3,7 +3,7 @@ import type { APIGatewayProxyResult } from 'aws-lambda';
 
 import HttpError from 'http-errors';
 import { APIGatewayWebSocketEvent } from '../wrapper';
-import { getUserFromConnectionId } from 'authorizer/token';
+import { getUserFromConnectionId } from '../../../authorizer/token';
 import { forceDisconnect } from '../../client-management';
 
 /**
