@@ -21,3 +21,12 @@ export const getUser = async (email: DUser['email']): Promise<DUser | null> => {
 
   return result && result.length > 0 ? result[0] : null;
 };
+
+export const getUserById = async (uid: DUser['uid']): Promise<DUser | null> => {
+  const result = await pgsql<DUser>(tablenames.usersTableName)
+    .select('*')
+    .where({ uid })
+    .returning('*');
+
+  return result && result.length > 0 ? result[0] : null;
+};

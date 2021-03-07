@@ -20,6 +20,8 @@
     "pgsql:down": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml down"
   },
   "dependencies": {
+    "@shallot/http-error-handler": "^1.0.2",
+    "@shallot/http-json-body-parser": "^1.0.1",
     "@shallot/rest-wrapper": "^1.1.2",
     "aws-sdk": "^2.842.0",
     "http-errors": "^1.8.0",

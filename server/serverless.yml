@@ -147,6 +147,13 @@ functions:
       - websocket:
           route: $default
 
+  socket-edit-cell:
+    handler: src/socket/cell/edit-cell.handler
+
+    events:
+      - websocket:
+          route: edit_cell
+
 resources:
   Resources:
     activeSessionsTable:
@@ -191,18 +198,10 @@ resources:
           - AttributeName: nb_id
             AttributeType: N
         KeySchema:
-          - AttributeName: cell_id
+          - AttributeName: nb_id
             KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: NotebookIdIndex
-            KeySchema:
-              - AttributeName: nb_id
-                KeyType: HASH
-            Projection:
-              ProjectionType: 'ALL'
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+          - AttributeName: cell_id
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -212,34 +211,15 @@ resources:
       Properties:
         TableName: ${self:custom.dynamoTableNames.outputsTableName}
         AttributeDefinitions:
-          - AttributeName: output_id
+          - AttributeName: nb_id
             AttributeType: S
           - AttributeName: cell_id
             AttributeType: S
-          - AttributeName: uid
-            AttributeType: N
         KeySchema:
-          - AttributeName: output_id
+          - AttributeName: nb_id
             KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: CellIdIndex
-            KeySchema:
-              - AttributeName: cell_id
-                KeyType: HASH
-            Projection:
-              ProjectionType: 'ALL'
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-          - IndexName: UserIdIndex
-            KeySchema:
-              - AttributeName: uid
-                KeyType: HASH
-            Projection:
-              ProjectionType: 'ALL'
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+          - AttributeName: cell_id
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
