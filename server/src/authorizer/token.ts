@@ -1,7 +1,7 @@
 import { DUser, getUser, getUserById } from '../db/pgsql/models/User';
 
 import jwt from 'jsonwebtoken';
-import { DActiveSession, getSessionById } from '../db/dynamo/models/ActiveSession';
+import { DActiveSession, getSessionById } from '../db/pgsql/models/ActiveSession';
 
 interface TokenPayload {
   email: DUser['email'];
