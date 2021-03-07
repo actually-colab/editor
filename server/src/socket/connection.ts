@@ -1,9 +1,9 @@
 import type { Handler, APIGatewayProxyEvent } from 'aws-lambda';
 import type { DUser } from 'db/pgsql/models/User';
-import type { DActiveSession } from '../db/dynamo/models/ActiveSession';
+import type { DActiveSession } from '../db/pgsql/models/ActiveSession';
 
 import { getUserFromToken } from '../authorizer/token';
-import { connect, disconnect } from '../db/dynamo/models/ActiveSession';
+import { connect, disconnect } from '../db/pgsql/models/ActiveSession';
 import { forceDisconnect } from './client-management';
 
 const SocketEventTypes = Object.freeze({

@@ -1,4 +1,4 @@
-import { DCell, editCell } from '../../db/dynamo/models/Cell';
+import { DCell, editCell } from '../../db/pgsql/models/Cell';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
@@ -6,7 +6,7 @@ import ShallotSocketWrapper, {
 } from '../middleware/wrapper';
 
 import createHttpError from 'http-errors';
-import { getActiveSessions, getSessionById } from '../../db/dynamo/models/ActiveSession';
+import { getActiveSessions, getSessionById } from '../../db/pgsql/models/ActiveSession';
 import { getManagementApi } from '../client-management';
 
 interface TEditCellEventBody {

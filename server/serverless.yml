@@ -4,7 +4,6 @@ plugins:
   - serverless-stage-manager
   - serverless-webpack
   - serverless-offline
-  - serverless-dynamodb-local
 
 provider:
   name: aws
@@ -12,61 +11,32 @@ provider:
   stage: ${opt:stage,'dev'}
   region: us-east-1
 
-  iamRoleStatements:
-  - Effect: 'Allow'
-    Action:
-      - dynamodb:Query
-      - dynamodb:Scan
-      - dynamodb:GetItem
-      - dynamodb:PutItem
-      - dynamodb:UpdateItem
-      - dynamodb:DeleteItem
-    Resource:
-      - "Fn::GetAtt": [cellsTable, Arn]
-      - "Fn::GetAtt": [outputsTable, Arn]
-      - "Fn::GetAtt": [activeSessionsTable, Arn]
-
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
-
-    AC_DDB_CELLS_TABLE_NAME: ${self:custom.dynamoTableNames.cellsTableName}
-    AC_DDB_OUTPUTS_TABLE_NAME: ${self:custom.dynamoTableNames.outputsTableName}
-    AC_DDB_ACTIVE_SESSIONS_TABLE_NAME: ${self:custom.dynamoTableNames.activeSessionsTableName}
 
     AC_PGSQL_HOST: localhost
     AC_PGSQL_USER: admin
     AC_PGSQL_PASSWORD: password
     AC_PGSQL_DATABASE: AC-dev
+
     AC_PGSQL_USERS_TABLE_NAME: ${self:custom.pgsqlTableNames.usersTableName}
     AC_PGSQL_NOTEBOOKS_TABLE_NAME: ${self:custom.pgsqlTableNames.notebooksTableName}
+    AC_PGSQL_CELLS_TABLE_NAME: ${self:custom.pgsqlTableNames.cellsTableName}
+    AC_PGSQL_OUTPUTS_TABLE_NAME: ${self:custom.pgsqlTableNames.outputsTableName}
+    AC_PGSQL_ACTIVE_SESSIONS_TABLE_NAME: ${self:custom.pgsqlTableNames.activeSessionsTableName}
 
 custom:
   stages:
     - dev
 
-  dynamoTableNames:
-    cellsTableName: ${self:service}-${self:provider.stage}-Cell
-    outputsTableName: ${self:service}-${self:provider.stage}-Output
-    activeSessionsTableName: ${self:service}-${self:provider.stage}-ActiveSession
-
   pgsqlTableNames:
     usersTableName: User
     notebooksTableName: Notebook
     notebookAccessLevelsTableName: NotebookAccessLevel
-
-  dynamodb:
-    stages:
-      - dev
-    start:
-      port: 8000
-      inMemory: true
-      heapInitial: 200m
-      heapMax: 1g
-      migrate: true
-      seed: true
-      convertEmptyValues: true
-      dbPath: "./.dynamodb/db"
+    cellsTableName: Cell
+    outputsTableName: Output
+    activeSessionsTableName: ActiveSession
 
   serverless-offline:
     stage: ${self:provider.stage}
@@ -153,73 +123,3 @@ functions:
     events:
       - websocket:
           route: edit_cell
-
-resources:
-  Resources:
-    activeSessionsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.dynamoTableNames.activeSessionsTableName}
-        AttributeDefinitions:
-          - AttributeName: connectionId
-            AttributeType: S
-          - AttributeName: nb_id
-            AttributeType: N
-          - AttributeName: time_disconnected
-            AttributeType: N
-        KeySchema:
-          - AttributeName: connectionId
-            KeyType: HASH
-          - AttributeName: nb_id
-            KeyType: RANGE
-        GlobalSecondaryIndexes:
-          - IndexName: SessionIndex
-            KeySchema:
-              - AttributeName: nb_id
-                KeyType: HASH
-              - AttributeName: time_disconnected
-                KeyType: RANGE
-            Projection:
-              ProjectionType: 'ALL'
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-    cellsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.dynamoTableNames.cellsTableName}
-        AttributeDefinitions:
-          - AttributeName: cell_id
-            AttributeType: S
-          - AttributeName: nb_id
-            AttributeType: N
-        KeySchema:
-          - AttributeName: nb_id
-            KeyType: HASH
-          - AttributeName: cell_id
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-    outputsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.dynamoTableNames.outputsTableName}
-        AttributeDefinitions:
-          - AttributeName: nb_id
-            AttributeType: S
-          - AttributeName: cell_id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: nb_id
-            KeyType: HASH
-          - AttributeName: cell_id
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
