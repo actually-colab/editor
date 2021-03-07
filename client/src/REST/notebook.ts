@@ -5,7 +5,7 @@ import type { DNotebookAccessLevel, DUser, Notebook } from './types';
 /**
  * Fetches all notebooks that this user has access to.
  */
-export const getNotebooksForUser = async (): Promise<{ data: Notebook } | null> => {
+export const getNotebooksForUser = async (): Promise<{ data: Notebook[] } | null> => {
   return (await axios.get('/notebooks'))?.data?.data;
 };
 
