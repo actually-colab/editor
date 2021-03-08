@@ -4,6 +4,7 @@ import pgsql from '../connection';
 import tablenames from '../tablenames';
 
 import { grantAccessByEmail, NotebookAccessLevel } from './NotebookAccessLevel';
+import { DCell } from './Cell';
 
 export interface DNotebook {
   nb_id: number;
@@ -13,6 +14,10 @@ export interface DNotebook {
 
 export interface Notebook extends DNotebook {
   users: NotebookAccessLevel[];
+}
+
+export interface NotebookContents extends Notebook {
+  cells: DCell[];
 }
 
 export const createNotebook = async (
@@ -66,4 +71,83 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
         .where({ 'sub_u.email': email })
     )
     .groupBy('nb.nb_id');
+};
+
+export const getNotebookContents = async (
+  nb_id: DNotebook['nb_id']
+): Promise<NotebookContents | null> => {
+  console.log(
+    await pgsql
+      .select(
+        'nb2.*',
+        pgsql.raw(`json_agg(
+              json_build_object(
+                'cell_id', c.cell_id, 
+                'time_modified', c.time_modified, 
+                'language', c.language, 
+                'contents', c.contents,
+                'lock_held_by', c.lock_held_by
+              )
+            ) AS cells`)
+      )
+      .from({ nb2: tablenames.notebooksTableName })
+      .leftJoin({ c: tablenames.cellsTableName }, 'c.nb_id', '=', 'nb2.nb_id')
+      .where({ 'nb2.nb_id': nb_id })
+      .groupBy('nb2.nb_id')
+      .as('nb')
+  );
+  const notebooks = await pgsql
+    .select(
+      'nb.*',
+      pgsql.raw(`json_agg(
+        json_build_object(
+          'uid', u.uid, 
+          'email', u.email, 
+          'name', u.name, 
+          'access_level', nba.access_level
+        )
+      ) AS users`)
+    )
+    .from(
+      pgsql
+        .select(
+          'nb2.*',
+          pgsql.raw(`jsonb_agg(
+              json_build_object(
+                'cell_id', c.cell_id, 
+                'time_modified', c.time_modified, 
+                'language', c.language, 
+                'contents', c.contents,
+                'lock_held_by', c.lock_held_by
+              )
+            ) AS cells`)
+        )
+        .from({ nb2: tablenames.notebooksTableName })
+        .leftJoin({ c: tablenames.cellsTableName }, 'c.nb_id', '=', 'nb2.nb_id')
+        .where({ 'nb2.nb_id': nb_id })
+        .groupBy('nb2.nb_id')
+        .as('nb')
+    )
+    .innerJoin(
+      { nba: tablenames.notebookAccessLevelsTableName },
+      'nba.nb_id',
+      '=',
+      'nb.nb_id'
+    )
+    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+    .where({ 'nb.nb_id': nb_id })
+    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells');
+
+  if (notebooks.length === 0) {
+    return null;
+  }
+
+  const notebook = notebooks[0];
+
+  // Handle edge case of SQL json_agg null
+  if (notebook.cells?.length === 1 && notebook.cells[0].cell_id == null) {
+    notebook.cells = [];
+  }
+
+  return notebook;
 };
