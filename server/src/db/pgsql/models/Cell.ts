@@ -18,24 +18,25 @@ export const editCell = async (
   session: DActiveSession,
   cell: Partial<DCell>
 ): Promise<void> => {
-  await pgsql<DActiveSession>(tablenames.activeSessionsTableName)
-    .update({
-      last_event: Date.now(),
-    })
-    .whereNull('time_disconnected')
-    .andWhere({
-      connectionId: session.connectionId,
-      nb_id: session.nb_id,
-    });
-
-  await pgsql<DCell>(tablenames.activeSessionsTableName)
-    .update({
-      contents: cell.contents,
-      time_modified: Date.now(),
-    })
-    .whereNull('time_disconnected')
-    .andWhere({
-      cell_id: cell.cell_id,
-      nb_id: cell.nb_id,
-    });
+  await Promise.all([
+    pgsql<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        last_event: Date.now(),
+      })
+      .whereNull('time_disconnected')
+      .andWhere({
+        connectionId: session.connectionId,
+        nb_id: session.nb_id,
+      }),
+    pgsql<DCell>(tablenames.activeSessionsTableName)
+      .update({
+        contents: cell.contents,
+        time_modified: Date.now(),
+      })
+      .whereNull('time_disconnected')
+      .andWhere({
+        cell_id: cell.cell_id,
+        nb_id: cell.nb_id,
+      })
+  ]);
 };
