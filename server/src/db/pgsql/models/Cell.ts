@@ -37,6 +37,6 @@ export const editCell = async (
       .andWhere({
         cell_id: cell.cell_id,
         nb_id: cell.nb_id,
-      })
+      }),
   ]);
 };

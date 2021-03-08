@@ -4,32 +4,41 @@ import type { DUser } from './User';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
-export type NotebookAccessLevel = 'Full Access' | 'Read Only';
+export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
 
 export interface DNotebookAccessLevel {
   nb_id: DNotebook['nb_id'];
   uid: DUser['uid'];
-  access_level: NotebookAccessLevel;
+  access_level: NotebookAccessLevelType;
+}
+
+export interface NotebookAccessLevel extends DUser {
+  access_level: NotebookAccessLevelType;
 }
 
 export const grantAccessByUID = async (
   nb_access_level: Partial<DNotebookAccessLevel>
-): Promise<void> => {
-  await pgsql<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName).insert(
-    nb_access_level
-  );
+): Promise<DNotebookAccessLevel> => {
+  return (
+    await pgsql<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+      .insert(nb_access_level)
+      .returning('*')
+  )[0];
 };
 
 export const grantAccessByEmail = async (
   email: DUser['email'],
   nb_id: DNotebookAccessLevel['nb_id'],
   access_level: DNotebookAccessLevel['access_level']
-): Promise<void> => {
-  const uid: DUser['uid'] = (
-    await pgsql<DUser>(tablenames.usersTableName).select('uid').where({ email })
-  )[0].uid;
+): Promise<NotebookAccessLevel> => {
+  // TODO: simplify with transaction
+  const user: DUser = (
+    await pgsql<DUser>(tablenames.usersTableName).select('*').where({ email })
+  )[0];
 
-  await grantAccessByUID({ uid, nb_id, access_level });
+  await grantAccessByUID({ uid: user.uid, nb_id, access_level });
+
+  return { ...user, access_level };
 };
 
 export const getUserAccessLevel = async (

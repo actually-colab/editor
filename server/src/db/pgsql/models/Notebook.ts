@@ -3,7 +3,7 @@ import type { DUser } from './User';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
-import { DNotebookAccessLevel, grantAccessByEmail } from './NotebookAccessLevel';
+import { grantAccessByEmail, NotebookAccessLevel } from './NotebookAccessLevel';
 
 export interface DNotebook {
   nb_id: number;
@@ -12,21 +12,28 @@ export interface DNotebook {
 }
 
 export interface Notebook extends DNotebook {
-  users: (DUser & { access_level: DNotebookAccessLevel['access_level'] })[];
+  users: NotebookAccessLevel[];
 }
 
 export const createNotebook = async (
   notebook: Partial<DNotebook>,
   email: DUser['email']
-): Promise<DNotebook> => {
+): Promise<Notebook> => {
   // TODO: Use a transaction
   const notebookRecord: DNotebook = (
     await pgsql<DNotebook>(tablenames.notebooksTableName).insert(notebook).returning('*')
   )[0];
 
-  await grantAccessByEmail(email, notebookRecord.nb_id, 'Full Access');
+  const accessLevel = await grantAccessByEmail(
+    email,
+    notebookRecord.nb_id,
+    'Full Access'
+  );
 
-  return notebookRecord;
+  return {
+    ...notebookRecord,
+    users: [accessLevel],
+  };
 };
 
 export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebook[]> => {
