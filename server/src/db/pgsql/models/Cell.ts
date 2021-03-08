@@ -28,13 +28,12 @@ export const editCell = async (
         connectionId: session.connectionId,
         nb_id: session.nb_id,
       }),
-    pgsql<DCell>(tablenames.activeSessionsTableName)
+    pgsql<DCell>(tablenames.cellsTableName)
       .update({
         contents: cell.contents,
         time_modified: Date.now(),
       })
-      .whereNull('time_disconnected')
-      .andWhere({
+      .where({
         cell_id: cell.cell_id,
         nb_id: cell.nb_id,
       }),

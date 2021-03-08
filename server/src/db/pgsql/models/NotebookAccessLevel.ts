@@ -44,12 +44,31 @@ export const grantAccessByEmail = async (
 export const getUserAccessLevel = async (
   email: DUser['email'],
   nb_id: DNotebookAccessLevel['nb_id']
-): Promise<DNotebookAccessLevel['access_level']> => {
-  return (
-    await pgsql
-      .select('nba.access_level')
-      .from({ nba: tablenames.notebookAccessLevelsTableName })
-      .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
-      .where({ 'u.email': email, 'nba.nb_id': nb_id })
-  )[0].access_level;
+): Promise<DNotebookAccessLevel['access_level'] | null> => {
+  const accessLevels = await pgsql
+    .select('nba.access_level')
+    .from({ nba: tablenames.notebookAccessLevelsTableName })
+    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+    .where({ 'u.email': email, 'nba.nb_id': nb_id });
+
+  if (accessLevels.length === 0) {
+    return null;
+  }
+
+  return accessLevels[0].access_level;
+};
+
+export const getUserAccessLevelById = async (
+  uid: DUser['uid'],
+  nb_id: DNotebookAccessLevel['nb_id']
+): Promise<DNotebookAccessLevel['access_level'] | null> => {
+  const accessLevels = await pgsql(tablenames.notebookAccessLevelsTableName)
+    .select('access_level')
+    .where({ uid, nb_id });
+
+  if (accessLevels.length === 0) {
+    return null;
+  }
+
+  return accessLevels[0].access_level;
 };

@@ -14,7 +14,7 @@ export interface DActiveSession {
 }
 
 export const connect = async (newSession: DActiveSession): Promise<void> => {
-  await pgsql<DNotebook>(tablenames.activeSessionsTableName).insert(newSession);
+  await pgsql<DActiveSession>(tablenames.activeSessionsTableName).insert(newSession);
 };
 
 export const disconnect = async (
@@ -23,8 +23,6 @@ export const disconnect = async (
 ): Promise<void> => {
   await pgsql<DActiveSession>(tablenames.activeSessionsTableName)
     .update({
-      connectionId,
-      nb_id: 1, // todo
       time_disconnected,
       last_event: time_disconnected,
     })
@@ -33,11 +31,13 @@ export const disconnect = async (
 };
 
 export const getSessionById = async (
-  connectionId: DActiveSession['connectionId']
+  connectionId: DActiveSession['connectionId'],
+  nb_id?: DActiveSession['nb_id']
 ): Promise<DActiveSession | null> => {
+  const where = nb_id != null ? { connectionId, nb_id } : { connectionId };
   const res = await pgsql<DActiveSession>(tablenames.activeSessionsTableName)
     .select('*')
-    .where({ connectionId });
+    .where(where);
 
   if (res.length === 0) {
     return null;
@@ -55,4 +55,18 @@ export const getActiveSessions = async (
     .andWhere({ nb_id });
 
   return res.map((x) => x.connectionId);
+};
+
+export const openNotebook = async (
+  connectionId: DActiveSession['connectionId'],
+  uid: DActiveSession['uid'],
+  nb_id: DActiveSession['nb_id']
+): Promise<void> => {
+  await pgsql<DActiveSession>(tablenames.activeSessionsTableName).insert({
+    connectionId,
+    uid,
+    nb_id,
+    time_connected: Date.now(),
+    last_event: Date.now(),
+  });
 };
