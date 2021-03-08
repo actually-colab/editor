@@ -6,12 +6,25 @@ export interface DUser {
   email: string;
 }
 
-export type NotebookAccessLevel = 'Full Access' | 'Read Only';
+export interface DCell {
+  nb_id: DNotebook['nb_id'];
+  lock_held_by?: DUser['uid'];
+  cell_id: string;
+  time_modified: number;
+  contents: string;
+  language: 'python3' | 'markdown';
+}
+
+export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
 
 export interface DNotebookAccessLevel {
   nb_id: DNotebook['nb_id'];
   uid: DUser['uid'];
-  access_level: NotebookAccessLevel;
+  access_level: NotebookAccessLevelType;
+}
+
+export interface NotebookAccessLevel extends DUser {
+  access_level: NotebookAccessLevelType;
 }
 
 export interface DNotebook {
@@ -21,5 +34,9 @@ export interface DNotebook {
 }
 
 export interface Notebook extends DNotebook {
-  users: (DUser & { access_level: DNotebookAccessLevel['access_level'] })[];
+  users: NotebookAccessLevel[];
+}
+
+export interface NotebookContents extends Notebook {
+  cells: DCell[];
 }
