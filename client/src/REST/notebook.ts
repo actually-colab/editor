@@ -1,6 +1,6 @@
 import axios from './connection';
 
-import type { DNotebook, DNotebookAccessLevel, DUser, Notebook } from './types';
+import type { DNotebookAccessLevel, DUser, Notebook } from './types';
 
 /**
  * Fetches all notebooks that this user has access to.
@@ -18,8 +18,8 @@ export const getNotebooksForUser = async (): Promise<{ data: Notebook[] } | null
 export const createNotebook = async (
   name: Notebook['name'],
   language: Notebook['language'] = 'python3'
-): Promise<DNotebook> => {
-  return (await axios.post<{ data: DNotebook }>('/notebook', { name, language }))?.data
+): Promise<Notebook> => {
+  return (await axios.post<{ data: Notebook }>('/notebook', { name, language }))?.data
     ?.data;
 };
 
