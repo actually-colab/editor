@@ -78,6 +78,18 @@ functions:
             identitySource: method.request.header.Authorization
             type: token
 
+  GET-notebook-contents:
+    handler: src/rest/get-notebook-contents.handler
+    events:
+      - http:
+          path: /notebook/{nb_id}
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+
   POST-notebook:
     handler: src/rest/post-notebook.handler
     events:
