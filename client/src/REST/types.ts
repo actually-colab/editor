@@ -1,7 +1,7 @@
 // TODO: https://github.com/actually-colab/editor/issues/39
 
 export interface DUser {
-  uid: number;
+  uid: string;
   name: string;
   email: string;
 }
@@ -28,7 +28,7 @@ export interface NotebookAccessLevel extends DUser {
 }
 
 export interface DNotebook {
-  nb_id: number;
+  nb_id: string;
   name: string;
   language: 'python2' | 'python3';
 }
