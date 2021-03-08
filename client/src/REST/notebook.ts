@@ -9,10 +9,10 @@ import type { DNotebookAccessLevel, DUser, Notebook } from './types';
  */
 export const getNotebooksForUser = async (
   context?: RequestContext
-): Promise<{ data: Notebook[] } | null> => {
+): Promise<Notebook[] | null> => {
   setRequestContext(context);
 
-  return (await axios.get('/notebooks'))?.data?.data;
+  return (await axios.get<{ data: Notebook[] }>('/notebooks'))?.data?.data;
 };
 
 /**
@@ -24,10 +24,10 @@ export const getNotebooksForUser = async (
 export const getNotebookContents = async (
   nb_id: Notebook['nb_id'],
   context?: RequestContext
-): Promise<{ data: Notebook[] } | null> => {
+): Promise<Notebook | null> => {
   setRequestContext(context);
 
-  return (await axios.get(`/notebook/${nb_id}`))?.data?.data;
+  return (await axios.get<{ data: Notebook }>(`/notebook/${nb_id}`))?.data?.data;
 };
 
 /**
