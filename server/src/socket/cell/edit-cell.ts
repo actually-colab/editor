@@ -60,7 +60,6 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
   }
 
   // TODO: streamline fetching of user + session data
-  // const user = requestContext.authorizer;
   const session = await getSessionById(requestContext.connectionId);
 
   if (session == null || session.nb_id != data.nb_id) {

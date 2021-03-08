@@ -123,3 +123,10 @@ functions:
     events:
       - websocket:
           route: edit_cell
+
+  socket-open-notebook:
+    handler: src/socket/notebook/open-notebook.handler
+
+    events:
+      - websocket:
+          route: open_notebook

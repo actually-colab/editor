@@ -53,7 +53,6 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
         time_connected: event.requestContext.requestTimeEpoch,
         time_disconnected: -1,
         last_event: event.requestContext.requestTimeEpoch,
-        nb_id: 1, // todo: remove
       };
 
       await connect(newSession);
