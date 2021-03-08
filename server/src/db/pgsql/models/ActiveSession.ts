@@ -31,11 +31,13 @@ export const disconnect = async (
 };
 
 export const getSessionById = async (
-  connectionId: DActiveSession['connectionId']
+  connectionId: DActiveSession['connectionId'],
+  nb_id?: DActiveSession['nb_id']
 ): Promise<DActiveSession | null> => {
+  const where = nb_id != null ? { connectionId, nb_id } : { connectionId };
   const res = await pgsql<DActiveSession>(tablenames.activeSessionsTableName)
     .select('*')
-    .where({ connectionId });
+    .where(where);
 
   if (res.length === 0) {
     return null;

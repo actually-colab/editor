@@ -78,7 +78,7 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
     data.nb_id
   );
 
-  sendOpenedNotebookEvent(requestContext, data.nb_id, requestContext.authorizer.user);
+  sendOpenedNotebookEvent(requestContext, data.nb_id, requestContext.authorizer);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
