@@ -7,7 +7,7 @@ import { grantAccessByEmail, NotebookAccessLevel } from './NotebookAccessLevel';
 import { DCell } from './Cell';
 
 export interface DNotebook {
-  nb_id: number;
+  nb_id: string;
   name: string;
   language: 'python2' | 'python3';
 }
@@ -17,7 +17,7 @@ export interface Notebook extends DNotebook {
 }
 
 export interface NotebookContents extends Notebook {
-  cells: DCell[];
+  cells: Record<DCell['cell_id'], DCell>;
 }
 
 export const createNotebook = async (
@@ -76,26 +76,6 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
 export const getNotebookContents = async (
   nb_id: DNotebook['nb_id']
 ): Promise<NotebookContents | null> => {
-  console.log(
-    await pgsql
-      .select(
-        'nb2.*',
-        pgsql.raw(`json_agg(
-              json_build_object(
-                'cell_id', c.cell_id, 
-                'time_modified', c.time_modified, 
-                'language', c.language, 
-                'contents', c.contents,
-                'lock_held_by', c.lock_held_by
-              )
-            ) AS cells`)
-      )
-      .from({ nb2: tablenames.notebooksTableName })
-      .leftJoin({ c: tablenames.cellsTableName }, 'c.nb_id', '=', 'nb2.nb_id')
-      .where({ 'nb2.nb_id': nb_id })
-      .groupBy('nb2.nb_id')
-      .as('nb')
-  );
   const notebooks = await pgsql
     .select(
       'nb.*',
@@ -112,15 +92,17 @@ export const getNotebookContents = async (
       pgsql
         .select(
           'nb2.*',
-          pgsql.raw(`jsonb_agg(
-              json_build_object(
-                'cell_id', c.cell_id, 
-                'time_modified', c.time_modified, 
-                'language', c.language, 
-                'contents', c.contents,
-                'lock_held_by', c.lock_held_by
-              )
-            ) AS cells`)
+          pgsql.raw(`
+            COALESCE(
+              jsonb_object_agg(
+                c.cell_id, json_build_object(
+                  'cell_id', c.cell_id, 
+                  'time_modified', c.time_modified, 
+                  'language', c.language, 
+                  'contents', c.contents,
+                  'lock_held_by', c.lock_held_by
+                )
+              ) FILTER (WHERE c.cell_id IS NOT NULL), '{}'::JSONB) AS cells`)
         )
         .from({ nb2: tablenames.notebooksTableName })
         .leftJoin({ c: tablenames.cellsTableName }, 'c.nb_id', '=', 'nb2.nb_id')

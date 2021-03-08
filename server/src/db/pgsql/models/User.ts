@@ -5,7 +5,7 @@ export type NotebookAccessLevel = 'Full Access' | 'Read Only';
 
 export interface DUser {
   [k: string]: number | string | boolean;
-  uid: number;
+  uid: string;
   name: string;
   email: string;
 }

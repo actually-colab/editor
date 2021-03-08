@@ -38,5 +38,7 @@ export interface Notebook extends DNotebook {
 }
 
 export interface NotebookContents extends Notebook {
-  cells: DCell[];
+  cells: {
+    [cell_id: number]: DCell;
+  };
 }
