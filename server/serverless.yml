@@ -136,6 +136,13 @@ functions:
       - websocket:
           route: edit_cell
 
+  socket-create-cell:
+    handler: src/socket/cell/create-cell.handler
+
+    events:
+      - websocket:
+          route: create_cell
+
   socket-open-notebook:
     handler: src/socket/notebook/open-notebook.handler
 

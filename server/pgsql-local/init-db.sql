@@ -32,10 +32,9 @@ CREATE TABLE IF NOT EXISTS "ActiveSession" (
 
 CREATE TABLE IF NOT EXISTS "Cell" (
   nb_id UUID REFERENCES "Notebook" (nb_id) NOT NULL,
-  lock_held_by UUID REFERENCES "User" (uid) NOT NULL,
-  cell_id UUID NOT NULL,
+  lock_held_by UUID REFERENCES "User" (uid),
+  cell_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   time_modified BIGINT,
   contents TEXT,
-  language VARCHAR(16),
-  PRIMARY KEY (cell_id)
+  language VARCHAR(16)
 );
