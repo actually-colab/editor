@@ -1,4 +1,4 @@
-import type { DUser } from './types';
+import type { DUser } from '../types';
 
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
