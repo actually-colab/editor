@@ -1,12 +1,7 @@
-import type { DUser } from '../types';
+import type { DUser, RequestContext } from '../types';
 
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-
-export interface RequestContext {
-  sessionToken?: string;
-  baseURL?: string;
-}
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_AC_API_URI ?? 'http://localhost:3000/dev',
