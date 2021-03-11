@@ -129,6 +129,13 @@ functions:
       - websocket:
           route: $default
 
+  socket-open-notebook:
+    handler: src/socket/notebook/open-notebook.handler
+
+    events:
+      - websocket:
+          route: open_notebook
+
   socket-edit-cell:
     handler: src/socket/cell/edit-cell.handler
 
@@ -143,9 +150,9 @@ functions:
       - websocket:
           route: create_cell
 
-  socket-open-notebook:
-    handler: src/socket/notebook/open-notebook.handler
+  socket-lock-cell:
+    handler: src/socket/cell/lock-cell.handler
 
     events:
       - websocket:
-          route: open_notebook
+          route: lock_cell
