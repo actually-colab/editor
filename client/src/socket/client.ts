@@ -4,10 +4,9 @@ import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
 
 interface SocketConnectionListeners {
-  connect: (connection: ws.connection) => void;
-  connectFailed: (err: Error) => void;
-
-  close: (code: number, desc: string) => void;
+  connect: () => void;
+  close: (event: ws.ICloseEvent) => void;
+  error: (err: Error) => void;
 }
 
 interface SocketMessageListeners {
@@ -25,70 +24,65 @@ interface ActuallyColabEventData {
 type ActuallyColabEventListeners = SocketConnectionListeners & SocketMessageListeners;
 
 export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventListeners> {
-  private socketClient: ws.client;
-  private context: Required<RequestContext>;
-  private connection?: ws.connection;
+  private socketClient: ws.w3cwebsocket;
 
+  /**
+   * Establishes a new client connection to the Actually Colab server.
+   *
+   * @param context metadata to establish the connection.
+   */
   constructor(context: Required<RequestContext>) {
     super();
 
-    this.socketClient = new ws.client();
-    this.context = context;
+    this.socketClient = new ws.w3cwebsocket(context.baseURL, undefined, undefined, {
+      Authorization: `Bearer ${context.sessionToken}`,
+    });
 
     this.initSocketEventListeners();
   }
 
   private initSocketEventListeners = (): void => {
-    this.socketClient.on('connect', (connection) => {
-      this.connection = connection;
+    this.socketClient.onopen = () => {
+      this.emit('connect');
+    };
 
-      connection.on('close', (code, desc) => {
-        this.emit('close', code, desc);
-      });
+    this.socketClient.onclose = (event) => {
+      this.emit('close', event);
+    };
 
-      connection.on('message', (data) => {
-        if (data.type === 'utf8' && data.utf8Data != null) {
-          const eventData: ActuallyColabEventData = JSON.parse(data.utf8Data);
-          switch (eventData.actionType) {
-            case 'notebook_opened': {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const user: DUser = eventData.data as any;
-              this.emit('notebook_opened', user);
-              break;
-            }
-            case 'cell_created': {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const cell: DCell = eventData.data as any;
-              this.emit('cell_created', cell);
-              break;
-            }
-            case 'cell_edited': {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const cell: DCell = eventData.data as any;
-              this.emit('cell_edited', cell);
-              break;
-            }
-            default:
-              throw new Error('Message of unknown action type received');
+    this.socketClient.onerror = (error) => {
+      this.emit('error', error);
+    };
+
+    this.socketClient.onmessage = (message) => {
+      if (typeof message.data === 'string') {
+        const eventData: ActuallyColabEventData = JSON.parse(message.data);
+        switch (eventData.actionType) {
+          case 'notebook_opened': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const user: DUser = eventData.data as any;
+            this.emit('notebook_opened', user);
+            break;
           }
-        } else {
-          throw new Error('Malformed message received');
+          case 'cell_created': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cell: DCell = eventData.data as any;
+            this.emit('cell_created', cell);
+            break;
+          }
+          case 'cell_edited': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cell: DCell = eventData.data as any;
+            this.emit('cell_edited', cell);
+            break;
+          }
+          default:
+            throw new Error('Message of unknown action type received');
         }
-      });
-    });
-
-    this.socketClient.on('connectFailed', (err) => {
-      this.emit('connectFailed', err);
-    });
-  };
-
-  /**
-   * Establishes a connection to the Actually Colab Socket API.
-   */
-  public connect = (): void => {
-    this.socketClient.connect(this.context.baseURL, undefined, undefined, {
-      Authorization: `Bearer ${this.context.sessionToken}`,
-    });
+      } else {
+        throw new Error('Malformed message received');
+      }
+    };
   };
 
   /**
@@ -96,12 +90,14 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * and closes the connection to the Actually Colab Socket API.
    */
   public disconnectAndRemoveAllListeners = (): void => {
-    this.connection?.removeAllListeners();
-    this.socketClient.abort();
-    this.socketClient.removeAllListeners();
-    this.connection?.close();
+    this.socketClient.close();
 
     this.removeAllListeners();
+  };
+
+  private sendEvent = (actionType: string, data: Record<string, unknown>): void => {
+    const message = JSON.stringify({ actionType, data });
+    this.socketClient.send(message);
   };
 
   /**
@@ -110,7 +106,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param nb_id Notebook to connect to.
    */
   public openNotebook = (nb_id: Notebook['nb_id']): void => {
-    this.socketClient.emit('open_notebook', { nb_id });
+    this.sendEvent('open_notebook', { nb_id });
   };
 
   /**
@@ -123,7 +119,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     nb_id: Notebook['nb_id'],
     language: Notebook['language']
   ): void => {
-    this.socketClient.emit('create_cell', { nb_id, language });
+    this.sendEvent('create_cell', { nb_id, language });
   };
 
   /**
@@ -138,6 +134,6 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     cell_id: DCell['cell_id'],
     contents: DCell['cell_id']
   ): void => {
-    this.socketClient.emit('edit_cell', { nb_id, cell_id, contents });
+    this.sendEvent('edit_cell', { nb_id, cell_id, contents });
   };
 }
