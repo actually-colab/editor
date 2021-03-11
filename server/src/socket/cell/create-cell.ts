@@ -28,8 +28,8 @@ const sendCellCreatedEvent = async (
   cell: DCell
 ): Promise<void> => {
   const cellEditedEventBody = JSON.stringify({
-    eventType: 'cell_created',
-    cell,
+    action: 'cell_created',
+    data: cell,
   });
 
   const connectionIds = await getActiveSessions(cell.nb_id);

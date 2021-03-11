@@ -6,7 +6,7 @@ import EventEmitter from 'eventemitter3';
 interface SocketConnectionListeners {
   connect: () => void;
   close: (event: ws.ICloseEvent) => void;
-  error: (err: Error) => void;
+  error: (error: Error) => void;
 }
 
 interface SocketMessageListeners {
@@ -17,7 +17,7 @@ interface SocketMessageListeners {
 }
 
 interface ActuallyColabEventData {
-  actionType: keyof SocketMessageListeners;
+  action: keyof SocketMessageListeners;
   data: Record<string, unknown> | unknown[];
 }
 
@@ -57,7 +57,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     this.socketClient.onmessage = (message) => {
       if (typeof message.data === 'string') {
         const eventData: ActuallyColabEventData = JSON.parse(message.data);
-        switch (eventData.actionType) {
+        switch (eventData.action) {
           case 'notebook_opened': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const user: DUser = eventData.data as any;
@@ -95,8 +95,8 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     this.removeAllListeners();
   };
 
-  private sendEvent = (actionType: string, data: Record<string, unknown>): void => {
-    const message = JSON.stringify({ actionType, data });
+  private sendEvent = (action: string, data: Record<string, unknown>): void => {
+    const message = JSON.stringify({ action, data });
     this.socketClient.send(message);
   };
 

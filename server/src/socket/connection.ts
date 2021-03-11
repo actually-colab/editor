@@ -67,6 +67,7 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
       return success;
     }
     default:
+      console.error('unknown request', event);
       return error;
   }
 };
