@@ -3,17 +3,28 @@ import type { DCell, DUser, RequestContext } from '../types';
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
 
-type ConnectEvent = 'connect' | 'connectFailed' | 'httpResponse';
-type DisconnectEvent = 'close';
-type MessageEvent = 'notebook_opened' | 'cell_edited' | 'cell_created';
-type ActuallyColabEvent = ConnectEvent | DisconnectEvent | MessageEvent;
+interface SocketConnectionListeners {
+  connect: (connection: ws.connection) => void;
+  connectFailed: (err: Error) => void;
+
+  close: (code: number, desc: string) => void;
+}
+
+interface SocketMessageListeners {
+  notebook_opened: (user: DUser) => void;
+
+  cell_created: (cell: DCell) => void;
+  cell_edited: (cell: DCell) => void;
+}
 
 interface ActuallyColabEventData {
-  actionType: MessageEvent;
+  actionType: keyof SocketMessageListeners;
   data: Record<string, unknown> | unknown[];
 }
 
-export const eventEmitter = new EventEmitter<ActuallyColabEvent>();
+type ActuallyColabEventListeners = SocketConnectionListeners & SocketMessageListeners;
+
+export const eventEmitter = new EventEmitter<ActuallyColabEventListeners>();
 const socketClient = new ws.client();
 
 export const connect = (context: Required<RequestContext>): void => {
@@ -61,10 +72,6 @@ socketClient.on('connect', (connection) => {
   });
 });
 
-socketClient.on('connectFailed', (connection) => {
-  eventEmitter.emit('connectFailed', connection);
-});
-
-socketClient.on('httpResponse', (connection) => {
-  eventEmitter.emit('httpResponse', connection);
+socketClient.on('connectFailed', (err) => {
+  eventEmitter.emit('connectFailed', err);
 });
