@@ -156,3 +156,10 @@ functions:
     events:
       - websocket:
           route: lock_cell
+
+  socket-unlock-cell:
+    handler: src/socket/cell/unlock-cell.handler
+
+    events:
+      - websocket:
+          route: unlock_cell

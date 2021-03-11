@@ -113,3 +113,36 @@ export const lockCell = async (
 
   return res[1][0];
 };
+
+export const unlockCell = async (
+  session: DActiveSession,
+  nb_id: DCell['nb_id'],
+  cell_id: DCell['cell_id'],
+  uid: DUser['uid']
+): Promise<DCell | null> => {
+  const promises: [unknown, Promise<DCell[] | null>] = [
+    pgsql<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        last_event: Date.now(),
+      })
+      .whereNull('time_disconnected')
+      .andWhere({
+        connectionId: session.connectionId,
+        nb_id: session.nb_id,
+      }),
+    pgsql<DCell>(tablenames.cellsTableName)
+      .update({
+        lock_held_by: pgsql.raw('NULL'),
+        time_modified: Date.now(),
+      })
+      .andWhere({ cell_id, nb_id, lock_held_by: uid })
+      .returning('*'),
+  ];
+  const res = await Promise.all(promises);
+
+  if (res[1] == null || res[1].length === 0) {
+    return null;
+  }
+
+  return res[1][0];
+};
