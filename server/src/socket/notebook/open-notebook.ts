@@ -32,8 +32,8 @@ const sendOpenedNotebookEvent = async (
   user: DUser
 ): Promise<void> => {
   const openedNotebookEventBody = JSON.stringify({
-    eventType: 'notebook_opened',
-    user,
+    action: 'notebook_opened',
+    data: user,
   });
 
   const connectionIds = await getActiveSessions(nb_id);

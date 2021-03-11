@@ -29,8 +29,8 @@ const sendCellEditedEvent = async (
   cell: TEditCellEventBody['data']
 ): Promise<void> => {
   const cellEditedEventBody = JSON.stringify({
-    eventType: 'cell_edited',
-    cell,
+    action: 'cell_edited',
+    data: cell,
   });
 
   const connectionIds = await getActiveSessions(cell.nb_id);

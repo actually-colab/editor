@@ -1,6 +1,6 @@
-import axios, { RequestContext, setRequestContext } from './connection';
+import type { DNotebookAccessLevel, DUser, Notebook, RequestContext } from '../types';
 
-import type { DNotebookAccessLevel, DUser, Notebook } from './types';
+import axios, { setRequestContext } from './connection';
 
 /**
  * Fetches all notebooks that this user has access to.

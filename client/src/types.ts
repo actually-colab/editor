@@ -1,5 +1,10 @@
 // TODO: https://github.com/actually-colab/editor/issues/39
 
+export interface RequestContext {
+  sessionToken?: string;
+  baseURL?: string;
+}
+
 export interface DUser {
   uid: string;
   name: string;
