@@ -25,9 +25,9 @@ interface ActuallyColabEventData {
 type ActuallyColabEventListeners = SocketConnectionListeners & SocketMessageListeners;
 
 export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventListeners> {
-  socketClient: ws.client;
-  context: Required<RequestContext>;
-  connection?: ws.connection;
+  private socketClient: ws.client;
+  private context: Required<RequestContext>;
+  private connection?: ws.connection;
 
   constructor(context: Required<RequestContext>) {
     super();
