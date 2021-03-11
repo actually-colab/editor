@@ -14,6 +14,7 @@ interface SocketMessageListeners {
 
   cell_created: (cell: DCell) => void;
   cell_locked: (cell: DCell) => void;
+  cell_unlocked: (cell: DCell) => void;
   cell_edited: (cell: DCell) => void;
 }
 
@@ -83,6 +84,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             this.emit('cell_locked', cell);
             break;
           }
+          case 'cell_unlocked': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cell: DCell = eventData.data as any;
+            this.emit('cell_unlocked', cell);
+            break;
+          }
           default:
             throw new Error('Message of unknown action type received');
         }
@@ -137,6 +144,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    */
   public lockCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
     this.sendEvent('lock_cell', { nb_id, cell_id });
+  };
+
+  /**
+   * Releases a cell lock. Must have acquired lock.
+   *
+   * @param nb_id Notebook to create cell in.
+   * @param cell_id Cell to edit.
+   */
+  public unlockCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
+    this.sendEvent('unlock_cell', { nb_id, cell_id });
   };
 
   /**
