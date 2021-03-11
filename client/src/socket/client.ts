@@ -1,4 +1,4 @@
-import type { DCell, DUser, RequestContext } from '../types';
+import type { DCell, DUser, Notebook, RequestContext } from '../types';
 
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
@@ -102,5 +102,42 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     this.connection?.close();
 
     this.removeAllListeners();
+  };
+
+  /**
+   * Connects to a specific notebook.
+   *
+   * @param nb_id Notebook to connect to.
+   */
+  public openNotebook = (nb_id: Notebook['nb_id']): void => {
+    this.socketClient.emit('open_notebook', { nb_id });
+  };
+
+  /**
+   * Creates a new cell in a notebook.
+   *
+   * @param nb_id Notebook to create cell in.
+   * @param language Programming language of cell.
+   */
+  public createCell = (
+    nb_id: Notebook['nb_id'],
+    language: Notebook['language']
+  ): void => {
+    this.socketClient.emit('create_cell', { nb_id, language });
+  };
+
+  /**
+   * Edits the contents of a cell.
+   *
+   * @param nb_id Notebook to create cell in.
+   * @param cell_id Cell to edit.
+   * @param contents New text for the cell.
+   */
+  public editCell = (
+    nb_id: Notebook['nb_id'],
+    cell_id: DCell['cell_id'],
+    contents: DCell['cell_id']
+  ): void => {
+    this.socketClient.emit('edit_cell', { nb_id, cell_id, contents });
   };
 }
