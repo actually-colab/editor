@@ -1,4 +1,10 @@
-import type { DNotebookAccessLevel, DUser, Notebook, RequestContext } from '../types';
+import type {
+  DNotebookAccessLevel,
+  DUser,
+  Notebook,
+  NotebookContents,
+  RequestContext,
+} from '../types';
 
 import axios, { setRequestContext } from './connection';
 
@@ -9,10 +15,10 @@ import axios, { setRequestContext } from './connection';
  */
 export const getNotebooksForUser = async (
   context?: RequestContext
-): Promise<Notebook[] | null> => {
+): Promise<Notebook[]> => {
   setRequestContext(context);
 
-  return (await axios.get<{ data: Notebook[] }>('/notebooks'))?.data?.data;
+  return (await axios.get<{ data: Notebook[] }>('/notebooks')).data.data;
 };
 
 /**
@@ -24,10 +30,10 @@ export const getNotebooksForUser = async (
 export const getNotebookContents = async (
   nb_id: Notebook['nb_id'],
   context?: RequestContext
-): Promise<Notebook | null> => {
+): Promise<NotebookContents> => {
   setRequestContext(context);
 
-  return (await axios.get<{ data: Notebook }>(`/notebook/${nb_id}`))?.data?.data;
+  return (await axios.get<{ data: NotebookContents }>(`/notebook/${nb_id}`)).data.data;
 };
 
 /**
@@ -44,8 +50,8 @@ export const createNotebook = async (
 ): Promise<Notebook> => {
   setRequestContext(context);
 
-  return (await axios.post<{ data: Notebook }>('/notebook', { name, language }))?.data
-    ?.data;
+  return (await axios.post<{ data: Notebook }>('/notebook', { name, language })).data
+    .data;
 };
 
 /**
