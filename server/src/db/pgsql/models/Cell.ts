@@ -17,8 +17,8 @@ export interface DCell {
 export const editCell = async (
   session: DActiveSession,
   cell: Partial<DCell>
-): Promise<void> => {
-  await Promise.all([
+): Promise<DCell | null> => {
+  const promises: [unknown, Promise<DCell[] | null>] = [
     pgsql<DActiveSession>(tablenames.activeSessionsTableName)
       .update({
         last_event: Date.now(),
@@ -36,8 +36,17 @@ export const editCell = async (
       .where({
         cell_id: cell.cell_id,
         nb_id: cell.nb_id,
-      }),
-  ]);
+        lock_held_by: session.uid,
+      })
+      .returning('*'),
+  ];
+  const res = await Promise.all(promises);
+
+  if (res[1] == null || res[1].length === 0) {
+    return null;
+  }
+
+  return res[1][0];
 };
 
 export const createCell = async (
@@ -60,6 +69,40 @@ export const createCell = async (
         ...newCell,
         time_modified: Date.now(),
       })
+      .returning('*'),
+  ];
+  const res = await Promise.all(promises);
+
+  if (res[1] == null || res[1].length === 0) {
+    return null;
+  }
+
+  return res[1][0];
+};
+
+export const lockCell = async (
+  session: DActiveSession,
+  nb_id: DCell['nb_id'],
+  cell_id: DCell['cell_id'],
+  uid: DUser['uid']
+): Promise<DCell | null> => {
+  const promises: [unknown, Promise<DCell[] | null>] = [
+    pgsql<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        last_event: Date.now(),
+      })
+      .whereNull('time_disconnected')
+      .andWhere({
+        connectionId: session.connectionId,
+        nb_id: session.nb_id,
+      }),
+    pgsql<DCell>(tablenames.cellsTableName)
+      .update({
+        lock_held_by: uid,
+        time_modified: Date.now(),
+      })
+      .whereNull('lock_held_by')
+      .andWhere({ cell_id, nb_id })
       .returning('*'),
   ];
   const res = await Promise.all(promises);

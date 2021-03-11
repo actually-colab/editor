@@ -1,35 +1,36 @@
-import { DCell, editCell } from '../../db/pgsql/models/Cell';
+import createHttpError from 'http-errors';
+
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
   WebSocketRequestContext,
 } from '../middleware/wrapper';
 
-import createHttpError from 'http-errors';
-import { getActiveSessions, getSessionById } from '../../db/pgsql/models/ActiveSession';
 import { getManagementApi } from '../client-management';
 
-interface TEditCellEventBody {
+import { DCell, lockCell } from '../../db/pgsql/models/Cell';
+import { getActiveSessions, getSessionById } from '../../db/pgsql/models/ActiveSession';
+
+interface TLockCellEventBody {
   data: {
-    cell_id: DCell['cell_id'];
     nb_id: DCell['nb_id'];
-    contents: string;
+    cell_id: DCell['cell_id'];
   };
 }
 
-type TEditCellEvent = TShallotSocketEvent<
+type TLockCellEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TEditCellEventBody
+  TLockCellEventBody
 >;
 
-const sendCellEditedEvent = async (
+const sendCellLockedEvent = async (
   context: WebSocketRequestContext,
-  cell: DCell
+  cell: Partial<DCell>
 ): Promise<void> => {
-  const cellEditedEventBody = JSON.stringify({
-    action: 'cell_edited',
+  const cellLockAcquiredEventBody = JSON.stringify({
+    action: 'cell_locked',
     data: cell,
   });
 
@@ -42,7 +43,7 @@ const sendCellEditedEvent = async (
         await apigApi
           .postToConnection({
             ConnectionId: connectionId,
-            Data: cellEditedEventBody,
+            Data: cellLockAcquiredEventBody,
           })
           .promise();
       } catch (err) {
@@ -52,10 +53,9 @@ const sendCellEditedEvent = async (
   );
 };
 
-const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
+const _handler: ShallotRawHandler<TLockCellEvent> = async ({ requestContext, body }) => {
   const data = body?.data;
-  if (data?.cell_id == null || data.nb_id == null || data.contents == null) {
-    console.error('data:', data);
+  if (data?.nb_id == null || data.cell_id == null) {
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
@@ -66,12 +66,17 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
-  const cell = await editCell(session, data);
+  const cell = await lockCell(
+    session,
+    data.nb_id,
+    data.cell_id,
+    requestContext.authorizer.uid
+  );
   if (cell == null) {
-    throw new createHttpError.BadRequest('Could not edit cell');
+    throw new createHttpError.BadRequest('Could not lock cell');
   }
 
-  await sendCellEditedEvent(requestContext, cell);
+  await sendCellLockedEvent(requestContext, cell);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

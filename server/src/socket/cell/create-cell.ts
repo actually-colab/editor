@@ -72,7 +72,7 @@ const _handler: ShallotRawHandler<TCreateCellEvent> = async ({
     throw new createHttpError.InternalServerError('Could not create cell');
   }
 
-  sendCellCreatedEvent(requestContext, cell);
+  await sendCellCreatedEvent(requestContext, cell);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
