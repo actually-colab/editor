@@ -29,6 +29,7 @@ const sendCellCreatedEvent = async (
 ): Promise<void> => {
   const cellEditedEventBody = JSON.stringify({
     action: 'cell_created',
+    triggered_by: context.authorizer.uid,
     data: cell,
   });
 

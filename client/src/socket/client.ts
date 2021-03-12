@@ -10,16 +10,33 @@ interface SocketConnectionListeners {
 }
 
 interface SocketMessageListeners {
-  notebook_opened: (user: DUser) => void;
+  notebook_opened: (
+    user: DUser,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
-  cell_created: (cell: DCell) => void;
-  cell_locked: (cell: DCell) => void;
-  cell_unlocked: (cell: DCell) => void;
-  cell_edited: (cell: DCell) => void;
+  cell_created: (
+    cell: DCell,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  cell_locked: (
+    cell: DCell,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  cell_unlocked: (
+    cell: DCell,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  cell_edited: (
+    cell: DCell,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 }
 
 interface ActuallyColabEventData {
   action: keyof SocketMessageListeners;
+  /**If null, event was triggered by server. */
+  triggered_by: DUser['uid'] | null;
   data: Record<string, unknown> | unknown[];
 }
 
@@ -61,31 +78,31 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
           case 'notebook_opened': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const user: DUser = eventData.data as any;
-            this.emit('notebook_opened', user);
+            this.emit('notebook_opened', user, eventData.triggered_by);
             break;
           }
           case 'cell_created': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
-            this.emit('cell_created', cell);
+            this.emit('cell_created', cell, eventData.triggered_by);
             break;
           }
           case 'cell_edited': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
-            this.emit('cell_edited', cell);
+            this.emit('cell_edited', cell, eventData.triggered_by);
             break;
           }
           case 'cell_locked': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
-            this.emit('cell_locked', cell);
+            this.emit('cell_locked', cell, eventData.triggered_by);
             break;
           }
           case 'cell_unlocked': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
-            this.emit('cell_unlocked', cell);
+            this.emit('cell_unlocked', cell, eventData.triggered_by);
             break;
           }
           default:
