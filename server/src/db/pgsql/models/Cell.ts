@@ -11,7 +11,7 @@ export interface DCell {
   cell_id: string;
   time_modified: number;
   contents: string;
-  language: 'python' | 'markdown';
+  language: 'python3' | 'markdown';
 }
 
 export const editCell = async (

@@ -13,7 +13,7 @@ To make your life even easier, we built a native companion that will automatical
 If you've setup the companion or are running the kernel yourself, you should see a little green indicator in the top right corner of this page. If you do, let's start working. In the below cell, you'll see some packages imported. This is using the packages installed on your machine! Try running the cell, if you don't have the packages installed it'll show an error.`,
   },
   {
-    language: 'python',
+    language: 'python3',
     contents: `import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
     contents: `Did you notice the \`%matplotlib inline\`? That tells the kernel that you are using an editor that supports displaying your graphs! You only need this line once. Now lets demonstrate, run the next few cells.`,
   },
   {
-    language: 'python',
+    language: 'python3',
     contents: `def fib(n):
     """
     A recursive implementation of finding the nth number in the fibonacci sequence
@@ -34,14 +34,14 @@ import matplotlib.pyplot as plt
     return fib(n - 1) + fib(n - 2)`,
   },
   {
-    language: 'python',
+    language: 'python3',
     contents: `xpoints = np.arange(0, 10)
 ypoints = np.array([fib(i) for i in range(10)])
 print(xpoints)
 print(ypoints)`,
   },
   {
-    language: 'python',
+    language: 'python3',
     contents: `plt.plot(xpoints, ypoints)`,
   },
   {
