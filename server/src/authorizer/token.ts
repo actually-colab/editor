@@ -1,15 +1,15 @@
-import { DUser, getUser, getUserById } from '../db/pgsql/models/User';
+import { DUser, getUserById } from '../db/pgsql/models/User';
 
 import jwt from 'jsonwebtoken';
 import { DActiveSession, getSessionById } from '../db/pgsql/models/ActiveSession';
 
 interface TokenPayload {
-  email: DUser['email'];
+  uid: DUser['uid'];
   tokenType: 'dev' | 'google';
 }
 
-export const getDevToken = (email: DUser['email']): string => {
-  return jwt.sign({ email, tokenType: 'dev' } as TokenPayload, 'dev');
+export const getDevToken = (uid: DUser['uid']): string => {
+  return jwt.sign({ uid, tokenType: 'dev' } as TokenPayload, 'dev');
 };
 
 export const decodeTokenPayload = (accessToken: string): TokenPayload => {
@@ -39,7 +39,7 @@ export const getUserFromToken = async (
     }
   }
 
-  return getUser(tokenPayload.email);
+  return getUserById(tokenPayload.uid);
 };
 
 export const getUserFromConnectionId = async (

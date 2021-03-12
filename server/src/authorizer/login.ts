@@ -35,13 +35,14 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
         throw new createHTTPError.Unauthorized('Cannot use dev token in prod');
       }
 
-      user = await getUser(body.email);
+      const email = body.email.toLowerCase().trim();
+      user = await getUser(email);
 
       if (user == null) {
-        user = await createUser({ email: body.email, name: body.name });
+        user = await createUser({ email, name: body.name });
       }
 
-      sessionToken = getDevToken(body.email);
+      sessionToken = getDevToken(user.uid);
       break;
     }
     default: {
