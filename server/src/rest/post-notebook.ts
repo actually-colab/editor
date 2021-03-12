@@ -29,7 +29,10 @@ const _handler: ShallotRawHandler<TEvent, DNotebook> = async ({
     throw new createHTTPError.BadRequest('Must specify body.name');
   }
 
-  const notebook = await createNotebook({ name: body.name }, user.email);
+  const notebook = await createNotebook(
+    { name: body.name, language: 'python' },
+    user.uid
+  );
 
   return { message: 'success', data: notebook };
 };
