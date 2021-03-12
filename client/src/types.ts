@@ -17,7 +17,7 @@ export interface DCell {
   cell_id: string;
   time_modified: number;
   contents: string;
-  language: 'python3' | 'markdown';
+  language: 'python' | 'markdown';
 }
 
 export type NotebookAccessLevelType = 'Full Access' | 'Read Only';

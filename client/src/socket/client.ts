@@ -144,10 +144,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param nb_id Notebook to create cell in.
    * @param language Programming language of cell.
    */
-  public createCell = (
-    nb_id: Notebook['nb_id'],
-    language: Notebook['language']
-  ): void => {
+  public createCell = (nb_id: Notebook['nb_id'], language: DCell['language']): void => {
     this.sendEvent('create_cell', { nb_id, language });
   };
 
