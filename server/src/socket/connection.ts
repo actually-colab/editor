@@ -33,13 +33,23 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
     case SocketEventTypes.Connect: {
       // SLS Offline doesn't support Lambda Authorizers :,(
       if (process.env.IS_OFFLINE != null) {
-        if (event.headers.Authorization == null) {
+        const token =
+          event.headers.Authorization ?? event.queryStringParameters?.sessionToken;
+        if (token == null) {
+          console.error(
+            event.requestContext.connectionId,
+            'Authorization token not supplied... forcing disconnect...'
+          );
           await forceDisconnect(event.requestContext);
           return { statusCode: 401 };
         }
 
-        const user = await getUserFromToken(event.headers.Authorization);
+        const user = await getUserFromToken(token);
         if (user == null) {
+          console.error(
+            event.requestContext.connectionId,
+            'Authorization token invalid... forcing disconnect...'
+          );
           await forceDisconnect(event.requestContext);
           return { statusCode: 401 };
         }

@@ -122,7 +122,9 @@ functions:
           route: $connect
           authorizer:
             name: authorizer
-            identitySource: route.request.header.Authorization
+            identitySource: 
+              - route.request.header.Authorization
+              - route.request.querystring.sessionToken
           
       - websocket:
           route: $disconnect

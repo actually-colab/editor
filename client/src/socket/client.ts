@@ -35,10 +35,8 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    */
   constructor(context: Required<RequestContext>) {
     super();
-
-    this.socketClient = new ws.w3cwebsocket(context.baseURL, undefined, undefined, {
-      Authorization: `Bearer ${context.sessionToken}`,
-    });
+    const connectionURL = `${context.baseURL}/?sessionToken=Bearer ${context.sessionToken}`;
+    this.socketClient = new ws.w3cwebsocket(connectionURL);
 
     this.initSocketEventListeners();
   }
@@ -91,7 +89,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             break;
           }
           default:
-            throw new Error('Message of unknown action type received');
+            throw new Error('Message of unknown action type received ' + message.data);
         }
       } else {
         throw new Error('Malformed message received');

@@ -25,7 +25,7 @@ describe('', () => {
     expect(notebooks).not.toHaveLength(0);
 
     const socketClient = new ActuallyColabSocketClient({
-      baseURL: 'http://localhost:3001/dev',
+      baseURL: 'ws://localhost:3001/dev',
       sessionToken,
     });
     const connectListener = jest.fn();
