@@ -33,6 +33,7 @@ const sendOpenedNotebookEvent = async (
 ): Promise<void> => {
   const openedNotebookEventBody = JSON.stringify({
     action: 'notebook_opened',
+    triggered_by: context.authorizer.uid,
     data: user,
   });
 

@@ -31,6 +31,7 @@ const sendCellUnlockedEvent = async (
 ): Promise<void> => {
   const cellUnlockedEventBody = JSON.stringify({
     action: 'cell_unlocked',
+    triggered_by: context.authorizer.uid,
     data: cell,
   });
 

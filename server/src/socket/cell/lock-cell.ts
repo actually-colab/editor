@@ -31,6 +31,7 @@ const sendCellLockedEvent = async (
 ): Promise<void> => {
   const cellLockAcquiredEventBody = JSON.stringify({
     action: 'cell_locked',
+    triggered_by: context.authorizer.uid,
     data: cell,
   });
 
