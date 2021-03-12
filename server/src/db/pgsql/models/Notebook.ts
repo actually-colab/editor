@@ -3,13 +3,14 @@ import type { DUser } from './User';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
-import { grantAccessByEmail, NotebookAccessLevel } from './NotebookAccessLevel';
+import { grantAccessById, NotebookAccessLevel } from './NotebookAccessLevel';
 import { DCell } from './Cell';
+import { DEMO_NOTEBOOK_CELLS } from '../../../static/demo-notebook';
 
 export interface DNotebook {
   nb_id: string;
   name: string;
-  language: 'python2' | 'python3';
+  language: 'python';
 }
 
 export interface Notebook extends DNotebook {
@@ -22,23 +23,44 @@ export interface NotebookContents extends Notebook {
 
 export const createNotebook = async (
   notebook: Partial<DNotebook>,
-  email: DUser['email']
+  uid: DUser['uid']
 ): Promise<Notebook> => {
   // TODO: Use a transaction
   const notebookRecord: DNotebook = (
     await pgsql<DNotebook>(tablenames.notebooksTableName).insert(notebook).returning('*')
   )[0];
 
-  const accessLevel = await grantAccessByEmail(
-    email,
-    notebookRecord.nb_id,
-    'Full Access'
-  );
+  const accessLevel = await grantAccessById(uid, notebookRecord.nb_id, 'Full Access');
 
   return {
     ...notebookRecord,
     users: [accessLevel],
   };
+};
+
+export const createDemoNotebook = async (uid: DUser['uid']): Promise<Notebook> => {
+  // TODO: Use a transaction
+  const demoNotebook = await createNotebook(
+    {
+      name: 'Welcome to Actually Colab',
+      language: 'python',
+    },
+    uid
+  );
+
+  if (demoNotebook == null) {
+    throw new Error('Could not create demo notebook');
+  }
+
+  await pgsql<DCell>(tablenames.cellsTableName).insert(
+    DEMO_NOTEBOOK_CELLS.map((cell) => ({
+      ...cell,
+      time_modified: Date.now(),
+      nb_id: demoNotebook.nb_id,
+    }))
+  );
+
+  return demoNotebook;
 };
 
 export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebook[]> => {

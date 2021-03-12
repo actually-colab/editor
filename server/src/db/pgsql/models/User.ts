@@ -1,5 +1,6 @@
 import pgsql from '../connection';
 import tablenames from '../tablenames';
+import { createDemoNotebook } from './Notebook';
 
 export type NotebookAccessLevel = 'Full Access' | 'Read Only';
 
@@ -10,8 +11,19 @@ export interface DUser {
   email: string;
 }
 
-export const createUser = async (user: Partial<DUser>): Promise<DUser> =>
-  (await pgsql<DUser>(tablenames.usersTableName).insert(user).returning('*'))[0];
+export const createUser = async (user: Partial<DUser>): Promise<DUser | null> => {
+  const newUser = (
+    await pgsql<DUser>(tablenames.usersTableName).insert(user).returning('*')
+  )[0];
+
+  if (newUser == null) {
+    return null;
+  }
+
+  await createDemoNotebook(newUser.uid);
+
+  return newUser;
+};
 
 export const getUser = async (email: DUser['email']): Promise<DUser | null> => {
   const result = await pgsql<DUser>(tablenames.usersTableName)

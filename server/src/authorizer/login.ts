@@ -40,6 +40,10 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
 
       if (user == null) {
         user = await createUser({ email, name: body.name });
+
+        if (user == null) {
+          throw new createHTTPError.InternalServerError('Could not create user');
+        }
       }
 
       sessionToken = getDevToken(user.uid);

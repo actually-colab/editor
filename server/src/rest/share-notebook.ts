@@ -11,7 +11,7 @@ import createHTTPError from 'http-errors';
 import {
   DNotebookAccessLevel,
   getUserAccessLevel,
-  grantAccessByEmail,
+  grantAccessById,
 } from '../db/pgsql/models/NotebookAccessLevel';
 
 interface RShareNotebook {
@@ -58,7 +58,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
     throw new createHTTPError.Forbidden('Must have Full Access to share a notebook');
   }
 
-  await grantAccessByEmail(body.email, pathParameters.nb_id, body.access_level);
+  await grantAccessById(user.uid, pathParameters.nb_id, body.access_level);
 
   // TODO: Send an email to the user https://github.com/actually-colab/editor/issues/27
 
