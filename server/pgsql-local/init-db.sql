@@ -36,5 +36,6 @@ CREATE TABLE IF NOT EXISTS "Cell" (
   cell_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   time_modified BIGINT,
   contents TEXT,
+  position SERIAL UNIQUE NOT NULL,
   language VARCHAR(16)
 );

@@ -122,7 +122,8 @@ export const getNotebookContents = async (
                   'time_modified', c.time_modified, 
                   'language', c.language, 
                   'contents', c.contents,
-                  'lock_held_by', c.lock_held_by
+                  'lock_held_by', c.lock_held_by,
+                  'position', c.position
                 )
               ) FILTER (WHERE c.cell_id IS NOT NULL), '{}'::JSONB) AS cells`)
         )
