@@ -5,11 +5,22 @@ import { DActiveSession, getSessionById } from '../db/pgsql/models/ActiveSession
 
 interface TokenPayload {
   uid: DUser['uid'];
-  tokenType: 'dev' | 'google';
+  tokenType: 'dev' | 'prod' | 'google';
 }
 
 export const getDevToken = (uid: DUser['uid']): string => {
   return jwt.sign({ uid, tokenType: 'dev' } as TokenPayload, 'dev');
+};
+
+export const getProdToken = (uid: DUser['uid']): string => {
+  if (process.env.PROD_AUTH_SECRET == null) {
+    throw new Error('PROD_AUTH_SECRET env var not defined');
+  }
+
+  return jwt.sign(
+    { uid, tokenType: 'prod' } as TokenPayload,
+    process.env.PROD_AUTH_SECRET
+  );
 };
 
 export const decodeTokenPayload = (accessToken: string): TokenPayload => {

@@ -7,7 +7,8 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { createUser, DUser, getUser } from '../db/pgsql/models/User';
-import { getDevToken } from './token';
+import { getDevToken, getProdToken } from './token';
+import { validateGoogleIdToken } from './google';
 
 interface DevLogin {
   tokenType: 'dev';
@@ -28,7 +29,24 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
   let user: DUser | null;
   switch (body?.tokenType) {
     case 'google': {
-      throw new createHTTPError.BadRequest('google login method not implemented');
+      const googleAuthInfo = await validateGoogleIdToken(body.idToken);
+      if (googleAuthInfo == null) {
+        throw new createHTTPError.BadRequest('Google Auth info could not be processed.');
+      }
+
+      const email = googleAuthInfo.email.toLowerCase().trim();
+      user = await getUser(email);
+
+      if (user == null) {
+        user = await createUser({ email, name: googleAuthInfo.name });
+
+        if (user == null) {
+          throw new createHTTPError.InternalServerError('Could not create user');
+        }
+      }
+
+      sessionToken = getProdToken(user.uid);
+      break;
     }
     case 'dev': {
       if (process.env.IS_OFFLINE == null) {

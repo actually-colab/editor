@@ -26,6 +26,10 @@ provider:
     AC_PGSQL_OUTPUTS_TABLE_NAME: ${self:custom.pgsqlTableNames.outputsTableName}
     AC_PGSQL_ACTIVE_SESSIONS_TABLE_NAME: ${self:custom.pgsqlTableNames.activeSessionsTableName}
 
+    GOOGLE_AUTH_WEB_CLIENT_ID: '<todo>'
+    GOOGLE_AUTH_WEB_CLIENT_SECRET: '<todo>'
+    PROD_AUTH_SECRET: '<todo>'
+
 custom:
   stages:
     - dev
