@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@types/eventemitter3": "^2.0.2",
+    "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^14.14.2",
     "@types/webpack": "^4.41.25",
     "@types/webpack-node-externals": "^2.5.0",
@@ -41,6 +42,7 @@
     "axios": "^0.21.1",
     "axios-retry": "^3.1.9",
     "eventemitter3": "^4.0.7",
+    "lodash.debounce": "^4.0.8",
     "websocket": "^1.0.33"
   }
 }

@@ -3,6 +3,8 @@ import type { DCell, DUser, Notebook, RequestContext } from '../types';
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
 
+import debounce from 'lodash.debounce';
+
 interface SocketConnectionListeners {
   connect: () => void;
   close: (event: ws.ICloseEvent) => void;
@@ -177,11 +179,15 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param cell_id Cell to edit.
    * @param contents New text for the cell.
    */
-  public editCell = (
-    nb_id: Notebook['nb_id'],
-    cell_id: DCell['cell_id'],
-    contents: DCell['cell_id']
-  ): void => {
-    this.sendEvent('edit_cell', { nb_id, cell_id, contents });
-  };
+  public editCell = debounce(
+    (
+      nb_id: Notebook['nb_id'],
+      cell_id: DCell['cell_id'],
+      contents: DCell['cell_id']
+    ): void => {
+      this.sendEvent('edit_cell', { nb_id, cell_id, contents });
+    },
+    1000,
+    { maxWait: 5000 }
+  );
 }
