@@ -7,7 +7,8 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { createUser, DUser, getUser } from '../db/pgsql/models/User';
-import { getDevToken } from './token';
+import { getDevToken, getProdToken } from './token';
+import { validateGoogleIdToken } from './google';
 
 interface DevLogin {
   tokenType: 'dev';
@@ -23,12 +24,35 @@ interface GoogleLogin {
 type TEvent = TShallotHttpEvent<unknown, unknown, unknown, DevLogin | GoogleLogin>;
 type TResult = { sessionToken: string; user: DUser };
 
+const getOrCreateGoogleAuthUser = async (
+  idToken: GoogleLogin['idToken']
+): Promise<TResult> => {
+  const googleAuthInfo = await validateGoogleIdToken(idToken);
+  if (googleAuthInfo == null) {
+    throw new createHTTPError.BadRequest('Google Auth info could not be processed.');
+  }
+
+  const email = googleAuthInfo.email.toLowerCase().trim();
+  let user = await getUser(email);
+
+  if (user == null) {
+    user = await createUser({ email, name: googleAuthInfo.name });
+
+    if (user == null) {
+      throw new createHTTPError.InternalServerError('Could not create user');
+    }
+  }
+
+  const sessionToken = getProdToken(user.uid);
+  return { sessionToken, user };
+};
+
 const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
-  let sessionToken: TResult['sessionToken'];
-  let user: DUser | null;
+  let loginData: TResult;
   switch (body?.tokenType) {
     case 'google': {
-      throw new createHTTPError.BadRequest('google login method not implemented');
+      loginData = await getOrCreateGoogleAuthUser(body.idToken);
+      break;
     }
     case 'dev': {
       if (process.env.IS_OFFLINE == null) {
@@ -36,7 +60,7 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
       }
 
       const email = body.email.toLowerCase().trim();
-      user = await getUser(email);
+      let user = await getUser(email);
 
       if (user == null) {
         user = await createUser({ email, name: body.name });
@@ -46,7 +70,7 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
         }
       }
 
-      sessionToken = getDevToken(user.uid);
+      loginData = { sessionToken: getDevToken(user.uid), user };
       break;
     }
     default: {
@@ -54,7 +78,7 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
     }
   }
 
-  return { message: 'success', data: { sessionToken, user } };
+  return { message: 'success', data: loginData };
 };
 
 export const handler = ShallotAWSRestWrapper(_handler, undefined, {

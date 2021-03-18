@@ -22,6 +22,7 @@
     "@shallot/http-error-handler": "^1.0.2",
     "@shallot/rest-wrapper": "^1.1.2",
     "aws-sdk": "^2.842.0",
+    "google-auth-library": "^7.0.2",
     "http-errors": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.17",

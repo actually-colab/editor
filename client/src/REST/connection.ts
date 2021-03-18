@@ -50,4 +50,31 @@ export const devLogin = async (
   return data;
 };
 
+/**
+ * Attempts to login. On success, stores the token.
+ *
+ * @param email the user's email address
+ * @param name optional, sets the name of the user
+ * @param context modifies axios request metadata
+ */
+export const login = async (
+  idToken: string,
+  context?: RequestContext
+): Promise<{ sessionToken: string; user: DUser }> => {
+  setRequestContext(context);
+
+  const data = (
+    await axiosInstance.post<{ data: { sessionToken: string; user: DUser } }>('/login', {
+      idToken,
+      tokenType: 'google',
+    })
+  )?.data?.data;
+  if (data?.sessionToken == null) {
+    throw new Error('Login failed');
+  }
+
+  setRequestContext({ sessionToken: data.sessionToken });
+  return data;
+};
+
 export default axiosInstance;
