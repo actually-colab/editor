@@ -1,10 +1,12 @@
 import { OAuth2Client, LoginTicket } from 'google-auth-library';
+import createHttpError from 'http-errors';
 
 if (
-  process.env.GOOGLE_AUTH_WEB_CLIENT_ID == null ||
-  process.env.GOOGLE_AUTH_WEB_CLIENT_SECRET
+  !process.env.IS_OFFLINE &&
+  (process.env.GOOGLE_AUTH_WEB_CLIENT_ID == null ||
+    process.env.GOOGLE_AUTH_WEB_CLIENT_SECRET == null)
 ) {
-  throw new Error('Did not define Google Auth Client ID/Secrit');
+  throw new Error('Did not define Google Auth Client ID/Secret');
 }
 
 const client = new OAuth2Client(
@@ -13,7 +15,7 @@ const client = new OAuth2Client(
 );
 
 const audience = [
-  process.env.GOOGLE_AUTH_WEB_CLIENT_ID,
+  process.env.GOOGLE_AUTH_WEB_CLIENT_ID ?? '',
   'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/userinfo.email',
 ];
@@ -42,8 +44,12 @@ export const validateGoogleIdToken = async (
   }
 
   const payload = ticket?.getPayload();
-  if (payload == null || payload.email == null || !isIllinoisEmail(payload.email)) {
+  if (payload == null || payload.email == null) {
     return null;
+  }
+
+  if (!process.env.IS_OFFLINE && !isIllinoisEmail(payload.email)) {
+    throw new createHttpError.Forbidden('This service requires an @illinois.edu email');
   }
 
   return {
