@@ -31,7 +31,7 @@ export interface NotebookAccessLevel extends DUser {
 export interface DNotebook {
   nb_id: string;
   name: string;
-  language: 'python2' | 'python3';
+  language: 'python';
 }
 
 export interface Notebook extends DNotebook {

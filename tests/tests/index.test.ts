@@ -18,7 +18,7 @@ describe('', () => {
     const { user, sessionToken } = await apiClient.devLogin('jeff@test.com', 'jeff');
     expect(user).toMatchObject({ email: 'jeff@test.com' });
 
-    const notebook = await apiClient.createNotebook('test', 'python3');
+    const notebook = await apiClient.createNotebook('test', 'python');
     expect(notebook).not.toBeNull();
     const notebooks = await apiClient.getNotebooksForUser();
     expect(notebooks).not.toHaveLength(0);

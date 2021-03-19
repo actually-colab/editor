@@ -113,7 +113,7 @@ export class ActuallyColabRESTClient {
    */
   public createNotebook = async (
     name: Notebook['name'],
-    language: Notebook['language'] = 'python3'
+    language: Notebook['language'] = 'python'
   ): Promise<Notebook> => {
     return (
       await this.axiosInstance.post<{ data: Notebook }>('/notebook', { name, language })
