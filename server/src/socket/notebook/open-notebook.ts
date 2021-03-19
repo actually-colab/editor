@@ -10,7 +10,7 @@ import ShallotSocketWrapper, {
 import createHttpError from 'http-errors';
 
 import { getActiveSessions, openNotebook } from '../../db/pgsql/models/ActiveSession';
-import { getUserAccessLevelById } from '../../db/pgsql/models/NotebookAccessLevel';
+import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
 import { getManagementApi } from '../client-management';
 
 interface TOpenNotebookEventBody {
@@ -65,7 +65,7 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
-  const access_level = await getUserAccessLevelById(
+  const access_level = await getUserAccessLevel(
     requestContext.authorizer.uid,
     data.nb_id
   );

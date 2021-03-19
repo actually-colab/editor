@@ -1,7 +1,7 @@
 import { DUser, getUserById } from '../db/pgsql/models/User';
 
 import jwt from 'jsonwebtoken';
-import { DActiveSession, getSessionById } from '../db/pgsql/models/ActiveSession';
+import { DActiveSession, getActiveSessionById } from '../db/pgsql/models/ActiveSession';
 import createHttpError from 'http-errors';
 
 interface TokenPayload {
@@ -77,7 +77,7 @@ export const getUserFromSessionToken = async (
 export const getUserFromConnectionId = async (
   connectionId: DActiveSession['connectionId']
 ): Promise<DUser | null> => {
-  const session = await getSessionById(connectionId);
+  const session = await getActiveSessionById(connectionId);
   if (session == null) {
     return null;
   }

@@ -6,7 +6,7 @@ import ShallotSocketWrapper, {
 } from '../middleware/wrapper';
 
 import createHttpError from 'http-errors';
-import { getActiveSessions, getSessionById } from '../../db/pgsql/models/ActiveSession';
+import { getActiveSessions, getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { getManagementApi } from '../client-management';
 
 interface TCreateCellEventBody {
@@ -62,7 +62,7 @@ const _handler: ShallotRawHandler<TCreateCellEvent> = async ({
   }
 
   // TODO: streamline fetching of user + session data
-  const session = await getSessionById(requestContext.connectionId, data.nb_id);
+  const session = await getActiveSessionById(requestContext.connectionId, data.nb_id);
 
   if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');

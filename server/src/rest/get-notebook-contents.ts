@@ -26,8 +26,8 @@ const _handler: ShallotRawHandler<TEvent, NotebookContents> = async ({
   pathParameters,
 }) => {
   const user = authorizer as DUser | null;
-  if (user?.email == null) {
-    throw new createHTTPError.InternalServerError();
+  if (user?.uid == null) {
+    throw new createHTTPError.Unauthorized();
   }
 
   if (pathParameters?.nb_id == null) {
@@ -35,7 +35,7 @@ const _handler: ShallotRawHandler<TEvent, NotebookContents> = async ({
   }
 
   const requestingUserAccessLevel = await getUserAccessLevel(
-    user.email,
+    user.uid,
     pathParameters.nb_id
   );
   if (requestingUserAccessLevel == null) {
