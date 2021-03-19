@@ -111,7 +111,7 @@ export class ActuallyColabRESTClient {
    * @param name human-readable name of the notebook
    * @param language runtime language for the notebook
    */
-  createNotebook = async (
+  public createNotebook = async (
     name: Notebook['name'],
     language: Notebook['language'] = 'python3'
   ): Promise<Notebook> => {
@@ -128,7 +128,7 @@ export class ActuallyColabRESTClient {
    * @param nb_id id of the notebook to share
    * @param access_level permissions level for the user that the notebook is being shared with
    */
-  shareNotebook = async (
+  public shareNotebook = async (
     email: DUser['email'],
     nb_id: DNotebookAccessLevel['nb_id'],
     access_level: DNotebookAccessLevel['access_level']
