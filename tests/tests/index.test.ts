@@ -1,9 +1,7 @@
 import { test, describe, expect } from '@jest/globals';
 
 import {
-  createNotebook,
-  devLogin,
-  getNotebooksForUser,
+  ActuallyColabRESTClient,
   ActuallyColabSocketClient,
   DUser,
 } from '@actually-colab/editor-client';
@@ -16,18 +14,19 @@ function sleep(ms: number): Promise<void> {
 
 describe('', () => {
   test('', async () => {
-    const { user, sessionToken } = await devLogin('jeff@test.com', 'jeff');
+    const apiClient = new ActuallyColabRESTClient('http://localhost:3000/dev');
+    const { user, sessionToken } = await apiClient.devLogin('jeff@test.com', 'jeff');
     expect(user).toMatchObject({ email: 'jeff@test.com' });
 
-    const notebook = await createNotebook('test', 'python3');
+    const notebook = await apiClient.createNotebook('test', 'python3');
     expect(notebook).not.toBeNull();
-    const notebooks = await getNotebooksForUser();
+    const notebooks = await apiClient.getNotebooksForUser();
     expect(notebooks).not.toHaveLength(0);
 
-    const socketClient = new ActuallyColabSocketClient({
-      baseURL: 'ws://localhost:3001/dev',
-      sessionToken,
-    });
+    const socketClient = new ActuallyColabSocketClient(
+      'ws://localhost:3001/dev',
+      sessionToken
+    );
     const connectListener = jest.fn();
     const errorListener = jest.fn(console.error);
     const notebookOpenedListener = jest.fn((user2: DUser) => {

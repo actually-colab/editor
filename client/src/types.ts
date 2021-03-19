@@ -1,10 +1,5 @@
 // TODO: https://github.com/actually-colab/editor/issues/39
 
-export interface RequestContext {
-  sessionToken?: string;
-  baseURL?: string;
-}
-
 export interface DUser {
   uid: string;
   name: string;
@@ -48,3 +43,25 @@ export interface NotebookContents extends Notebook {
     [cell_id: number]: DCell;
   };
 }
+
+interface LoginDataBase {
+  tokenType: string;
+}
+
+export interface DevLoginData extends LoginDataBase {
+  tokenType: 'dev';
+  email: string;
+  name?: string;
+}
+
+export interface SessionRefreshLoginData extends LoginDataBase {
+  tokenType: 'session';
+  sessionToken: string;
+}
+
+export interface GoogleLoginData extends LoginDataBase {
+  tokenType: 'google';
+  idToken: string;
+}
+
+export type LoginData = DevLoginData | SessionRefreshLoginData | GoogleLoginData;
