@@ -1,13 +1,12 @@
+import type { ModelBase, UTCEpochDateTime } from './ModelBase';
 import type { DUser } from './User';
 import type { DNotebook } from '../../pgsql/models/Notebook';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
-type UTCEpochDateTime = number;
-
 /**An active socket session for a user. */
-export interface DActiveSession {
+export interface DActiveSession extends ModelBase {
   /**Session ID from AWS API Gateway */
   connectionId: string;
   nb_id?: DNotebook['nb_id'];

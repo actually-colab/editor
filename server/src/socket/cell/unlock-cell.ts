@@ -9,7 +9,10 @@ import ShallotSocketWrapper, {
 import { getManagementApi } from '../client-management';
 
 import { DCell, unlockCell } from '../../db/pgsql/models/Cell';
-import { getActiveSessions, getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
+import {
+  getActiveSessions,
+  getActiveSessionById,
+} from '../../db/pgsql/models/ActiveSession';
 
 interface TUnlockCellEventBody {
   data: {
@@ -70,12 +73,7 @@ const _handler: ShallotRawHandler<TUnlockCellEvent> = async ({
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
-  const cell = await unlockCell(
-    session,
-    data.nb_id,
-    data.cell_id,
-    requestContext.authorizer.uid
-  );
+  const cell = await unlockCell(session, data.nb_id, data.cell_id);
   if (cell == null) {
     throw new createHttpError.BadRequest('Could not unlock cell');
   }

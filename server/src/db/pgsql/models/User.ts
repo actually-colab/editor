@@ -1,14 +1,13 @@
+import type { ModelBase, UUID } from './ModelBase';
+
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 import { createDemoNotebook } from './Notebook';
 
-export type NotebookAccessLevel = 'Full Access' | 'Read Only';
-
 /**Actually Colab Database User Object */
-export interface DUser {
-  [k: string]: number | string | boolean;
+export interface DUser extends ModelBase {
   /**The user's generated UUID */
-  uid: string;
+  uid: UUID;
   name: string;
   email: string;
 }
