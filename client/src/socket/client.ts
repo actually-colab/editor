@@ -1,4 +1,4 @@
-import type { DCell, DUser, Notebook, RequestContext } from '../types';
+import type { DCell, DUser, Notebook } from '../types';
 
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
@@ -50,11 +50,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   /**
    * Establishes a new client connection to the Actually Colab server.
    *
-   * @param context metadata to establish the connection.
+   * @param baseURL Actually Colab API basename
+   * @param sessionToken authorization token for Actually Colab
    */
-  constructor(context: Required<RequestContext>) {
+  constructor(baseURL: string, sessionToken: string) {
     super();
-    const connectionURL = `${context.baseURL}/?sessionToken=Bearer ${context.sessionToken}`;
+    const connectionURL = `${baseURL}/?sessionToken=Bearer ${sessionToken}`;
     this.socketClient = new ws.w3cwebsocket(connectionURL);
 
     this.initSocketEventListeners();
