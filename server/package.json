@@ -16,7 +16,8 @@
     "start:pgsql": "yarn pgsql:up && sleep 3 && yarn pgsql:init",
     "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./pgsql-local/init-db.sql -w",
     "pgsql:up": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml up -d --build",
-    "pgsql:down": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml down"
+    "pgsql:down": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml down",
+    "deploy": "sls deploy --aws-profile ac-bailey"
   },
   "dependencies": {
     "@shallot/http-error-handler": "^1.0.2",
