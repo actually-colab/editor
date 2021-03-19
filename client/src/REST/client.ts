@@ -58,7 +58,7 @@ export class ActuallyColabRESTClient {
    * @param email the user's email address
    * @param name optional, sets the name of the user
    */
-  public devlogin = async (
+  public devLogin = async (
     email: DUser['email'],
     name?: string
   ): Promise<{ sessionToken: string; user: DUser }> => {
