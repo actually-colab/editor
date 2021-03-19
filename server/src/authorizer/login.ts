@@ -7,8 +7,9 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { createUser, DUser, getUser } from '../db/pgsql/models/User';
-import { getDevToken, getProdToken } from './token';
+import { getDevToken, getProdToken, getUserFromSessionToken } from './token';
 import { validateGoogleIdToken } from './google';
+import createHttpError from 'http-errors';
 
 interface DevLogin {
   tokenType: 'dev';
@@ -16,12 +17,22 @@ interface DevLogin {
   name?: string;
 }
 
+interface SessionRefreshLogin {
+  tokenType: 'session';
+  sessionToken: string;
+}
+
 interface GoogleLogin {
   tokenType: 'google';
   idToken: string;
 }
 
-type TEvent = TShallotHttpEvent<unknown, unknown, unknown, DevLogin | GoogleLogin>;
+type TEvent = TShallotHttpEvent<
+  unknown,
+  unknown,
+  unknown,
+  DevLogin | GoogleLogin | SessionRefreshLogin
+>;
 type TResult = { sessionToken: string; user: DUser };
 
 const getOrCreateGoogleAuthUser = async (
@@ -54,8 +65,18 @@ const _handler: ShallotRawHandler<TEvent, TResult> = async ({ body }) => {
       loginData = await getOrCreateGoogleAuthUser(body.idToken);
       break;
     }
+    case 'session': {
+      const user = await getUserFromSessionToken(body.sessionToken);
+      if (user == null) {
+        throw new createHttpError.Unauthorized('Invalid token');
+      }
+
+      const sessionToken = getProdToken(user.uid);
+      loginData = { sessionToken, user };
+      break;
+    }
     case 'dev': {
-      if (process.env.IS_OFFLINE == null) {
+      if (!process.env.IS_OFFLINE) {
         throw new createHTTPError.Unauthorized('Cannot use dev token in prod');
       }
 

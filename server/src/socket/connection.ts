@@ -2,7 +2,7 @@ import type { Handler, APIGatewayProxyEvent } from 'aws-lambda';
 import type { DUser } from 'db/pgsql/models/User';
 import type { DActiveSession } from '../db/pgsql/models/ActiveSession';
 
-import { getUserFromToken } from '../authorizer/token';
+import { getUserFromBearerToken } from '../authorizer/token';
 import { connect, disconnect } from '../db/pgsql/models/ActiveSession';
 import { forceDisconnect } from './client-management';
 
@@ -33,9 +33,9 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
     case SocketEventTypes.Connect: {
       // SLS Offline doesn't support Lambda Authorizers :,(
       if (process.env.IS_OFFLINE != null) {
-        const token =
+        const bearerToken =
           event.headers.Authorization ?? event.queryStringParameters?.sessionToken;
-        if (token == null) {
+        if (bearerToken == null) {
           console.error(
             event.requestContext.connectionId,
             'Authorization token not supplied... forcing disconnect...'
@@ -44,7 +44,7 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
           return { statusCode: 401 };
         }
 
-        const user = await getUserFromToken(token);
+        const user = await getUserFromBearerToken(bearerToken);
         if (user == null) {
           console.error(
             event.requestContext.connectionId,

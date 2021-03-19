@@ -7,7 +7,7 @@ import type {
 
 import type { DUser } from '../db/pgsql/models/User';
 
-import { getUserFromToken } from './token';
+import { getUserFromBearerToken } from './token';
 import { ShallotAWS } from 'shallot';
 
 const generatePolicy = (
@@ -42,7 +42,7 @@ const _handler: Handler<
   APIGatewayAuthorizerWithContextResult<DUser> | APIGatewayAuthorizerResult
 > = async (event) => {
   try {
-    const user = await getUserFromToken(event.authorizationToken);
+    const user = await getUserFromBearerToken(event.authorizationToken);
 
     if (user !== null) {
       return generatePolicy(user.email, event.methodArn, 'Allow', user);
