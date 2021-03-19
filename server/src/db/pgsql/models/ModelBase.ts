@@ -1,6 +1,9 @@
 export type UTCEpochDateTime = number;
 export type UUID = string;
 
-export interface ModelBase {
-  [k: string]: number | string | boolean | UTCEpochDateTime | UUID | null | undefined;
+interface Json {
+  [x: string]: string | number | boolean | Date | Json | JsonArray | null | undefined;
 }
+type JsonArray = Array<string | number | boolean | Date | Json | JsonArray>;
+
+export type ModelBase = Json;

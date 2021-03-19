@@ -1,26 +1,38 @@
+import type { ModelBase, UUID } from './ModelBase';
+
 import type { DUser } from './User';
+import type { DCell } from './Cell';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
 import { grantAccessById, NotebookAccessLevel } from './NotebookAccessLevel';
-import { DCell } from './Cell';
 import { DEMO_NOTEBOOK_CELLS } from '../../../static/demo-notebook';
 
-export interface DNotebook {
-  nb_id: string;
+/**Model for a notebook */
+export interface DNotebook extends ModelBase {
+  /**The notebook's generated id */
+  nb_id: UUID;
   name: string;
   language: 'python';
 }
 
+/**Metadata for a Notebook */
 export interface Notebook extends DNotebook {
-  users: NotebookAccessLevel[];
+  users: Array<NotebookAccessLevel>;
 }
 
+/**Metadata with contents for a Notebook */
 export interface NotebookContents extends Notebook {
   cells: Record<DCell['cell_id'], DCell>;
 }
 
+/**Creates a blank notebook.
+ *
+ * @param notebook metadata to insert
+ * @param uid the user creating the notebook
+ * @returns the notebook, if created successfully
+ */
 export const createNotebook = async (
   notebook: Partial<DNotebook>,
   uid: DUser['uid']
@@ -38,6 +50,11 @@ export const createNotebook = async (
   };
 };
 
+/**Initializes the demo notebook for a user.
+ *
+ * @param uid the user to create the notebook for
+ * @returns the notebook, if created successfully
+ */
 export const createDemoNotebook = async (uid: DUser['uid']): Promise<Notebook> => {
   // TODO: Use a transaction
   const demoNotebook = await createNotebook(
@@ -63,7 +80,12 @@ export const createDemoNotebook = async (uid: DUser['uid']): Promise<Notebook> =
   return demoNotebook;
 };
 
-export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebook[]> => {
+/**Queries all notebooks for a specific user.
+ *
+ * @param uid the user to query for
+ * @returns the user's notebooks, if any
+ */
+export const getNotebooksForUser = async (uid: DUser['uid']): Promise<Notebook[]> => {
   return pgsql
     .select(
       'nb.*',
@@ -90,11 +112,16 @@ export const getNotebooksForUser = async (email: DUser['email']): Promise<Notebo
         .select('nb_id')
         .from({ sub_nba: tablenames.notebookAccessLevelsTableName })
         .innerJoin({ sub_u: tablenames.usersTableName }, 'sub_u.uid', '=', 'sub_nba.uid')
-        .where({ 'sub_u.email': email })
+        .where({ 'sub_u.uid': uid })
     )
     .groupBy('nb.nb_id');
 };
 
+/**Queries the contents of a specific notebook.
+ *
+ * @param uid the user to query for
+ * @returns the user's notebooks, if any
+ */
 export const getNotebookContents = async (
   nb_id: DNotebook['nb_id']
 ): Promise<NotebookContents | null> => {

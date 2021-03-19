@@ -1,3 +1,5 @@
+import type { ModelBase } from './ModelBase';
+
 import type { DNotebook } from './Notebook';
 import type { DUser } from './User';
 
@@ -6,7 +8,7 @@ import tablenames from '../tablenames';
 
 export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
 
-export interface DNotebookAccessLevel {
+export interface DNotebookAccessLevel extends ModelBase {
   nb_id: DNotebook['nb_id'];
   uid: DUser['uid'];
   access_level: NotebookAccessLevelType;

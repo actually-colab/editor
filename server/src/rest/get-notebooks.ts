@@ -15,11 +15,11 @@ const _handler: ShallotRawHandler<TShallotHttpEvent, Notebook[]> = async ({
   requestContext: { authorizer },
 }) => {
   const user = authorizer as DUser | null;
-  if (user?.email == null) {
-    throw new createHTTPError.InternalServerError();
+  if (user?.uid == null) {
+    throw new createHTTPError.Unauthorized();
   }
 
-  const notebooks = await getNotebooksForUser(user.email);
+  const notebooks = await getNotebooksForUser(user.uid);
 
   return { message: 'success', data: notebooks };
 };
