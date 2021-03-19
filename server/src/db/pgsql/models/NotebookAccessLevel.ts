@@ -6,18 +6,28 @@ import type { DUser } from './User';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
+/**Enum of access levels for a notebook */
 export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
 
+/**A model for a user's access level to a specific notebook */
 export interface DNotebookAccessLevel extends ModelBase {
   nb_id: DNotebook['nb_id'];
   uid: DUser['uid'];
   access_level: NotebookAccessLevelType;
 }
 
+/**Pair of user, access_level */
 export interface NotebookAccessLevel extends DUser {
   access_level: NotebookAccessLevelType;
 }
 
+/**Grants access for a specific user to a specific notebook.
+ *
+ * @param uid the user to grant notebook access to
+ * @param nb_id the notebook to grant access to
+ * @param access_level type of access for the user
+ * @returns the access provided, if successful
+ */
 export const grantAccessById = async (
   uid: DUser['uid'],
   nb_id: DNotebookAccessLevel['nb_id'],
@@ -35,24 +45,37 @@ export const grantAccessById = async (
   return { ...user, access_level };
 };
 
-export const getUserAccessLevel = async (
+/**Grants access for a specific user to a specific notebook.
+ *
+ * @param email the user to grant notebook access to
+ * @param nb_id the notebook to grant access to
+ * @param access_level type of access for the user
+ * @returns the access provided, if successful
+ */
+export const grantAccessByEmail = async (
   email: DUser['email'],
-  nb_id: DNotebookAccessLevel['nb_id']
-): Promise<DNotebookAccessLevel['access_level'] | null> => {
-  const accessLevels = await pgsql
-    .select('nba.access_level')
-    .from({ nba: tablenames.notebookAccessLevelsTableName })
-    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
-    .where({ 'u.email': email, 'nba.nb_id': nb_id });
+  nb_id: DNotebookAccessLevel['nb_id'],
+  access_level: DNotebookAccessLevel['access_level']
+): Promise<NotebookAccessLevel> => {
+  // TODO: simplify with transaction
+  const user: DUser = (
+    await pgsql<DUser>(tablenames.usersTableName).select('*').where({ email })
+  )[0];
 
-  if (accessLevels.length === 0) {
-    return null;
-  }
+  await pgsql<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+    .insert({ uid: user.uid, nb_id, access_level })
+    .returning('*');
 
-  return accessLevels[0].access_level;
+  return { ...user, access_level };
 };
 
-export const getUserAccessLevelById = async (
+/**Queries a user's access level to a specific notebook.
+ *
+ * @param uid the user to query
+ * @param nb_id the notebook to query
+ * @returns the user's access level, if any
+ */
+export const getUserAccessLevel = async (
   uid: DUser['uid'],
   nb_id: DNotebookAccessLevel['nb_id']
 ): Promise<DNotebookAccessLevel['access_level'] | null> => {

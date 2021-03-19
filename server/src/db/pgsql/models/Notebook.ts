@@ -1,4 +1,4 @@
-import type { ModelBase, UUID } from './ModelBase';
+import type { ModelBase, UUID, Json } from './ModelBase';
 
 import type { DUser } from './User';
 import type { DCell } from './Cell';
@@ -18,7 +18,11 @@ export interface DNotebook extends ModelBase {
 }
 
 /**Metadata for a Notebook */
-export interface Notebook extends DNotebook {
+export interface Notebook extends Json {
+  /**The notebook's generated id */
+  nb_id: DNotebook['nb_id'];
+  name: DNotebook['name'];
+  language: DNotebook['language'];
   users: Array<NotebookAccessLevel>;
 }
 

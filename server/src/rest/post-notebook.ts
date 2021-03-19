@@ -8,7 +8,7 @@ import type { DUser } from '../db/pgsql/models/User';
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import { createNotebook, DNotebook } from '../db/pgsql/models/Notebook';
+import { createNotebook, Notebook } from '../db/pgsql/models/Notebook';
 
 interface RNotebook {
   name: string;
@@ -16,7 +16,7 @@ interface RNotebook {
 
 type TEvent = TShallotHttpEvent<{ email: string }, unknown, unknown, RNotebook>;
 
-const _handler: ShallotRawHandler<TEvent, DNotebook> = async ({
+const _handler: ShallotRawHandler<TEvent, Notebook> = async ({
   body,
   requestContext: { authorizer },
 }) => {
