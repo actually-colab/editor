@@ -51,13 +51,12 @@ export const devLogin = async (
 };
 
 /**
- * Attempts to login. On success, stores the token.
+ * Attempts to login with Google ID Token. On success, stores the token.
  *
- * @param email the user's email address
- * @param name optional, sets the name of the user
+ * @param idToken from Google Auth
  * @param context modifies axios request metadata
  */
-export const login = async (
+export const loginWithGoogleIdToken = async (
   idToken: string,
   context?: RequestContext
 ): Promise<{ sessionToken: string; user: DUser }> => {
@@ -67,6 +66,32 @@ export const login = async (
     await axiosInstance.post<{ data: { sessionToken: string; user: DUser } }>('/login', {
       idToken,
       tokenType: 'google',
+    })
+  )?.data?.data;
+  if (data?.sessionToken == null) {
+    throw new Error('Login failed');
+  }
+
+  setRequestContext({ sessionToken: data.sessionToken });
+  return data;
+};
+
+/**
+ * Attempts to refresh session token. On success, stores the token.
+ *
+ * @param sessionToken JWT from Actually Colab service
+ * @param context modifies axios request metadata
+ */
+export const refreshSessionToken = async (
+  sessionToken: string,
+  context?: RequestContext
+): Promise<{ sessionToken: string; user: DUser }> => {
+  setRequestContext(context);
+
+  const data = (
+    await axiosInstance.post<{ data: { sessionToken: string; user: DUser } }>('/login', {
+      sessionToken,
+      tokenType: 'session',
     })
   )?.data?.data;
   if (data?.sessionToken == null) {

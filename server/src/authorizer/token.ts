@@ -6,7 +6,7 @@ import createHttpError from 'http-errors';
 
 interface TokenPayload {
   uid: DUser['uid'];
-  tokenType: 'dev' | 'prod' | 'google';
+  tokenType: 'dev' | 'session' | 'google';
 }
 
 export const getDevToken = (uid: DUser['uid']): string => {
@@ -19,7 +19,7 @@ export const getProdToken = (uid: DUser['uid']): string => {
   }
 
   return jwt.sign(
-    { uid, tokenType: 'prod' } as TokenPayload,
+    { uid, tokenType: 'session' } as TokenPayload,
     process.env.PROD_AUTH_SECRET
   );
 };
@@ -28,19 +28,25 @@ export const decodeTokenPayload = (accessToken: string): TokenPayload => {
   return jwt.decode(accessToken) as TokenPayload;
 };
 
-export const getAccessToken = (authorizationToken: string): string => {
-  if (authorizationToken.startsWith('Bearer')) {
-    return authorizationToken.substr(7);
+export const getSessionToken = (bearerToken: string): string => {
+  if (bearerToken.startsWith('Bearer')) {
+    return bearerToken.substr(7);
   }
 
   throw new Error('Invalid token');
 };
 
-export const getUserFromToken = async (
-  authorizationToken: string
+export const getUserFromBearerToken = async (
+  bearerToken: string
 ): Promise<DUser | null> => {
-  const accessToken = getAccessToken(authorizationToken);
-  const tokenPayload = decodeTokenPayload(accessToken);
+  const sessionToken = getSessionToken(bearerToken);
+  return getUserFromSessionToken(sessionToken);
+};
+
+export const getUserFromSessionToken = async (
+  sessionToken: string
+): Promise<DUser | null> => {
+  const tokenPayload = decodeTokenPayload(sessionToken);
 
   switch (tokenPayload.tokenType) {
     case 'dev': {
@@ -49,12 +55,12 @@ export const getUserFromToken = async (
       }
       break;
     }
-    case 'prod': {
+    case 'session': {
       if (process.env.PROD_AUTH_SECRET == null) {
         throw new Error('PROD_AUTH_SECRET env var not defined');
       }
 
-      if (jwt.verify(accessToken, process.env.PROD_AUTH_SECRET) == null) {
+      if (jwt.verify(sessionToken, process.env.PROD_AUTH_SECRET) == null) {
         throw new createHttpError.Unauthorized('Invalid token');
       }
 
