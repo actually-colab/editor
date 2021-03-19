@@ -48,6 +48,10 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
     throw new createHTTPError.BadRequest('Must specify body.access_level');
   }
 
+  if (body.email === user.email) {
+    throw new createHTTPError.BadRequest('Cannot grant access to yourself!');
+  }
+
   // Assert that the request user has full access
   const requestingUserAccessLevel = await getUserAccessLevel(
     user.uid,
