@@ -16,6 +16,14 @@ const generatePolicy = (
   effect: 'Allow' | 'Deny',
   user?: DUser
 ): APIGatewayAuthorizerWithContextResult<DUser> | APIGatewayAuthorizerResult => {
+  // arn:aws:execute-api:region:account-id:api-id/stage-name/HTTP-VERB/resource-path-specifier
+  const paths = methodArn.split('/');
+  const apiMeta = paths[0].split(':');
+  const accountId = apiMeta[4];
+  const apiId = apiMeta[5];
+  const stageName = paths[1];
+  const allowArn = `arn:aws:execute-api:*:${accountId}:${apiId}/${stageName}/*/*`;
+
   const res: APIGatewayAuthorizerResult = {
     principalId: principalId,
     policyDocument: {
@@ -24,7 +32,7 @@ const generatePolicy = (
         {
           Action: 'execute-api:Invoke',
           Effect: effect,
-          Resource: methodArn,
+          Resource: allowArn,
         },
       ],
     },
