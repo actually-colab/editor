@@ -69,7 +69,7 @@ custom:
   restCorsPolicy:
     origins:
       - 'http://localhost:4000'
-      - 'https://*.actuallycolab.org'
+      - 'https://app.actuallycolab.org'
     headers:
       - Content-Type
       - X-Amz-Date

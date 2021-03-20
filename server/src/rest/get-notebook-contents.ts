@@ -54,6 +54,6 @@ export const handler = ShallotAWSRestWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
   HttpCorsOpts: {
     allowHeaders: 'Authorization',
-    allowedOrigins: ['http://localhost:4000', 'https://*.actuallycolab.org'],
+    allowedOrigins: ['http://localhost:4000', 'https://app.actuallycolab.org'],
   },
 });
