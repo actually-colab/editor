@@ -17,18 +17,17 @@ const config: Configuration = {
   externals: [nodeExternals()],
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.d.ts', '.ts', '.tsx'],
-    alias: {
-      src: path.resolve(__dirname, 'src/'),
-      middleware: path.resolve(__dirname, 'src/middleware/'),
-      models: path.resolve(__dirname, 'src/models/'),
-      routes: path.resolve(__dirname, 'src/routes/'),
-      'input-schemas': path.resolve(__dirname, 'src/input-schemas/'),
-    },
   },
   module: {
     rules: [
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-      { test: /\.tsx?$/, loader: 'ts-loader' },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        options: {
+          transpileOnly: !slsw.lib.webpack.isLocal,
+        },
+      },
     ],
   },
 };

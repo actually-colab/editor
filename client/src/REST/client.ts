@@ -20,7 +20,7 @@ export class ActuallyColabRESTClient {
   constructor(baseURL: string) {
     this.axiosInstance = axios.create({
       baseURL: baseURL,
-      timeout: 1000,
+      timeout: 10000,
       headers: {},
     });
 

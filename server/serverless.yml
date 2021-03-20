@@ -11,16 +11,20 @@ provider:
   name: aws
   runtime: nodejs12.x
   stage: ${opt:stage,'dev'}
-  region: us-east-1
+  region: us-east-1  
+
+  logs:
+    restApi: true
+    websocket: true
 
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
     AWS_DEPLOYMENT_REGION: ${self:provider.region}
 
-    AC_PGSQL_HOST: localhost
-    AC_PGSQL_USER: admin
-    AC_PGSQL_PASSWORD: password
-    AC_PGSQL_DATABASE: AC-dev
+    AC_PGSQL_HOST: ${env:DB_HOST}
+    AC_PGSQL_USER: ${env:DB_USERNAME}
+    AC_PGSQL_PASSWORD: ${env:DB_PASSWORD}
+    AC_PGSQL_DATABASE: ${env:DB_NAME}
 
     AC_PGSQL_USERS_TABLE_NAME: ${self:custom.pgsqlTableNames.usersTableName}
     AC_PGSQL_NOTEBOOKS_TABLE_NAME: ${self:custom.pgsqlTableNames.notebooksTableName}
@@ -32,9 +36,13 @@ provider:
     GOOGLE_AUTH_WEB_CLIENT_SECRET: ${env:GOOGLE_AUTH_WEB_CLIENT_SECRET}
     PROD_AUTH_SECRET: ${env:PROD_AUTH_SECRET}
 
+package:
+  individually: true
+
 custom:
   stages:
     - dev
+    - production
 
   pgsqlTableNames:
     usersTableName: User
@@ -50,19 +58,49 @@ custom:
   webpack:
     webpackConfig: 'webpack.config.ts'
     packager: 'yarn'
-    includeModules: true
+    includeModules: 
+      forceInclude:
+        - pg 
+      forceExclude:
+        - aws-sdk
+    packagerOptions:
+      noFrozenLockfile: true
+    
+  restCorsPolicy:
+    origins:
+      - 'http://localhost:4000'
+      - 'https://*.actuallycolab.org'
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+    allowCredentials: false
+    
+  restAuthorizerConfig:
+    name: rest-authorizer
+    identitySource: method.request.header.Authorization
+    type: token
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
 
 functions:
-  test:
-    handler: src/index.handler
-    events:
-      - http:
-          path: /test
-          method: get
-          cors: true
-
-  authorizer:
-    handler: src/authorizer/authorizer.handler
+  rest-authorizer:
+    handler: src/authorizer/lambda-authorizer.rest
+  socket-authorizer:
+    handler: src/authorizer/lambda-authorizer.socket
 
   login:
     handler: src/authorizer/login.handler
@@ -70,7 +108,7 @@ functions:
       - http:
           path: /login
           method: post 
-          cors: true
+          cors: ${self:custom.restCorsPolicy}
 
   GET-notebooks:
     handler: src/rest/get-notebooks.handler
@@ -78,11 +116,8 @@ functions:
       - http:
           path: /notebooks
           method: get
-          cors: true
-          authorizer:
-            name: authorizer
-            identitySource: method.request.header.Authorization
-            type: token
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
 
   GET-notebook-contents:
     handler: src/rest/get-notebook-contents.handler
@@ -90,11 +125,8 @@ functions:
       - http:
           path: /notebook/{nb_id}
           method: get
-          cors: true
-          authorizer:
-            name: authorizer
-            identitySource: method.request.header.Authorization
-            type: token
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
 
   POST-notebook:
     handler: src/rest/post-notebook.handler
@@ -102,11 +134,8 @@ functions:
       - http:
           path: /notebook
           method: post
-          cors: true
-          authorizer:
-            name: authorizer
-            identitySource: method.request.header.Authorization
-            type: token
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
 
   share-notebook:
     handler: src/rest/share-notebook.handler
@@ -114,11 +143,8 @@ functions:
       - http:
           path: /notebook/{nb_id}/share
           method: post
-          cors: true
-          authorizer:
-            name: authorizer
-            identitySource: method.request.header.Authorization
-            type: token
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
   
   socket-connection:
     handler: src/socket/connection.handler
@@ -127,10 +153,8 @@ functions:
       - websocket:
           route: $connect
           authorizer:
-            name: authorizer
-            identitySource: 
-              - route.request.header.Authorization
-              - route.request.querystring.sessionToken
+            name: socket-authorizer
+            identitySource: route.request.querystring.sessionToken
           
       - websocket:
           route: $disconnect

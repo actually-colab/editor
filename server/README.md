@@ -6,10 +6,17 @@ The REST and WebSocket API for Actually Colab.
 
 1.) Create a `.env` file with the following vars defined
 
+*Create a `.env.production` file for deployed use
+
 ```bash
 GOOGLE_AUTH_WEB_CLIENT_ID="<from google auth console>"
 GOOGLE_AUTH_WEB_CLIENT_SECRET="<from google auth console>"
 PROD_AUTH_SECRET="<anything random>"
+API_ACM_CERTIFICATE_ARN="<only needed if deploying to prod>"
+DB_HOST="localhost"
+DB_NAME="AC-dev"
+DB_USERNAME="admin"
+DB_PASSWORD="password"
 ```
 
 2.) Install docker & docker-compose to your system

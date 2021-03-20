@@ -3,10 +3,11 @@ yarn-error.log
 npm-debug.*
 
 .webpack
+.serverless
 
 coverage
 
 .vscode
 .DS_Store
 
-.env
+.env*
