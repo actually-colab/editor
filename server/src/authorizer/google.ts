@@ -22,7 +22,11 @@ const audience = [
 
 const isIllinoisEmail = (email: string): boolean => {
   const parts = email.split('@');
-  return parts.length === 2 && parts[1] === 'illinois.edu';
+  return (
+    email === 'btincher99@gmail.com' ||
+    email === 'jefftaylorchang@gmail.com' ||
+    (parts.length === 2 && parts[1] === 'illinois.edu')
+  );
 };
 
 export const validateGoogleIdToken = async (
