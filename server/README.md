@@ -6,6 +6,8 @@ The REST and WebSocket API for Actually Colab.
 
 1.) Create a `.env` file with the following vars defined
 
+*Create a `.env.production` file for deployed use
+
 ```bash
 GOOGLE_AUTH_WEB_CLIENT_ID="<from google auth console>"
 GOOGLE_AUTH_WEB_CLIENT_SECRET="<from google auth console>"

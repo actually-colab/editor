@@ -42,6 +42,7 @@ package:
 custom:
   stages:
     - dev
+    - production
 
   pgsqlTableNames:
     usersTableName: User
