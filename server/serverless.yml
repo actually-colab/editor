@@ -15,6 +15,7 @@ provider:
 
   logs:
     restApi: true
+    websocket: true
 
   environment:
     EXECUTION_STAGE: ${self:provider.stage}
@@ -78,7 +79,7 @@ custom:
     allowCredentials: false
     
   restAuthorizerConfig:
-    name: authorizer
+    name: rest-authorizer
     identitySource: method.request.header.Authorization
     type: token
 
@@ -95,8 +96,10 @@ resources:
           Ref: 'ApiGatewayRestApi'
 
 functions:
-  authorizer:
-    handler: src/authorizer/authorizer.handler
+  rest-authorizer:
+    handler: src/authorizer/lambda-authorizer.rest
+  socket-authorizer:
+    handler: src/authorizer/lambda-authorizer.socket
 
   login:
     handler: src/authorizer/login.handler
@@ -149,11 +152,8 @@ functions:
       - websocket:
           route: $connect
           authorizer:
-            name: authorizer
-            type: token
-            identitySource: 
-              - route.request.header.Authorization
-              - route.request.querystring.sessionToken
+            name: socket-authorizer
+            identitySource: route.request.querystring.sessionToken
           
       - websocket:
           route: $disconnect
