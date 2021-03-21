@@ -8,8 +8,9 @@ export interface DUser {
 
 export interface DCell {
   nb_id: DNotebook['nb_id'];
-  lock_held_by?: DUser['uid'];
+  lock_held_by?: DUser['uid'] | null;
   cell_id: string;
+  cursor_pos?: number | null;
   time_modified: number;
   contents: string;
   language: 'python' | 'markdown';

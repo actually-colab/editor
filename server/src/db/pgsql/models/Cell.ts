@@ -16,6 +16,8 @@ export interface DCell extends ModelBase {
   cell_id: UUID;
   time_modified: UTCEpochDateTime;
   contents: string;
+  /**Position of the lock-holding-user's cursor in the cell */
+  cursor_pos?: number | null;
   language: 'python' | 'markdown';
   position: number;
 }
@@ -40,23 +42,27 @@ export const updateLastEvent = (session: DActiveSession): QueryBuilder =>
 /**Modifies the contents of a cell.
  *
  * @param session The active user session initiating the request
- * @param cell The cell object to replace with
+ * @param nb_id The notebook containing the cell to modify
+ * @param cell_id The cell to modify
+ * @param cell The metadata to replace with
  * @returns The cell, if successfully modified
  */
 export const editCell = async (
   session: DActiveSession,
+  nb_id: DCell['nb_id'],
+  cell_id: DCell['cell_id'],
   cell: Partial<DCell>
 ): Promise<DCell | null> => {
   const promises: [unknown, Promise<DCell[] | null>] = [
     updateLastEvent(session),
     pgsql<DCell>(tablenames.cellsTableName)
       .update({
-        contents: cell.contents,
+        ...cell,
         time_modified: Date.now(),
       })
       .where({
-        cell_id: cell.cell_id,
-        nb_id: cell.nb_id,
+        cell_id: cell_id,
+        nb_id: nb_id,
         lock_held_by: session.uid,
       })
       .returning('*'),
@@ -148,6 +154,7 @@ export const unlockCell = async (
     pgsql<DCell>(tablenames.cellsTableName)
       .update({
         lock_held_by: null,
+        cursor_pos: null,
         time_modified: Date.now(),
       })
       .andWhere({ cell_id, nb_id, lock_held_by: session.uid })

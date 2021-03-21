@@ -176,17 +176,21 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    *
    * Will fail if cell lock not acquired.
    *
-   * @param nb_id Notebook to create cell in.
-   * @param cell_id Cell to edit.
-   * @param contents New text for the cell.
+   * @param nb_id Notebook to create cell in
+   * @param cell_id Cell to edit
+   * @param cellData Cell data to replace with
    */
   public editCell = debounce(
     (
       nb_id: Notebook['nb_id'],
       cell_id: DCell['cell_id'],
-      contents: DCell['cell_id']
+      cellData: {
+        contents?: DCell['cell_id'];
+        language?: DCell['language'];
+        cursor_pos?: DCell['cursor_pos'];
+      }
     ): void => {
-      this.sendEvent('edit_cell', { nb_id, cell_id, contents });
+      this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
     },
     1000,
     { maxWait: 5000 }

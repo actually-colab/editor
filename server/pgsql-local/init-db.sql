@@ -37,5 +37,6 @@ CREATE TABLE IF NOT EXISTS "Cell" (
   time_modified BIGINT,
   contents TEXT,
   position SERIAL UNIQUE NOT NULL,
+  cursor_pos SMALLINT,
   language VARCHAR(16)
 );

@@ -6,14 +6,21 @@ import ShallotSocketWrapper, {
 } from '../middleware/wrapper';
 
 import createHttpError from 'http-errors';
-import { getActiveSessions, getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
+import {
+  getActiveSessions,
+  getActiveSessionById,
+} from '../../db/pgsql/models/ActiveSession';
 import { getManagementApi } from '../client-management';
 
 interface TEditCellEventBody {
   data: {
     cell_id: DCell['cell_id'];
     nb_id: DCell['nb_id'];
-    contents: string;
+    cellData: {
+      contents?: DCell['cell_id'];
+      language?: DCell['language'];
+      cursorPos?: DCell['cursor_pos'];
+    };
   };
 }
 
@@ -55,8 +62,7 @@ const sendCellEditedEvent = async (
 
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
   const data = body?.data;
-  if (data?.cell_id == null || data.nb_id == null || data.contents == null) {
-    console.error('data:', data);
+  if (data?.cell_id == null || data.nb_id == null || data.cellData == null) {
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
@@ -67,7 +73,7 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
-  const cell = await editCell(session, data);
+  const cell = await editCell(session, data.nb_id, data.cell_id, data.cellData);
   if (cell == null) {
     throw new createHttpError.BadRequest('Could not edit cell');
   }
