@@ -168,6 +168,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param cell_id Cell to edit.
    */
   public unlockCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
+    this.editCell.flush();
     this.sendEvent('unlock_cell', { nb_id, cell_id });
   };
 
