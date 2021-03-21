@@ -17,7 +17,7 @@ export interface DCell extends ModelBase {
   time_modified: UTCEpochDateTime;
   contents: string;
   /**Position of the lock-holding-user's cursor in the cell */
-  cursorPos?: number | null;
+  cursor_pos?: number | null;
   language: 'python' | 'markdown';
   position: number;
 }
@@ -154,7 +154,7 @@ export const unlockCell = async (
     pgsql<DCell>(tablenames.cellsTableName)
       .update({
         lock_held_by: null,
-        cursorPos: null,
+        cursor_pos: null,
         time_modified: Date.now(),
       })
       .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
