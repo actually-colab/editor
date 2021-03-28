@@ -5,15 +5,11 @@ import createHttpError from 'http-errors';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-  WebSocketRequestContext,
 } from '../middleware/wrapper';
 
-import { getManagementApi } from '../client-management';
+import { broadcastToNotebook } from '../client-management';
 
-import {
-  getActiveSessions,
-  getActiveSessionById,
-} from '../../db/pgsql/models/ActiveSession';
+import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { editCell } from '../../db/pgsql/models/Cell';
 
 interface TEditCellEventBody {
@@ -35,35 +31,6 @@ type TEditCellEvent = TShallotSocketEvent<
   TEditCellEventBody
 >;
 
-const sendCellEditedEvent = async (
-  context: WebSocketRequestContext,
-  cell: DCell
-): Promise<void> => {
-  const cellEditedEventBody = JSON.stringify({
-    action: 'cell_edited',
-    triggered_by: context.authorizer.uid,
-    data: cell,
-  });
-
-  const connectionIds = await getActiveSessions(cell.nb_id);
-
-  const apigApi = getManagementApi(context);
-  await Promise.all(
-    connectionIds.map(async (connectionId) => {
-      try {
-        await apigApi
-          .postToConnection({
-            ConnectionId: connectionId,
-            Data: cellEditedEventBody,
-          })
-          .promise();
-      } catch (err) {
-        console.error('Could not reach', connectionId);
-      }
-    })
-  );
-};
-
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
   const data = body?.data;
   if (data?.cell_id == null || data.nb_id == null || data.cellData == null) {
@@ -82,7 +49,11 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
     throw new createHttpError.BadRequest('Could not edit cell');
   }
 
-  await sendCellEditedEvent(requestContext, cell);
+  await broadcastToNotebook(requestContext, session.nb_id, {
+    action: 'cell_edited',
+    triggered_by: requestContext.authorizer.uid,
+    data: cell,
+  });
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

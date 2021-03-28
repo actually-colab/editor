@@ -5,16 +5,12 @@ import createHttpError from 'http-errors';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-  WebSocketRequestContext,
 } from '../middleware/wrapper';
 
-import { getManagementApi } from '../client-management';
+import { broadcastToNotebook } from '../client-management';
 
 import { unlockCell } from '../../db/pgsql/models/Cell';
-import {
-  getActiveSessions,
-  getActiveSessionById,
-} from '../../db/pgsql/models/ActiveSession';
+import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 
 interface TUnlockCellEventBody {
   data: {
@@ -29,35 +25,6 @@ type TUnlockCellEvent = TShallotSocketEvent<
   undefined,
   TUnlockCellEventBody
 >;
-
-const sendCellUnlockedEvent = async (
-  context: WebSocketRequestContext,
-  cell: Partial<DCell>
-): Promise<void> => {
-  const cellUnlockedEventBody = JSON.stringify({
-    action: 'cell_unlocked',
-    triggered_by: context.authorizer.uid,
-    data: cell,
-  });
-
-  const connectionIds = await getActiveSessions(cell.nb_id);
-
-  const apigApi = getManagementApi(context);
-  await Promise.all(
-    connectionIds.map(async (connectionId) => {
-      try {
-        await apigApi
-          .postToConnection({
-            ConnectionId: connectionId,
-            Data: cellUnlockedEventBody,
-          })
-          .promise();
-      } catch (err) {
-        console.error('Could not reach', connectionId);
-      }
-    })
-  );
-};
 
 const _handler: ShallotRawHandler<TUnlockCellEvent> = async ({
   requestContext,
@@ -80,7 +47,11 @@ const _handler: ShallotRawHandler<TUnlockCellEvent> = async ({
     throw new createHttpError.BadRequest('Could not unlock cell');
   }
 
-  await sendCellUnlockedEvent(requestContext, cell);
+  await broadcastToNotebook(requestContext, session.nb_id, {
+    action: 'cell_unlocked',
+    triggered_by: requestContext.authorizer.uid,
+    data: cell,
+  });
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
