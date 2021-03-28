@@ -12,12 +12,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn reinstall:client; yarn install && rm -rf dist && webpack",
+    "build": "yarn reinstall:types; yarn install && rm -rf dist && webpack",
     "test": "jest",
     "postversion": "git push && git push --tags",
-    "reinstall:client": "yarn remove:client; yarn add:client",
-    "remove:client": "yarn remove @actually-colab/editor-types",
-    "add:client": "yarn add --dev file:../types"
+    "reinstall:types": "yarn remove:types; yarn add:types",
+    "remove:types": "yarn remove @actually-colab/editor-types",
+    "add:types": "yarn add --dev file:../types"
   },
   "devDependencies": {
     "@actually-colab/editor-types": "file:../types",

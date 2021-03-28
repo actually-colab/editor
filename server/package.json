@@ -20,7 +20,10 @@
     "deploy": "NODE_OPTIONS=\"--max-old-space-size=4096\" yarn serverless deploy --aws-profile ac-bailey",
     "deploy:domain": "yarn serverless create_domain --aws-profile ac-bailey",
     "deploy:prod": "yarn deploy -s production",
-    "deploy:domain:prod": "yarn deploy:domain -s production"
+    "deploy:domain:prod": "yarn deploy:domain -s production",
+    "reinstall:types": "yarn remove:types; yarn add:types",
+    "remove:types": "yarn remove @actually-colab/editor-types",
+    "add:types": "yarn add --dev file:../types"
   },
   "dependencies": {
     "@shallot/http-error-handler": "^1.0.2",
@@ -31,10 +34,10 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.17",
     "pg": "^8.5.1",
+    "shallot": "^1.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@actually-colab/editor-client": "file:../types",
     "@actually-colab/editor-types": "file:../types",
     "@types/aws-lambda": "^8.10.67",
     "@types/aws-sdk": "^2.7.0",

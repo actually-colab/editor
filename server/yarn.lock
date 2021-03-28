@@ -10,11 +10,8 @@
     d "1"
     es5-ext "^0.10.47"
 
-"@actually-colab/editor-client@file:../types":
-  version "0.0.8"
-
 "@actually-colab/editor-types@file:../types":
-  version "0.0.8"
+  version "0.1.0"
 
 "@babel/code-frame@^7.0.0":
   version "7.12.11"
