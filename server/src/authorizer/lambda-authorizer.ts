@@ -5,8 +5,7 @@ import type {
   APIGatewayTokenAuthorizerEvent,
   APIGatewayRequestAuthorizerEvent,
 } from 'aws-lambda';
-
-import type { DUser } from '../db/pgsql/models/User';
+import { DUser } from '@actually-colab/editor-types';;
 
 import { getUserFromBearerToken } from './token';
 import { ShallotAWS } from 'shallot';

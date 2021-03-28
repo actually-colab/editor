@@ -1,6 +1,5 @@
 import type { Handler, APIGatewayProxyEvent } from 'aws-lambda';
-import type { DUser } from 'db/pgsql/models/User';
-import type { DActiveSession } from '../db/pgsql/models/ActiveSession';
+import { DUser, DActiveSession } from '@actually-colab/editor-types';
 
 import { getUserFromBearerToken } from '../authorizer/token';
 import { connect, disconnect } from '../db/pgsql/models/ActiveSession';

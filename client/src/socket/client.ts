@@ -1,4 +1,4 @@
-import type { DCell, DUser, Notebook } from '../types';
+import type { DCell, DUser, Notebook } from '@actually-colab/editor-types';
 
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';

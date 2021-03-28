@@ -1,20 +1,7 @@
-import type { ModelBase, UTCEpochDateTime } from './ModelBase';
-import type { DUser } from './User';
-import type { DNotebook } from '../../pgsql/models/Notebook';
+import type { DActiveSession } from '@actually-colab/editor-types';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
-
-/**An active socket session for a user. */
-export interface DActiveSession extends ModelBase {
-  /**Session ID from AWS API Gateway */
-  connectionId: string;
-  nb_id?: DNotebook['nb_id'];
-  uid: DUser['uid'];
-  time_connected: UTCEpochDateTime;
-  time_disconnected?: UTCEpochDateTime;
-  last_event?: UTCEpochDateTime;
-}
 
 /**Stores a new session for a user.
  *

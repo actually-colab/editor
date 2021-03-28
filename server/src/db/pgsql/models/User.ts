@@ -1,16 +1,8 @@
-import type { ModelBase, UUID } from './ModelBase';
+import type { DUser } from '@actually-colab/editor-types';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 import { createDemoNotebook } from './Notebook';
-
-/**Actually Colab Database User Object */
-export interface DUser extends ModelBase {
-  /**The user's generated UUID */
-  uid: UUID;
-  name: string;
-  email: string;
-}
 
 /**Creates and returns a new user.
  *

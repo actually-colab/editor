@@ -34,6 +34,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@actually-colab/editor-client": "file:../types",
+    "@actually-colab/editor-types": "file:../types",
     "@types/aws-lambda": "^8.10.67",
     "@types/aws-sdk": "^2.7.0",
     "@types/http-errors": "^1.8.0",
