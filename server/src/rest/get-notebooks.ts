@@ -3,8 +3,7 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { Notebook } from '../db/pgsql/models/Notebook';
-import type { DUser } from 'db/pgsql/models/User';
+import type { Notebook, DUser } from '@actually-colab/editor-types';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';

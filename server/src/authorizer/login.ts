@@ -2,11 +2,12 @@ import type {
   ShallotRawHandler,
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
+import { DUser } from '@actually-colab/editor-types';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import { createUser, DUser, getUser } from '../db/pgsql/models/User';
+import { createUser, getUser } from '../db/pgsql/models/User';
 import { getDevToken, getProdToken, getUserFromSessionToken } from './token';
 import { validateGoogleIdToken } from './google';
 import createHttpError from 'http-errors';

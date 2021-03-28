@@ -1,13 +1,19 @@
-import { createCell, DCell } from '../../db/pgsql/models/Cell';
+import type { DCell } from '@actually-colab/editor-types';
+
+import createHttpError from 'http-errors';
+
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
   WebSocketRequestContext,
 } from '../middleware/wrapper';
 
-import createHttpError from 'http-errors';
-import { getActiveSessions, getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { getManagementApi } from '../client-management';
+import {
+  getActiveSessions,
+  getActiveSessionById,
+} from '../../db/pgsql/models/ActiveSession';
+import { createCell } from '../../db/pgsql/models/Cell';
 
 interface TCreateCellEventBody {
   data: {

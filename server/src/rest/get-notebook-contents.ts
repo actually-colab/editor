@@ -3,16 +3,17 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { DUser } from '../db/pgsql/models/User';
-import { getNotebookContents, NotebookContents } from '../db/pgsql/models/Notebook';
+import type {
+  DUser,
+  NotebookContents,
+  DNotebookAccessLevel,
+} from '@actually-colab/editor-types';
+import { getNotebookContents } from '../db/pgsql/models/Notebook';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import {
-  DNotebookAccessLevel,
-  getUserAccessLevel,
-} from '../db/pgsql/models/NotebookAccessLevel';
+import { getUserAccessLevel } from '../db/pgsql/models/NotebookAccessLevel';
 
 type TEvent = TShallotHttpEvent<
   unknown,

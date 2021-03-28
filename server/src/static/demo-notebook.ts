@@ -1,4 +1,4 @@
-import { DCell } from '../db/pgsql/models/Cell';
+import { DCell } from '@actually-colab/editor-types';
 
 export const DEMO_NOTEBOOK_CELLS: Partial<DCell>[] = [
   {

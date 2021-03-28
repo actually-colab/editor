@@ -1,26 +1,8 @@
-import type { ModelBase, UTCEpochDateTime, UUID } from './ModelBase';
-
-import type { DUser } from './User';
-import type { DNotebook } from './Notebook';
-import type { DActiveSession } from './ActiveSession';
 import type { QueryBuilder } from 'knex';
+import type { DCell, DActiveSession } from '@actually-colab/editor-types';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
-
-/**Model for a notebook cell */
-export interface DCell extends ModelBase {
-  nb_id: DNotebook['nb_id'];
-  lock_held_by?: DUser['uid'] | null;
-  /**The cell's generated UUID */
-  cell_id: UUID;
-  time_modified: UTCEpochDateTime;
-  contents: string;
-  /**Position of the lock-holding-user's cursor in the cell */
-  cursor_pos?: number | null;
-  language: 'python' | 'markdown';
-  position: number;
-}
 
 /**Returns a non-executed Knex query that updates last_event
  * for a user session.

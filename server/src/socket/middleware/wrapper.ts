@@ -1,11 +1,12 @@
-import { ShallotAWSHttpErrorHandler } from '@shallot/http-error-handler';
-import { TShallotErrorHandlerOptions } from '@shallot/http-error-handler/dist/aws';
-import ShallotAWSSocketJsonBodyParser from './custom/json-body-parser';
-import { TShallotJSONBodyParserOptions } from '@shallot/http-json-body-parser/dist/aws';
 import type { APIGatewayProxyEvent, Handler } from 'aws-lambda';
-import type { DUser } from '../../db/pgsql/models/User';
+import type { DUser } from '@actually-colab/editor-types';
 
 import { ShallotAWS } from 'shallot';
+import { ShallotAWSHttpErrorHandler } from '@shallot/http-error-handler';
+import { TShallotErrorHandlerOptions } from '@shallot/http-error-handler/dist/aws';
+import { TShallotJSONBodyParserOptions } from '@shallot/http-json-body-parser/dist/aws';
+
+import ShallotAWSSocketJsonBodyParser from './custom/json-body-parser';
 import ShallotSocketAuthorizer from './custom/authorizer';
 
 export type WebSocketRequestContext = APIGatewayProxyEvent['requestContext'] & {

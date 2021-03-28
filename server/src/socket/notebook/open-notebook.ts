@@ -1,5 +1,4 @@
-import { DNotebook } from '../../db/pgsql/models/Notebook';
-import type { DUser } from '../../db/pgsql/models/User';
+import { DUser, DNotebook } from '@actually-colab/editor-types';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,

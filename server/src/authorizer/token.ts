@@ -1,8 +1,10 @@
-import { DUser, getUserById } from '../db/pgsql/models/User';
+import { DUser, DActiveSession } from '@actually-colab/editor-types';
 
-import jwt from 'jsonwebtoken';
-import { DActiveSession, getActiveSessionById } from '../db/pgsql/models/ActiveSession';
 import createHttpError from 'http-errors';
+import jwt from 'jsonwebtoken';
+
+import { getUserById } from '../db/pgsql/models/User';
+import { getActiveSessionById } from '../db/pgsql/models/ActiveSession';
 
 interface TokenPayload {
   uid: DUser['uid'];

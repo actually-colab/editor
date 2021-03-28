@@ -1,16 +1,20 @@
-import { DCell, editCell } from '../../db/pgsql/models/Cell';
+import type { DCell } from '@actually-colab/editor-types';
+
+import createHttpError from 'http-errors';
+
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
   WebSocketRequestContext,
 } from '../middleware/wrapper';
 
-import createHttpError from 'http-errors';
+import { getManagementApi } from '../client-management';
+
 import {
   getActiveSessions,
   getActiveSessionById,
 } from '../../db/pgsql/models/ActiveSession';
-import { getManagementApi } from '../client-management';
+import { editCell } from '../../db/pgsql/models/Cell';
 
 interface TEditCellEventBody {
   data: {

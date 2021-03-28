@@ -1,3 +1,5 @@
+import { DCell } from '@actually-colab/editor-types';
+
 import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
@@ -8,7 +10,7 @@ import ShallotSocketWrapper, {
 
 import { getManagementApi } from '../client-management';
 
-import { DCell, unlockCell } from '../../db/pgsql/models/Cell';
+import { unlockCell } from '../../db/pgsql/models/Cell';
 import {
   getActiveSessions,
   getActiveSessionById,

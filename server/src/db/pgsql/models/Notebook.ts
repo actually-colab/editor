@@ -1,31 +1,15 @@
-import type { ModelBase, UUID, Json } from './ModelBase';
-
-import type { DUser } from './User';
-import type { DCell } from './Cell';
-
+import type {
+  DUser,
+  DNotebook,
+  Notebook,
+  DCell,
+  NotebookContents,
+} from '@actually-colab/editor-types';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
-import { grantAccessById, NotebookAccessLevel } from './NotebookAccessLevel';
+import { grantAccessById } from './NotebookAccessLevel';
 import { DEMO_NOTEBOOK_CELLS } from '../../../static/demo-notebook';
-
-/**Model for a notebook */
-export interface DNotebook extends ModelBase {
-  /**The notebook's generated id */
-  nb_id: UUID;
-  name: string;
-  language: 'python';
-}
-
-/**Metadata for a Notebook */
-export interface Notebook extends Json, Pick<DNotebook, 'nb_id' | 'name' | 'language'> {
-  users: Array<NotebookAccessLevel>;
-}
-
-/**Metadata with contents for a Notebook */
-export interface NotebookContents extends Notebook {
-  cells: Record<DCell['cell_id'], DCell>;
-}
 
 /**Creates a blank notebook.
  *

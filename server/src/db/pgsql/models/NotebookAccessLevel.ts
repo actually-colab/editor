@@ -1,25 +1,11 @@
-import type { ModelBase } from './ModelBase';
-
-import type { DNotebook } from './Notebook';
-import type { DUser } from './User';
+import type {
+  DUser,
+  DNotebookAccessLevel,
+  NotebookAccessLevel,
+} from '@actually-colab/editor-types';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
-
-/**Enum of access levels for a notebook */
-export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
-
-/**A model for a user's access level to a specific notebook */
-export interface DNotebookAccessLevel extends ModelBase {
-  nb_id: DNotebook['nb_id'];
-  uid: DUser['uid'];
-  access_level: NotebookAccessLevelType;
-}
-
-/**Pair of user, access_level */
-export interface NotebookAccessLevel extends DUser {
-  access_level: NotebookAccessLevelType;
-}
 
 /**Grants access for a specific user to a specific notebook.
  *
