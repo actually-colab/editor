@@ -6,6 +6,7 @@ plugins:
   - serverless-stage-manager
   - serverless-webpack
   - serverless-offline
+  - serverless-domain-manager
 
 provider:
   name: aws
@@ -51,6 +52,24 @@ custom:
     cellsTableName: Cell
     outputsTableName: Output
     activeSessionsTableName: ActiveSession
+  
+  customDomain:
+    rest:
+      domainName: rest.api.actuallycolab.org
+      stage: ${opt:stage,'dev'}
+      basePath: ${opt:stage,'dev'}
+      certificateName: '*.api.actuallycolab.org'
+      createRoute53Record: true
+      endpointType: regional
+      securityPolicy: tls_1_2
+    websocket:
+      domainName: ws.api.actuallycolab.org
+      stage: ${opt:stage,'dev'}
+      basePath: ${opt:stage,'dev'}
+      certificateName: '*.api.actuallycolab.org'
+      createRoute53Record: true
+      endpointType: regional
+      securityPolicy: tls_1_2
 
   serverless-offline:
     stage: ${self:provider.stage}

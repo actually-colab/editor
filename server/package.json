@@ -18,7 +18,9 @@
     "pgsql:up": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml up -d --build",
     "pgsql:down": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml down",
     "deploy": "NODE_OPTIONS=\"--max-old-space-size=4096\" yarn serverless deploy --aws-profile ac-bailey",
-    "deploy:prod": "yarn deploy -s production"
+    "deploy:domain": "yarn serverless create_domain --aws-profile ac-bailey",
+    "deploy:prod": "yarn deploy -s production",
+    "deploy:domain:prod": "yarn deploy:domain -s production"
   },
   "dependencies": {
     "@shallot/http-error-handler": "^1.0.2",
@@ -46,7 +48,8 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.1.2",
-    "serverless": "2.28.0",
+    "serverless": "^2.31.0",
+    "serverless-domain-manager": "^5.1.0",
     "serverless-offline": "^6.1.5",
     "serverless-stage-manager": "^1.0.5",
     "serverless-webpack": "^5.4.0",
