@@ -1,6 +1,9 @@
+import type { DNotebook, Json, DUser } from '@actually-colab/editor-types';
 import type { WebSocketRequestContext } from './connection';
 
 import { ApiGatewayManagementApi } from 'aws-sdk';
+
+import { getActiveSessions } from '../db/pgsql/models/ActiveSession';
 
 export const getManagementApi = (
   context: WebSocketRequestContext
@@ -21,4 +24,36 @@ export const forceDisconnect = async (
   const apigApi = getManagementApi(context);
 
   await apigApi.deleteConnection({ ConnectionId: context.connectionId }).promise();
+};
+
+interface ACSocketEventData extends Json {
+  action: string;
+  triggered_by: DUser['uid'];
+  data: Json;
+}
+
+export const broadcastToNotebook = async (
+  context: WebSocketRequestContext,
+  nb_id: DNotebook['nb_id'],
+  data: ACSocketEventData
+): Promise<void> => {
+  const eventBody = JSON.stringify(data);
+
+  const connectionIds = await getActiveSessions(nb_id);
+
+  const apigApi = getManagementApi(context);
+  await Promise.all(
+    connectionIds.map(async (connectionId) => {
+      try {
+        await apigApi
+          .postToConnection({
+            ConnectionId: connectionId,
+            Data: eventBody,
+          })
+          .promise();
+      } catch (err) {
+        console.error('Could not reach', connectionId);
+      }
+    })
+  );
 };
