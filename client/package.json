@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn reinstall:client; rm -rf dist && webpack",
+    "build": "yarn reinstall:client; yarn install && rm -rf dist && webpack",
     "test": "jest",
     "postversion": "git push && git push --tags",
     "reinstall:client": "yarn remove:client; yarn add:client",
