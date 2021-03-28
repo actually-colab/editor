@@ -12,11 +12,15 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "rm -rf dist && webpack",
+    "build": "yarn reinstall:client; rm -rf dist && webpack",
     "test": "jest",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "reinstall:client": "yarn remove:client; yarn add:client",
+    "remove:client": "yarn remove @actually-colab/editor-types",
+    "add:client": "yarn add --dev file:../types"
   },
   "devDependencies": {
+    "@actually-colab/editor-types": "file:../types",
     "@types/eventemitter3": "^2.0.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^14.14.2",

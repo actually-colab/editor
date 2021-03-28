@@ -1,10 +1,10 @@
 import type {
   DNotebookAccessLevel,
   DUser,
-  LoginData,
   Notebook,
   NotebookContents,
-} from '../types';
+} from '@actually-colab/editor-types';
+import type { LoginData } from '../types';
 
 import axios, { AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
