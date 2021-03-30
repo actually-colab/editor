@@ -19,16 +19,17 @@ export const grantAccessById = async (
   nb_id: DNotebookAccessLevel['nb_id'],
   access_level: DNotebookAccessLevel['access_level']
 ): Promise<NotebookAccessLevel> => {
-  // TODO: simplify with transaction
-  const user: DUser = (
-    await pgsql<DUser>(tablenames.usersTableName).select('*').where({ uid })
-  )[0];
+  return pgsql.transaction(async (trx) => {
+    await trx<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+      .insert({ uid, nb_id, access_level })
+      .returning('*');
 
-  await pgsql<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
-    .insert({ uid, nb_id, access_level })
-    .returning('*');
+    const user: DUser = (
+      await trx<DUser>(tablenames.usersTableName).select('*').where({ uid })
+    )[0];
 
-  return { ...user, access_level };
+    return { ...user, access_level };
+  });
 };
 
 /**Grants access for a specific user to a specific notebook.
