@@ -35,27 +35,25 @@ export const editCell = async (
   cell_id: DCell['cell_id'],
   cell: Partial<DCell>
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        ...cell,
-        time_modified: Date.now(),
-      })
-      .where({
-        cell_id: cell_id,
-        nb_id: nb_id,
-        lock_held_by: session.uid,
-      })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await updateLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
+    const newCell = (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          ...cell,
+          time_modified: Date.now(),
+        })
+        .where({
+          cell_id: cell_id,
+          nb_id: nb_id,
+          lock_held_by: session.uid,
+        })
+        .returning('*')
+    )[0];
 
-  return res[1][0];
+    return newCell;
+  });
 };
 
 /**Creates a new cell.
