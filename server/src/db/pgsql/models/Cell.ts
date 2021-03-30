@@ -91,24 +91,20 @@ export const lockCell = async (
   nb_id: DCell['nb_id'],
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        lock_held_by: session.uid,
-        time_modified: Date.now(),
-      })
-      .whereNull('lock_held_by')
-      .andWhere({ cell_id, nb_id })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await updateLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: session.uid,
+          time_modified: Date.now(),
+        })
+        .whereNull('lock_held_by')
+        .andWhere({ cell_id, nb_id })
+        .returning('*')
+    )[0];
+  });
 };
 
 /**Releases a cell lock for an active user session.
@@ -123,22 +119,18 @@ export const unlockCell = async (
   nb_id: DCell['nb_id'],
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        lock_held_by: null,
-        cursor_pos: null,
-        time_modified: Date.now(),
-      })
-      .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await updateLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: null,
+          cursor_pos: null,
+          time_modified: Date.now(),
+        })
+        .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
+        .returning('*')
+    )[0];
+  });
 };
