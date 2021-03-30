@@ -10,7 +10,7 @@ import tablenames from '../tablenames';
  * @param session The current user session to update
  * @returns a Knex query promise
  */
-export const updateLastEvent = (session: DActiveSession): QueryBuilder =>
+export const recordLastEvent = (session: DActiveSession): QueryBuilder =>
   pgsql<DActiveSession>(tablenames.activeSessionsTableName)
     .update({
       last_event: Date.now(),
@@ -36,7 +36,7 @@ export const editCell = async (
   cell: Partial<DCell>
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await updateLastEvent(session).transacting(trx);
+    await recordLastEvent(session).transacting(trx);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
@@ -65,7 +65,7 @@ export const createCell = async (
   newCell: Partial<DCell>
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await updateLastEvent(session).transacting(trx);
+    await recordLastEvent(session).transacting(trx);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
@@ -92,7 +92,7 @@ export const lockCell = async (
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await updateLastEvent(session).transacting(trx);
+    await recordLastEvent(session).transacting(trx);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
@@ -120,7 +120,7 @@ export const unlockCell = async (
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await updateLastEvent(session).transacting(trx);
+    await recordLastEvent(session).transacting(trx);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
