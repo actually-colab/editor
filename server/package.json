@@ -1,7 +1,7 @@
 {
   "name": "@actually-colab/editor-server",
-  "version": "0.0.1",
-  "description": "Socket.io server for a synced editor component",
+  "version": "0.1.0",
+  "description": "WebSocket server for a synced editor component",
   "license": "MIT",
   "keywords": [
     "typescript",
