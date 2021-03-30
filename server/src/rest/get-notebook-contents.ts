@@ -14,6 +14,7 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { getUserAccessLevel } from '../db/pgsql/models/NotebookAccessLevel';
+import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 
 type TEvent = TShallotHttpEvent<
   unknown,
@@ -51,10 +52,8 @@ const _handler: ShallotRawHandler<TEvent, NotebookContents> = async ({
   return { message: 'success', data: notebook };
 };
 
-export const handler = ShallotAWSRestWrapper(_handler, undefined, {
-  HttpErrorHandlerOpts: { catchAllErrors: true },
-  HttpCorsOpts: {
-    allowHeaders: 'Authorization',
-    allowedOrigins: ['http://localhost:4000', 'https://app.actuallycolab.org'],
-  },
-});
+export const handler = ShallotAWSRestWrapper(
+  _handler,
+  undefined,
+  AC_REST_MIDDLEWARE_OPTS
+);

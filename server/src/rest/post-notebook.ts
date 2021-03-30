@@ -9,6 +9,7 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import { createNotebook } from '../db/pgsql/models/Notebook';
+import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 
 interface RNotebook {
   name: string;
@@ -37,10 +38,8 @@ const _handler: ShallotRawHandler<TEvent, Notebook> = async ({
   return { message: 'success', data: notebook };
 };
 
-export const handler = ShallotAWSRestWrapper(_handler, undefined, {
-  HttpErrorHandlerOpts: { catchAllErrors: true },
-  HttpCorsOpts: {
-    allowHeaders: 'Authorization',
-    allowedOrigins: ['http://localhost:4000', 'https://app.actuallycolab.org'],
-  },
-});
+export const handler = ShallotAWSRestWrapper(
+  _handler,
+  undefined,
+  AC_REST_MIDDLEWARE_OPTS
+);
