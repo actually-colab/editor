@@ -44,16 +44,17 @@ export const grantAccessByEmail = async (
   nb_id: DNotebookAccessLevel['nb_id'],
   access_level: DNotebookAccessLevel['access_level']
 ): Promise<NotebookAccessLevel> => {
-  // TODO: simplify with transaction
-  const user: DUser = (
-    await pgsql<DUser>(tablenames.usersTableName).select('*').where({ email })
-  )[0];
+  return pgsql.transaction(async (trx) => {
+    const user: DUser = (
+      await trx<DUser>(tablenames.usersTableName).select('*').where({ email })
+    )[0];
 
-  await pgsql<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
-    .insert({ uid: user.uid, nb_id, access_level })
-    .returning('*');
+    await trx<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+      .insert({ uid: user.uid, nb_id, access_level })
+      .returning('*');
 
-  return { ...user, access_level };
+    return { ...user, access_level };
+  });
 };
 
 /**Queries a user's access level to a specific notebook.
