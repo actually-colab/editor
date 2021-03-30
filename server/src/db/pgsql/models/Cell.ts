@@ -38,7 +38,7 @@ export const editCell = async (
   return pgsql.transaction(async (trx) => {
     await updateLastEvent(session).transacting(trx);
 
-    const newCell = (
+    return (
       await trx<DCell>(tablenames.cellsTableName)
         .update({
           ...cell,
@@ -51,8 +51,6 @@ export const editCell = async (
         })
         .returning('*')
     )[0];
-
-    return newCell;
   });
 };
 
@@ -66,23 +64,19 @@ export const createCell = async (
   session: DActiveSession,
   newCell: Partial<DCell>
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .insert({
-        contents: '',
-        ...newCell,
-        time_modified: Date.now(),
-      })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await updateLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .insert({
+          contents: '',
+          ...newCell,
+          time_modified: Date.now(),
+        })
+        .returning('*')
+    )[0];
+  });
 };
 
 /**Acquires a cell lock for an active user session.
