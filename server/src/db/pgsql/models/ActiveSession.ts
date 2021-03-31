@@ -1,4 +1,4 @@
-import type { DActiveSession } from '@actually-colab/editor-types';
+import type { DActiveSession, DCell } from '@actually-colab/editor-types';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
@@ -15,18 +15,39 @@ export const connect = async (newSession: DActiveSession): Promise<void> => {
  *
  * @param connectionId Session connection ID that is disconnected.
  * @param time_disconnected epoch time
+ *
+ * @returns notebook sessions the user is now disconnected from
  */
 export const disconnect = async (
   connectionId: DActiveSession['connectionId'],
   time_disconnected: DActiveSession['time_disconnected']
-): Promise<void> => {
-  await pgsql<DActiveSession>(tablenames.activeSessionsTableName)
-    .update({
-      time_disconnected,
-      last_event: time_disconnected,
-    })
-    .whereNull('time_disconnected')
-    .andWhere({ connectionId });
+): Promise<Required<DActiveSession>[]> => {
+  return pgsql.transaction(async (trx) => {
+    const sessions = await trx<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        time_disconnected,
+        last_event: time_disconnected,
+      })
+      .whereNull('time_disconnected')
+      .andWhere({ connectionId })
+      .returning('*');
+
+    if (sessions.length > 0) {
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: null,
+          cursor_pos: null,
+          time_modified: Date.now(),
+        })
+        .where({
+          lock_held_by: sessions[0].uid,
+        });
+    }
+
+    return sessions.filter(
+      (session): session is Required<DActiveSession> => session.nb_id != null
+    );
+  });
 };
 
 /**Queries for an active user session by connection ID.

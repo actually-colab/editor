@@ -3,7 +3,7 @@ import { DUser, DActiveSession } from '@actually-colab/editor-types';
 
 import { getUserFromBearerToken } from '../authorizer/token';
 import { connect, disconnect } from '../db/pgsql/models/ActiveSession';
-import { forceDisconnect } from './client-management';
+import { broadcastToNotebook, forceDisconnect } from './client-management';
 
 const SocketEventTypes = Object.freeze({
   Connect: 'CONNECT',
@@ -68,9 +68,19 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
       return success;
     }
     case SocketEventTypes.Disconnect: {
-      await disconnect(
+      const sessions = await disconnect(
         event.requestContext.connectionId,
         event.requestContext.requestTimeEpoch
+      );
+
+      await Promise.all(
+        sessions.map((session) =>
+          broadcastToNotebook(event.requestContext, session.nb_id, {
+            action: 'notebook_closed',
+            triggered_by: session.uid,
+            data: { nb_id: session.nb_id },
+          })
+        )
       );
 
       return success;
