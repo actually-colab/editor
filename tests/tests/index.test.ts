@@ -1,9 +1,9 @@
 import { test, describe, expect } from '@jest/globals';
 
+import { DUser } from '@actually-colab/editor-types';
 import {
   ActuallyColabRESTClient,
   ActuallyColabSocketClient,
-  DUser,
 } from '@actually-colab/editor-client';
 
 function sleep(ms: number): Promise<void> {
