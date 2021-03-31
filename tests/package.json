@@ -8,6 +8,7 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@actually-colab/editor-types": "file:../types",
     "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31",
@@ -30,6 +31,11 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "reinstall:client": "yarn remove:types; yarn remove:client; yarn add:client; yarn add:types",
+    "remove:types": "yarn remove @actually-colab/editor-types",
+    "add:types": "yarn add --dev file:../types",
+    "remove:client": "yarn remove @actually-colab/editor-client",
+    "add:client": "yarn add file:../client"
   }
 }

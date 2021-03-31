@@ -5,7 +5,7 @@ import type {
   APIGatewayTokenAuthorizerEvent,
   APIGatewayRequestAuthorizerEvent,
 } from 'aws-lambda';
-import { DUser } from '@actually-colab/editor-types';;
+import { DUser } from '@actually-colab/editor-types';
 
 import { getUserFromBearerToken } from './token';
 import { ShallotAWS } from 'shallot';
@@ -43,7 +43,7 @@ const authorize = async (methodArn: string, token?: string) => {
       const user = await getUserFromBearerToken(token);
 
       if (user !== null) {
-        return generatePolicy(user.email, methodArn, 'Allow', user);
+        return generatePolicy(user.uid, methodArn, 'Allow', user);
       }
     } catch (error) {
       console.error(error);

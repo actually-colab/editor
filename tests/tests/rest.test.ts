@@ -3,11 +3,8 @@ import { test, describe, expect } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 
-import {
-  ActuallyColabRESTClient,
-  DUser,
-  NotebookAccessLevelType,
-} from '@actually-colab/editor-client';
+import { DUser, NotebookAccessLevelType } from '@actually-colab/editor-types';
+import { ActuallyColabRESTClient } from '@actually-colab/editor-client';
 
 const getTestUser = async (): Promise<{
   apiClient: ActuallyColabRESTClient;

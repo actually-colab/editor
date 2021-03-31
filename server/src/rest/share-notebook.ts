@@ -12,6 +12,7 @@ import {
   getUserAccessLevel,
   grantAccessByEmail,
 } from '../db/pgsql/models/NotebookAccessLevel';
+import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 
 interface RShareNotebook {
   email: DUser['email'];
@@ -68,10 +69,8 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
   return { message: 'success' };
 };
 
-export const handler = ShallotAWSRestWrapper(_handler, undefined, {
-  HttpErrorHandlerOpts: { catchAllErrors: true },
-  HttpCorsOpts: {
-    allowHeaders: 'Authorization',
-    allowedOrigins: ['http://localhost:4000', 'https://app.actuallycolab.org'],
-  },
-});
+export const handler = ShallotAWSRestWrapper(
+  _handler,
+  undefined,
+  AC_REST_MIDDLEWARE_OPTS
+);

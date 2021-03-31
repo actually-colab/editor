@@ -10,7 +10,7 @@ import tablenames from '../tablenames';
  * @param session The current user session to update
  * @returns a Knex query promise
  */
-export const updateLastEvent = (session: DActiveSession): QueryBuilder =>
+export const recordLastEvent = (session: DActiveSession): QueryBuilder =>
   pgsql<DActiveSession>(tablenames.activeSessionsTableName)
     .update({
       last_event: Date.now(),
@@ -35,27 +35,23 @@ export const editCell = async (
   cell_id: DCell['cell_id'],
   cell: Partial<DCell>
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        ...cell,
-        time_modified: Date.now(),
-      })
-      .where({
-        cell_id: cell_id,
-        nb_id: nb_id,
-        lock_held_by: session.uid,
-      })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await recordLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          ...cell,
+          time_modified: Date.now(),
+        })
+        .where({
+          cell_id: cell_id,
+          nb_id: nb_id,
+          lock_held_by: session.uid,
+        })
+        .returning('*')
+    )[0];
+  });
 };
 
 /**Creates a new cell.
@@ -68,23 +64,19 @@ export const createCell = async (
   session: DActiveSession,
   newCell: Partial<DCell>
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .insert({
-        contents: '',
-        ...newCell,
-        time_modified: Date.now(),
-      })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await recordLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .insert({
+          contents: '',
+          ...newCell,
+          time_modified: Date.now(),
+        })
+        .returning('*')
+    )[0];
+  });
 };
 
 /**Acquires a cell lock for an active user session.
@@ -99,24 +91,20 @@ export const lockCell = async (
   nb_id: DCell['nb_id'],
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        lock_held_by: session.uid,
-        time_modified: Date.now(),
-      })
-      .whereNull('lock_held_by')
-      .andWhere({ cell_id, nb_id })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await recordLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: session.uid,
+          time_modified: Date.now(),
+        })
+        .whereNull('lock_held_by')
+        .andWhere({ cell_id, nb_id })
+        .returning('*')
+    )[0];
+  });
 };
 
 /**Releases a cell lock for an active user session.
@@ -131,22 +119,18 @@ export const unlockCell = async (
   nb_id: DCell['nb_id'],
   cell_id: DCell['cell_id']
 ): Promise<DCell | null> => {
-  const promises: [unknown, Promise<DCell[] | null>] = [
-    updateLastEvent(session),
-    pgsql<DCell>(tablenames.cellsTableName)
-      .update({
-        lock_held_by: null,
-        cursor_pos: null,
-        time_modified: Date.now(),
-      })
-      .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
-      .returning('*'),
-  ];
-  const res = await Promise.all(promises);
+  return pgsql.transaction(async (trx) => {
+    await recordLastEvent(session).transacting(trx);
 
-  if (res[1] == null || res[1].length === 0) {
-    return null;
-  }
-
-  return res[1][0];
+    return (
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: null,
+          cursor_pos: null,
+          time_modified: Date.now(),
+        })
+        .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
+        .returning('*')
+    )[0];
+  });
 };
