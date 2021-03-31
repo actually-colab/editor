@@ -16,6 +16,10 @@ interface SocketMessageListeners {
     user: DUser,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
+  notebook_closed: (
+    nb_id: Notebook['nb_id'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
   cell_created: (
     cell: DCell,
@@ -82,6 +86,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const user: DUser = eventData.data as any;
             this.emit('notebook_opened', user, eventData.triggered_by);
+            break;
+          }
+          case 'notebook_closed': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const notebook: { nb_id: Notebook['nb_id'] } = eventData.data as any;
+            this.emit('notebook_closed', notebook.nb_id, eventData.triggered_by);
             break;
           }
           case 'cell_created': {
