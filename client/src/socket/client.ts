@@ -128,6 +128,13 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   };
 
   /**
+   * Disconnects from server, but does not remove event listeners.
+   */
+  public close = (): void => {
+    this.socketClient.close();
+  };
+
+  /**
    * Aborts all in-flight requests, removes all event listeners,
    * and closes the connection to the Actually Colab Socket API.
    */
