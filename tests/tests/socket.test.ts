@@ -18,9 +18,17 @@ const getTestUser = async (): Promise<{
     `${uuid()}@test.actuallycolab.org`,
     'Test User'
   );
+
   const socketClient = new ActuallyColabSocketClient(
     'ws://localhost:3001/dev',
     sessionToken
+  );
+  socketClient.on('connect', jest.fn());
+  socketClient.on(
+    'error',
+    jest.fn((error) => {
+      throw error;
+    })
   );
 
   return { apiClient, socketClient, user };
@@ -29,16 +37,7 @@ const getTestUser = async (): Promise<{
 describe('Connection', () => {
   test('Open and Close Notebook', async (done) => {
     const mainUser = await getTestUser();
-    const errorListener = jest.fn((...args) => {
-      console.error(args);
-      throw new Error();
-    });
-    mainUser.socketClient.on('connect', jest.fn());
-    mainUser.socketClient.on('error', errorListener);
-
     const otherUser = await getTestUser();
-    otherUser.socketClient.on('connect', jest.fn());
-    otherUser.socketClient.on('error', errorListener);
 
     const notebook = await mainUser.apiClient.createNotebook('Test Notebook');
     await mainUser.apiClient.shareNotebook(
@@ -83,7 +82,8 @@ describe('Connection', () => {
         // Cleanup
         otherUser.socketClient.close();
 
-        expect(errorListener).not.toHaveBeenCalled();
+        expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+        expect(otherUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
         expect(otherUser.socketClient.listeners('connect')[0]).toHaveBeenCalledTimes(1);
         expect(mainUser.socketClient.listeners('connect')[0]).toHaveBeenCalledTimes(1);
 
