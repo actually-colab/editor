@@ -10,7 +10,7 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "baseUrl": "src",
+    "baseUrl": "src"
   },
   "include": ["src"]
 }

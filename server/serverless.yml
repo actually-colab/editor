@@ -12,7 +12,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   stage: ${opt:stage,'dev'}
-  region: us-east-1  
+  region: us-east-1
 
   logs:
     restApi: true
@@ -52,7 +52,7 @@ custom:
     cellsTableName: Cell
     outputsTableName: Output
     activeSessionsTableName: ActiveSession
-  
+
   customDomain:
     rest:
       domainName: rest.api.actuallycolab.org
@@ -77,14 +77,14 @@ custom:
   webpack:
     webpackConfig: 'webpack.config.ts'
     packager: 'yarn'
-    includeModules: 
+    includeModules:
       forceInclude:
-        - pg 
+        - pg
       forceExclude:
         - aws-sdk
     packagerOptions:
       noFrozenLockfile: true
-    
+
   restCorsPolicy:
     origins:
       - 'http://localhost:4000'
@@ -97,7 +97,7 @@ custom:
       - X-Amz-Security-Token
       - X-Amz-User-Agent
     allowCredentials: false
-    
+
   restAuthorizerConfig:
     name: rest-authorizer
     identitySource: method.request.header.Authorization
@@ -126,7 +126,7 @@ functions:
     events:
       - http:
           path: /login
-          method: post 
+          method: post
           cors: ${self:custom.restCorsPolicy}
 
   GET-notebooks:
@@ -164,7 +164,7 @@ functions:
           method: post
           cors: ${self:custom.restCorsPolicy}
           authorizer: ${self:custom.restAuthorizerConfig}
-  
+
   socket-connection:
     handler: src/socket/connection.handler
 
@@ -174,7 +174,7 @@ functions:
           authorizer:
             name: socket-authorizer
             identitySource: route.request.querystring.sessionToken
-          
+
       - websocket:
           route: $disconnect
       - websocket:

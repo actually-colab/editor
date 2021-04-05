@@ -37,7 +37,10 @@ const generatePolicy = (
   return res;
 };
 
-const authorize = async (methodArn: string, token?: string) => {
+const authorize = async (
+  methodArn: string,
+  token?: string
+): Promise<APIGatewayAuthorizerWithContextResult<DUser> | APIGatewayAuthorizerResult> => {
   if (token != null) {
     try {
       const user = await getUserFromBearerToken(token);

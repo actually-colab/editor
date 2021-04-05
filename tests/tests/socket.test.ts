@@ -1,5 +1,6 @@
 import type { DCell, DUser } from '@actually-colab/editor-types';
 
+import 'ts-jest';
 import { test, describe, expect } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 

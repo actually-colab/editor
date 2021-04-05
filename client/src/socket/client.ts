@@ -66,19 +66,19 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   }
 
   private initSocketEventListeners = (): void => {
-    this.socketClient.onopen = () => {
+    this.socketClient.onopen = (): void => {
       this.emit('connect');
     };
 
-    this.socketClient.onclose = (event) => {
+    this.socketClient.onclose = (event): void => {
       this.emit('close', event);
     };
 
-    this.socketClient.onerror = (error) => {
+    this.socketClient.onerror = (error): void => {
       this.emit('error', error);
     };
 
-    this.socketClient.onmessage = (message) => {
+    this.socketClient.onmessage = (message): void => {
       if (typeof message.data === 'string') {
         const eventData: ActuallyColabEventData = JSON.parse(message.data);
         switch (eventData.action) {
