@@ -26,6 +26,7 @@ const ShallotAWSSocketJsonBodyParser: ShallotMiddlewareWithOptions<
   any,
   TShallotJSONBodyParserOptions
 > = (config) => ({
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   before: async (request) => {
     try {
       if (request.event.body == null) throw new Error();

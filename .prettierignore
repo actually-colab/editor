@@ -1,0 +1,10 @@
+**/node_modules
+**/coverage
+**/.*ignore
+**/yarn*
+**/dist
+**/build
+**/.github
+**/.webpack
+**/.serverless
+**/.husky

@@ -15,6 +15,7 @@ const ShallotSocketAuthorizer: ShallotMiddlewareWithOptions<
   APIGatewayWebSocketEvent,
   APIGatewayProxyResult
 > = () => ({
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   before: async ({ event }) => {
     if (event.requestContext.connectionId == null) {
       throw new HttpError.Unauthorized();
