@@ -7,3 +7,4 @@
 **/.github
 **/.webpack
 **/.serverless
+**/.husky
