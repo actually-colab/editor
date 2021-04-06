@@ -13,8 +13,9 @@ export interface DActiveSession extends ModelBase {
 export interface DUser extends ModelBase {
   /**The user's generated UUID */
   uid: UUID;
-  name: string;
+  name?: string;
   email: string;
+  image_url?: string;
 }
 
 /**Model for a notebook cell */
