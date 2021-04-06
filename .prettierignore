@@ -8,3 +8,4 @@
 **/.webpack
 **/.serverless
 **/.husky
+**/*.sql

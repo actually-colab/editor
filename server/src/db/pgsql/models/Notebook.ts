@@ -5,11 +5,29 @@ import type {
   DCell,
   NotebookContents,
 } from '@actually-colab/editor-types';
+
+import { QueryBuilder } from 'knex';
+
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
 import { grantAccessById } from './NotebookAccessLevel';
 import { DEMO_NOTEBOOK_CELLS } from '../../../static/demo-notebook';
+
+/**Returns a non-executed Knex query that updates time_modified
+ * for a notebook.
+ *
+ * @param nb_id The notebook to update
+ * @returns a Knex query promise
+ */
+export const recordTimeModified = (nb_id: DNotebook['nb_id']): QueryBuilder =>
+  pgsql<DNotebook>(tablenames.notebooksTableName)
+    .update({
+      time_modified: Date.now(),
+    })
+    .where({
+      nb_id,
+    });
 
 /**Creates a blank notebook.
  *
@@ -23,7 +41,9 @@ export const createNotebook = async (
 ): Promise<Notebook> => {
   // TODO: Use a transaction
   const notebookRecord: DNotebook = (
-    await pgsql<DNotebook>(tablenames.notebooksTableName).insert(notebook).returning('*')
+    await pgsql<DNotebook>(tablenames.notebooksTableName)
+      .insert({ ...notebook, time_modified: Date.now() })
+      .returning('*')
   )[0];
 
   const accessLevel = await grantAccessById(uid, notebookRecord.nb_id, 'Full Access');
@@ -152,7 +172,7 @@ export const getNotebookContents = async (
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
     .where({ 'nb.nb_id': nb_id })
-    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells');
+    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
 
   if (notebooks.length === 0) {
     return null;

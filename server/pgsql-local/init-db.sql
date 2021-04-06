@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS "User" (
 CREATE TABLE IF NOT EXISTS "Notebook" (
   nb_id UUID DEFAULT uuid_generate_v4()  PRIMARY KEY,
   name VARCHAR(256),
+  time_modified BIGINT,
   language VARCHAR(256)
 );
 
