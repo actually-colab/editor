@@ -170,7 +170,8 @@ export const getNotebookContents = async (
         json_build_object(
           'uid', u.uid, 
           'email', u.email, 
-          'name', u.name, 
+          'name', u.name,
+          'image_url', u.image_url,
           'access_level', nba.access_level
         )
       ) AS users`)
