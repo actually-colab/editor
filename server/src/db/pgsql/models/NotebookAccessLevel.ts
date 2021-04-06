@@ -22,6 +22,8 @@ export const grantAccessById = async (
   return pgsql.transaction(async (trx) => {
     await trx<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
       .insert({ uid, nb_id, access_level })
+      .onConflict(['nb_id', 'uid'])
+      .merge()
       .returning('*');
 
     const user: DUser = (
@@ -51,6 +53,8 @@ export const grantAccessByEmail = async (
 
     await trx<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
       .insert({ uid: user.uid, nb_id, access_level })
+      .onConflict(['nb_id', 'uid'])
+      .merge()
       .returning('*');
 
     return { ...user, access_level };
