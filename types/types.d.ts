@@ -41,7 +41,9 @@ export interface DNotebook extends ModelBase {
 }
 
 /**Metadata for a Notebook */
-export interface Notebook extends Json, Pick<DNotebook, 'nb_id' | 'name' | 'language'> {
+export interface Notebook
+  extends Json,
+    Pick<DNotebook, 'nb_id' | 'name' | 'language' | 'time_modified'> {
   users: Array<NotebookAccessLevel>;
 }
 
