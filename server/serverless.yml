@@ -214,3 +214,10 @@ functions:
     events:
       - websocket:
           route: unlock_cell
+
+  socket-update-output:
+    handler: src/socket/cell/update-output.handler
+
+    events:
+      - websocket:
+          route: update_output

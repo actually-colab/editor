@@ -1,4 +1,4 @@
-import type { DCell, DUser, Notebook } from '@actually-colab/editor-types';
+import type { DCell, DUser, Notebook, OOutput } from '@actually-colab/editor-types';
 
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
@@ -35,6 +35,11 @@ interface SocketMessageListeners {
   ) => void;
   cell_edited: (
     cell: DCell,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  output_updated: (
+    output: OOutput,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 }
@@ -116,6 +121,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
             this.emit('cell_unlocked', cell, eventData.triggered_by);
+            break;
+          }
+          case 'output_updated': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const output: OOutput = eventData.data as any;
+            this.emit('output_updated', output, eventData.triggered_by);
             break;
           }
           default:
@@ -213,4 +224,19 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     1000,
     { maxWait: 5000 }
   );
+
+  /**
+   * Acquires a cell lock for editing.
+   *
+   * @param nb_id Notebook to create cell in.
+   * @param cell_id Cell to edit.
+   */
+  public updateOutput = (
+    nb_id: OOutput['nb_id'],
+    cell_id: OOutput['cell_id'],
+    output: OOutput['output'],
+    run_index: OOutput['run_index'] = 0
+  ): void => {
+    this.sendEvent('update_output', { nb_id, cell_id, output, run_index });
+  };
 }

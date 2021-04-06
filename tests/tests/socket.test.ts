@@ -259,4 +259,107 @@ describe('Collaboration', () => {
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
   }, 5000);
+
+  test('Live Outputs', async (done) => {
+    const mainUser = await getTestUser();
+    const otherUser = await getTestUser();
+
+    const notebook = await mainUser.apiClient.createNotebook('Test Notebook');
+    await mainUser.apiClient.shareNotebook(
+      otherUser.user.email,
+      notebook.nb_id,
+      'Read Only'
+    );
+
+    const expectedOutput = {
+      output: 'Test output',
+      nb_id: notebook.nb_id,
+      run_index: 0,
+      uid: mainUser.user.uid,
+    };
+
+    mainUser.socketClient.on('notebook_opened', jest.fn());
+    otherUser.socketClient.on(
+      'notebook_opened',
+      jest.fn((_, res_triggered_by) => {
+        if (res_triggered_by === otherUser.user.uid) {
+          // Now that otherUser has notebook opened, open notebook for mainUser
+          mainUser.socketClient.openNotebook(notebook.nb_id);
+        } else {
+          // Now that mainUser has opened notebook, make edit
+          mainUser.socketClient.createCell(notebook.nb_id, 'python');
+        }
+      })
+    );
+
+    mainUser.socketClient.on(
+      'cell_created',
+      jest.fn((cell, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+        expect(cell.language).toEqual('python');
+
+        mainUser.socketClient.updateOutput(
+          cell.nb_id,
+          cell.cell_id,
+          expectedOutput.output
+        );
+      })
+    );
+    otherUser.socketClient.on(
+      'cell_created',
+      jest.fn((_, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+      })
+    );
+
+    mainUser.socketClient.on(
+      'output_updated',
+      jest.fn((output, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+        expect(output).toMatchObject(expectedOutput);
+
+        mainUser.socketClient.close();
+      })
+    );
+    otherUser.socketClient.on(
+      'output_updated',
+      jest.fn((output, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+        expect(output).toMatchObject(expectedOutput);
+      })
+    );
+
+    otherUser.socketClient.on(
+      'notebook_closed',
+      jest.fn((res_nb_id, res_triggered_by) => {
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+
+        // Cleanup
+        otherUser.socketClient.close();
+
+        expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+        expect(otherUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+
+        expect(mainUser.socketClient.listeners('cell_created')[0]).toHaveBeenCalledTimes(
+          1
+        );
+        expect(otherUser.socketClient.listeners('cell_created')[0]).toHaveBeenCalledTimes(
+          1
+        );
+
+        expect(
+          mainUser.socketClient.listeners('output_updated')[0]
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          otherUser.socketClient.listeners('output_updated')[0]
+        ).toHaveBeenCalledTimes(1);
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        done!();
+      })
+    );
+
+    otherUser.socketClient.openNotebook(notebook.nb_id);
+  }, 5000);
 });
