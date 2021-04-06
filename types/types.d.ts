@@ -37,6 +37,7 @@ export interface DNotebook extends ModelBase {
   nb_id: UUID;
   name: string;
   language: 'python';
+  time_modified: UTCEpochDateTime;
 }
 
 /**Metadata for a Notebook */

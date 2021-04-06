@@ -4,6 +4,8 @@ import type { DCell, DActiveSession } from '@actually-colab/editor-types';
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
+import { recordTimeModified } from './Notebook';
+
 /**Returns a non-executed Knex query that updates last_event
  * for a user session.
  *
@@ -36,7 +38,10 @@ export const editCell = async (
   cell: Partial<DCell>
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await recordLastEvent(session).transacting(trx);
+    await Promise.all([
+      recordLastEvent(session).transacting(trx),
+      recordTimeModified(nb_id).transacting(trx),
+    ]);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
@@ -62,10 +67,13 @@ export const editCell = async (
  */
 export const createCell = async (
   session: DActiveSession,
-  newCell: Partial<DCell>
+  newCell: Partial<DCell> & Pick<DCell, 'nb_id'>
 ): Promise<DCell | null> => {
   return pgsql.transaction(async (trx) => {
-    await recordLastEvent(session).transacting(trx);
+    await Promise.all([
+      recordLastEvent(session).transacting(trx),
+      recordTimeModified(newCell.nb_id).transacting(trx),
+    ]);
 
     return (
       await trx<DCell>(tablenames.cellsTableName)
