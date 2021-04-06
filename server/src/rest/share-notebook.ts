@@ -3,7 +3,7 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { DNotebookAccessLevel, DUser } from '@actually-colab/editor-types';
+import type { DNotebookAccessLevel, DUser, Notebook } from '@actually-colab/editor-types';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
@@ -13,6 +13,7 @@ import {
   grantAccessByEmail,
 } from '../db/pgsql/models/NotebookAccessLevel';
 import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
+import { getNotebookMeta } from '../db/pgsql/models/Notebook';
 
 interface RShareNotebook {
   email: DUser['email'];
@@ -26,7 +27,7 @@ type TEvent = TShallotHttpEvent<
   RShareNotebook
 >;
 
-const _handler: ShallotRawHandler<TEvent, never> = async ({
+const _handler: ShallotRawHandler<TEvent, Notebook> = async ({
   requestContext: { authorizer },
   pathParameters,
   body,
@@ -66,7 +67,7 @@ const _handler: ShallotRawHandler<TEvent, never> = async ({
 
   // TODO: Send an email to the user https://github.com/actually-colab/editor/issues/27
 
-  return { message: 'success' };
+  return { message: 'success', data: await getNotebookMeta(pathParameters.nb_id) };
 };
 
 export const handler = ShallotAWSRestWrapper(

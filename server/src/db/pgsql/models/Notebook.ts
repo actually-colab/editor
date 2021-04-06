@@ -121,6 +121,38 @@ export const getNotebooksForUser = async (uid: DUser['uid']): Promise<Notebook[]
     .groupBy('nb.nb_id');
 };
 
+/**Queries metadata for a specific notebook.
+ *
+ * @param nb_id the notebook to query
+ * @returns the notebook metadata
+ */
+export const getNotebookMeta = async (nb_id: DNotebook['nb_id']): Promise<Notebook> => {
+  return (
+    await pgsql
+      .select(
+        'nb.*',
+        pgsql.raw(`json_agg(
+      json_build_object(
+        'uid', u.uid, 
+        'email', u.email, 
+        'name', u.name, 
+        'access_level', nba.access_level
+      )
+    ) AS users`)
+      )
+      .from({ nb: tablenames.notebooksTableName })
+      .innerJoin(
+        { nba: tablenames.notebookAccessLevelsTableName },
+        'nba.nb_id',
+        '=',
+        'nb.nb_id'
+      )
+      .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+      .where({ 'nb.nb_id': nb_id })
+      .groupBy('nb.nb_id')
+  )[0];
+};
+
 /**Queries the contents of a specific notebook.
  *
  * @param uid the user to query for

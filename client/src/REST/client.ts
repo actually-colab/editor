@@ -132,7 +132,9 @@ export class ActuallyColabRESTClient {
     email: DUser['email'],
     nb_id: DNotebookAccessLevel['nb_id'],
     access_level: DNotebookAccessLevel['access_level']
-  ): Promise<void> => {
-    await this.axiosInstance.post(`/notebook/${nb_id}/share`, { email, access_level });
+  ): Promise<Notebook> => {
+    return (
+      await this.axiosInstance.post(`/notebook/${nb_id}/share`, { email, access_level })
+    ).data.data;
   };
 }
