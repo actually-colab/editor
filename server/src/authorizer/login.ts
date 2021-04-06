@@ -48,7 +48,11 @@ const getOrCreateGoogleAuthUser = async (
   let user = await getUser(email);
 
   if (user == null) {
-    user = await createUser({ email, name: googleAuthInfo.name });
+    user = await createUser({
+      email,
+      name: googleAuthInfo.name,
+      image_url: googleAuthInfo.image_url,
+    });
 
     if (user == null) {
       throw new createHTTPError.InternalServerError('Could not create user');

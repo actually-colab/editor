@@ -34,9 +34,9 @@ export const validateGoogleIdToken = async (
 ): Promise<{
   googleUID: string;
   email: string;
-  email_verified: boolean;
   name?: string;
-} | null> => {
+  image_url?: string;
+}> => {
   let ticket: LoginTicket | null = null;
   try {
     ticket = await client.verifyIdToken({
@@ -49,7 +49,11 @@ export const validateGoogleIdToken = async (
 
   const payload = ticket?.getPayload();
   if (payload == null || payload.email == null) {
-    return null;
+    throw new createHttpError.BadRequest('Could not get user');
+  }
+
+  if (!payload.email_verified) {
+    throw new createHttpError.Forbidden('Google account not verified');
   }
 
   if (!process.env.IS_OFFLINE && !isIllinoisEmail(payload.email)) {
@@ -59,7 +63,7 @@ export const validateGoogleIdToken = async (
   return {
     googleUID: payload.sub,
     email: payload.email,
-    email_verified: payload.email_verified ?? false,
     name: payload.name,
+    image_url: payload.picture,
   };
 };

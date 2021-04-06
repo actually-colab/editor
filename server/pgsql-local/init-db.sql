@@ -3,7 +3,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS "User" (
   uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   email VARCHAR(256) UNIQUE,
-  name VARCHAR(256)
+  name VARCHAR(256),
+  image_url VARCHAR(2048)
 );
 
 CREATE TABLE IF NOT EXISTS "Notebook" (
