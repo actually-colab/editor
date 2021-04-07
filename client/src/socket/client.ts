@@ -232,10 +232,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   );
 
   /**
-   * Acquires a cell lock for editing.
+   * Sends a compressed output for a cell to be shared with users in the notebook.
    *
-   * @param nb_id Notebook to create cell in.
-   * @param cell_id Cell to edit.
+   * @param nb_id Notebook to update
+   * @param cell_id Cell to update
+   * @param output Content to share
+   * @param run_index numeric index of output
    */
   public updateOutput = (
     nb_id: OOutput['nb_id'],
