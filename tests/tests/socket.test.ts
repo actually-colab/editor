@@ -272,7 +272,7 @@ describe('Collaboration', () => {
     );
 
     const expectedOutput = {
-      output: 'Test output',
+      output: 'Test output test output test output',
       nb_id: notebook.nb_id,
       run_index: 0,
       uid: mainUser.user.uid,

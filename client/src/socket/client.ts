@@ -5,6 +5,8 @@ import EventEmitter from 'eventemitter3';
 
 import debounce from 'lodash.debounce';
 
+import { compress, decompress } from '../compression';
+
 interface SocketConnectionListeners {
   connect: () => void;
   close: (event: ws.ICloseEvent) => void;
@@ -126,7 +128,11 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
           case 'output_updated': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const output: OOutput = eventData.data as any;
-            this.emit('output_updated', output, eventData.triggered_by);
+            this.emit(
+              'output_updated',
+              { ...output, output: decompress(output.output) },
+              eventData.triggered_by
+            );
             break;
           }
           default:
@@ -237,6 +243,11 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     output: OOutput['output'],
     run_index: OOutput['run_index'] = 0
   ): void => {
-    this.sendEvent('update_output', { nb_id, cell_id, output, run_index });
+    this.sendEvent('update_output', {
+      nb_id,
+      cell_id,
+      output: compress(output),
+      run_index,
+    });
   };
 }
