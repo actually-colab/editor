@@ -32,6 +32,16 @@ export interface DCell extends ModelBase {
   position: number;
 }
 
+/**Model for cell runtime outputs */
+export interface OOutput extends ModelBase {
+  nb_id: DCell['nb_id'];
+  cell_id: DCell['cell_id'];
+  uid: DUser['uid'];
+  output: string;
+  /**Order in which the user ran the cell. */
+  run_index?: number;
+}
+
 /**Model for a notebook */
 export interface DNotebook extends ModelBase {
   /**The notebook's generated id */
