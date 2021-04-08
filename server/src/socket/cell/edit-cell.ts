@@ -19,7 +19,7 @@ interface TEditCellEventBody {
     cellData: {
       contents?: DCell['cell_id'];
       language?: DCell['language'];
-      cursorPos?: DCell['cursor_pos'];
+      cursor_pos?: DCell['cursor_pos'];
     };
   };
 }

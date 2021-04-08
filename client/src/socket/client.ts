@@ -3,9 +3,10 @@ import type { DCell, DUser, Notebook, OOutput } from '@actually-colab/editor-typ
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
 
-import debounce from 'lodash.debounce';
-
 import lzutf8 from 'lzutf8';
+
+import debounce from 'lodash.debounce';
+import { memoizeDebounce } from './memoize-debounce';
 
 interface SocketConnectionListeners {
   connect: () => void;
@@ -231,9 +232,9 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
       nb_id: Notebook['nb_id'],
       cell_id: DCell['cell_id'],
       cellData: {
-        contents?: DCell['cell_id'];
-        language?: DCell['language'];
-        cursor_pos?: DCell['cursor_pos'];
+        contents: DCell['cell_id'];
+        language: DCell['language'];
+        cursor_pos: DCell['cursor_pos'];
       }
     ): void => {
       this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
@@ -249,7 +250,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param cell_id Cell to update
    * @param output Content to share
    */
-  public updateOutput = debounce(
+  public updateOutput = memoizeDebounce(
     (
       nb_id: OOutput['nb_id'],
       cell_id: OOutput['cell_id'],
@@ -269,6 +270,8 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
       });
     },
     3000,
-    { maxWait: 5000 }
+    { maxWait: 5000 },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
 }
