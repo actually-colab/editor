@@ -274,7 +274,6 @@ describe('Collaboration', () => {
     const expectedOutput = {
       output: 'Test output test output test output',
       nb_id: notebook.nb_id,
-      run_index: 0,
       uid: mainUser.user.uid,
     };
 
@@ -303,6 +302,7 @@ describe('Collaboration', () => {
           cell.cell_id,
           expectedOutput.output
         );
+        mainUser.socketClient.updateOutput.flush();
       })
     );
     otherUser.socketClient.on(
@@ -361,5 +361,5 @@ describe('Collaboration', () => {
     );
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
-  }, 5000);
+  }, 10000);
 });

@@ -5,7 +5,7 @@ import EventEmitter from 'eventemitter3';
 
 import debounce from 'lodash.debounce';
 
-import { compress, decompress } from '../compression';
+import lzutf8 from 'lzutf8';
 
 interface SocketConnectionListeners {
   connect: () => void;
@@ -128,10 +128,20 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
           case 'output_updated': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const output: OOutput = eventData.data as any;
-            this.emit(
-              'output_updated',
-              { ...output, output: decompress(output.output) },
-              eventData.triggered_by
+            lzutf8.decompressAsync(
+              output.output,
+              { inputEncoding: 'Base64', outputEncoding: 'String' },
+              (res, error) => {
+                if (error != null) {
+                  console.error(error);
+                  throw new Error('Could not decompress output');
+                }
+                this.emit(
+                  'output_updated',
+                  { ...output, output: res },
+                  eventData.triggered_by
+                );
+              }
             );
             break;
           }
@@ -239,17 +249,27 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param output Content to share
    * @param run_index numeric index of output
    */
-  public updateOutput = (
-    nb_id: OOutput['nb_id'],
-    cell_id: OOutput['cell_id'],
-    output: OOutput['output'],
-    run_index: OOutput['run_index'] = 0
-  ): void => {
-    this.sendEvent('update_output', {
-      nb_id,
-      cell_id,
-      output: compress(output),
-      run_index,
-    });
-  };
+  public updateOutput = debounce(
+    (
+      nb_id: OOutput['nb_id'],
+      cell_id: OOutput['cell_id'],
+      output: OOutput['output']
+    ): void => {
+      lzutf8.compressAsync(output, { outputEncoding: 'Base64' }, (res, error) => {
+        if (error != null) {
+          console.error(error);
+          throw new Error(`Could not compress output data for cell_id ${cell_id}`);
+        }
+        console.log(res);
+
+        this.sendEvent('update_output', {
+          nb_id,
+          cell_id,
+          output: res,
+        });
+      });
+    },
+    3000,
+    { maxWait: 5000 }
+  );
 }

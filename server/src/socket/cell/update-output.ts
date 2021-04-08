@@ -41,7 +41,11 @@ const _handler: ShallotRawHandler<TUpdateOutputEvent> = async ({
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
-  const output: OOutput = { ...data, uid: requestContext.authorizer.uid };
+  const output: OOutput = {
+    ...data,
+    uid: requestContext.authorizer.uid,
+    time_modified: Date.now(),
+  };
   await updateOutput(requestContext, session, output);
 
   await broadcastToNotebook(requestContext, session.nb_id, {

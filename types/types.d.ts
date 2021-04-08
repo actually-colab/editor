@@ -39,7 +39,7 @@ export interface OOutput extends ModelBase {
   uid: DUser['uid'];
   output: string;
   /**Order in which the user ran the cell. */
-  run_index?: number;
+  time_modified?: UTCEpochDateTime;
 }
 
 /**Model for a notebook */
