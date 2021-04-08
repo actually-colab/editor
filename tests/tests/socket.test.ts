@@ -116,8 +116,8 @@ describe('Collaboration', () => {
     const mainUser = await getTestUser();
     const otherUser = await getTestUser();
 
-    const newCellEdit: Partial<DCell> = {
-      position: 1,
+    const newCellEdit: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>> = {
+      cursor_pos: 1,
       contents: 'exit(1)',
       language: 'markdown',
     };
@@ -183,7 +183,7 @@ describe('Collaboration', () => {
         expect(cell.lock_held_by).toEqual(mainUser.user.uid);
         expect(cell).toMatchObject(newCellEdit);
 
-        mainUser.socketClient.unlockCell(cell.nb_id, cell.cell_id);
+        mainUser.socketClient.unlockCell(cell.nb_id, cell.cell_id, newCellEdit);
       })
     );
     otherUser.socketClient.on(
@@ -302,7 +302,11 @@ describe('Collaboration', () => {
           cell.cell_id,
           expectedOutput.output
         );
-        mainUser.socketClient.updateOutput.flush();
+        mainUser.socketClient.updateOutput.flush(
+          cell.nb_id,
+          cell.cell_id,
+          expectedOutput.output
+        );
       })
     );
     otherUser.socketClient.on(
