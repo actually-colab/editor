@@ -10,7 +10,6 @@
     eventemitter3 "^4.0.7"
     lodash.debounce "^4.0.8"
     lodash.memoize "^4.1.2"
-    lodash.mixin "^4.3.0"
     lzutf8 "^0.6.0"
     websocket "^1.0.33"
 
@@ -2538,11 +2537,6 @@ lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
-
-lodash.mixin@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/lodash.mixin/-/lodash.mixin-4.3.0.tgz#85d332ba7cc99478d02c327c9cbfb0630cb24891"
-  integrity sha1-hdMyunzJlHjQLDJ8nL+wYwyySJE=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"

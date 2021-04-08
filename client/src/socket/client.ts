@@ -216,11 +216,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   public unlockCell = (
     nb_id: Notebook['nb_id'],
     cell_id: DCell['cell_id'],
-    cellData: {
-      contents: DCell['cell_id'];
-      language: DCell['language'];
-      cursor_pos: DCell['cursor_pos'];
-    }
+    cellData: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>>
   ): void => {
     this.editCell.flush(nb_id, cell_id, cellData);
     this.sendEvent('unlock_cell', { nb_id, cell_id });
@@ -239,11 +235,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     (
       nb_id: Notebook['nb_id'],
       cell_id: DCell['cell_id'],
-      cellData: {
-        contents: DCell['cell_id'];
-        language: DCell['language'];
-        cursor_pos: DCell['cursor_pos'];
-      }
+      cellData: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>>
     ): void => {
       this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
     },
