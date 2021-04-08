@@ -136,6 +136,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
                   console.error(error);
                   throw new Error('Could not decompress output');
                 }
+
                 this.emit(
                   'output_updated',
                   { ...output, output: res },
@@ -259,7 +260,6 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
           console.error(error);
           throw new Error(`Could not compress output data for cell_id ${cell_id}`);
         }
-        console.log(res);
 
         this.sendEvent('update_output', {
           nb_id,
