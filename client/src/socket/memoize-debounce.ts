@@ -1,9 +1,11 @@
 import _ from 'lodash';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface MemoizeDebouncedFunction<F extends (...args: any[]) => any> {
-  (...args: Parameters<F>): void;
-  flush: (...args: Parameters<F>) => void;
+export interface MemoizeDebouncedFunction<F extends (...args: any[]) => any>
+  extends _.DebouncedFunc<F> {
+  (...args: Parameters<F>): ReturnType<F> | undefined;
+  flush: (...args: Parameters<F>) => ReturnType<F> | undefined;
+  cancel: (...args: Parameters<F>) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,9 +28,14 @@ export function memoizeDebounce<F extends (...args: any[]) => any>(
     return debounceMemo(...args)(...args);
   }
 
-  wrappedFunction.flush = (...args: Parameters<F>): void => {
-    debounceMemo(...args).flush();
+  const flush: MemoizeDebouncedFunction<F>['flush'] = (...args) => {
+    return debounceMemo(...args).flush();
+  };
+  wrappedFunction.flush = flush;
+
+  wrappedFunction.cancel = (...args: Parameters<F>): void => {
+    return debounceMemo(...args).cancel();
   };
 
-  return (wrappedFunction as unknown) as MemoizeDebouncedFunction<F>;
+  return wrappedFunction;
 }

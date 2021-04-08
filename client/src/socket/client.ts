@@ -5,7 +5,6 @@ import EventEmitter from 'eventemitter3';
 
 import lzutf8 from 'lzutf8';
 
-import debounce from 'lodash.debounce';
 import { memoizeDebounce } from './memoize-debounce';
 
 interface SocketConnectionListeners {
@@ -212,9 +211,18 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    *
    * @param nb_id Notebook to create cell in.
    * @param cell_id Cell to edit.
+   * @param cellData Cell data to replace with
    */
-  public unlockCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
-    this.editCell.flush();
+  public unlockCell = (
+    nb_id: Notebook['nb_id'],
+    cell_id: DCell['cell_id'],
+    cellData: {
+      contents: DCell['cell_id'];
+      language: DCell['language'];
+      cursor_pos: DCell['cursor_pos'];
+    }
+  ): void => {
+    this.editCell.flush(nb_id, cell_id, cellData);
     this.sendEvent('unlock_cell', { nb_id, cell_id });
   };
 
@@ -227,7 +235,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param cell_id Cell to edit
    * @param cellData Cell data to replace with
    */
-  public editCell = debounce(
+  public editCell = memoizeDebounce(
     (
       nb_id: Notebook['nb_id'],
       cell_id: DCell['cell_id'],
@@ -240,7 +248,9 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
       this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
     },
     1000,
-    { maxWait: 5000 }
+    { maxWait: 5000 },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
 
   /**

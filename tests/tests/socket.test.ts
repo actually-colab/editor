@@ -183,7 +183,7 @@ describe('Collaboration', () => {
         expect(cell.lock_held_by).toEqual(mainUser.user.uid);
         expect(cell).toMatchObject(newCellEdit);
 
-        mainUser.socketClient.unlockCell(cell.nb_id, cell.cell_id);
+        mainUser.socketClient.unlockCell(cell.nb_id, cell.cell_id, newCellEdit);
       })
     );
     otherUser.socketClient.on(
