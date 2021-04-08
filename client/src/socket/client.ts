@@ -247,7 +247,6 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param nb_id Notebook to update
    * @param cell_id Cell to update
    * @param output Content to share
-   * @param run_index numeric index of output
    */
   public updateOutput = debounce(
     (
