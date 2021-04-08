@@ -13,22 +13,22 @@ export function memoizeDebounce<F extends (...args: any[]) => any>(
   options: _.DebounceSettings = {},
   resolver?: (...args: Parameters<F>) => unknown
 ): MemoizeDebouncedFunction<F> {
-  const mem = _.memoize<(...args: Parameters<F>) => _.DebouncedFunc<F>>(
+  const debounceMemo = _.memoize<(...args: Parameters<F>) => _.DebouncedFunc<F>>(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (..._args: Parameters<F>) => _.debounce(func, wait, options),
     resolver
   );
 
-  function f(
+  function wrappedFunction(
     this: MemoizeDebouncedFunction<F>,
     ...args: Parameters<F>
   ): ReturnType<F> | undefined {
-    return mem(...args)(...args);
+    return debounceMemo(...args)(...args);
   }
 
-  f.flush = (...args: Parameters<F>): void => {
-    mem(...args).flush();
+  wrappedFunction.flush = (...args: Parameters<F>): void => {
+    debounceMemo(...args).flush();
   };
 
-  return (f as unknown) as MemoizeDebouncedFunction<F>;
+  return (wrappedFunction as unknown) as MemoizeDebouncedFunction<F>;
 }
