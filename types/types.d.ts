@@ -63,6 +63,11 @@ export interface NotebookContents extends Notebook {
   cells: Record<DCell['cell_id'], DCell>;
 }
 
+/**Metadata with contents for a Notebook */
+export interface ActiveNotebookContents extends NotebookContents {
+  connected_users: DUser['uid'][];
+}
+
 /**Enum of access levels for a notebook */
 export type NotebookAccessLevelType = 'Full Access' | 'Read Only';
 

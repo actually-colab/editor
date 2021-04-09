@@ -57,3 +57,22 @@ export const broadcastToNotebook = async (
     })
   );
 };
+
+export const emitToUser = async (
+  context: WebSocketRequestContext,
+  data: ACSocketEventData
+): Promise<void> => {
+  const eventBody = JSON.stringify(data);
+  const apigApi = getManagementApi(context);
+  try {
+    await apigApi
+      .postToConnection({
+        ConnectionId: context.connectionId,
+        Data: eventBody,
+      })
+      .promise();
+  } catch (err) {
+    console.error('Could not reach', context.connectionId);
+    throw new Error(err);
+  }
+};
