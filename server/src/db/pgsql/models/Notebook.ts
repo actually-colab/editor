@@ -222,3 +222,75 @@ export const getNotebookContents = async (
 
   return notebook;
 };
+
+/**Queries the contents of a specific notebook.
+ *
+ * @param uid the user to query for
+ * @returns the user's notebooks, if any
+ */
+export const getActiveNotebookContents = async (
+  nb_id: DNotebook['nb_id']
+): Promise<NotebookContents | null> => {
+  const notebooks = await pgsql
+    .select(
+      'nb.*',
+      pgsql.raw(`json_agg(
+        json_build_object(
+          'uid', u.uid, 
+          'email', u.email, 
+          'name', u.name,
+          'image_url', u.image_url,
+          'access_level', nba.access_level
+        )
+      ) AS users`),
+      pgsql.raw('json_agg(aus.uid) AS connected_users')
+    )
+    .from(
+      pgsql
+        .select(
+          'nb2.*',
+          pgsql.raw(`
+            COALESCE(
+              jsonb_object_agg(
+                c.cell_id, json_build_object(
+                  'cell_id', c.cell_id, 
+                  'time_modified', c.time_modified, 
+                  'language', c.language, 
+                  'contents', c.contents,
+                  'lock_held_by', c.lock_held_by,
+                  'position', c.position
+                )
+              ) FILTER (WHERE c.cell_id IS NOT NULL), '{}'::JSONB) AS cells`)
+        )
+        .from({ nb2: tablenames.notebooksTableName })
+        .leftJoin({ c: tablenames.cellsTableName }, 'c.nb_id', '=', 'nb2.nb_id')
+        .where({ 'nb2.nb_id': nb_id })
+        .groupBy('nb2.nb_id')
+        .as('nb')
+    )
+    .innerJoin(
+      { nba: tablenames.notebookAccessLevelsTableName },
+      'nba.nb_id',
+      '=',
+      'nb.nb_id'
+    )
+    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+    .leftJoin({ aus: tablenames.activeSessionsTableName }, (ausJoin) =>
+      ausJoin.on('aus.nb_id', 'nb.nb_id').andOnNull('aus.time_disconnected')
+    )
+    .where({ 'nb.nb_id': nb_id })
+    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
+
+  if (notebooks.length === 0) {
+    return null;
+  }
+
+  const notebook = notebooks[0];
+
+  // Handle edge case of SQL json_agg null
+  if (notebook.cells?.length === 1 && notebook.cells[0].cell_id == null) {
+    notebook.cells = [];
+  }
+
+  return notebook;
+};

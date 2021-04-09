@@ -52,9 +52,6 @@ describe('Connection', () => {
       jest.fn((res_user, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
         expect(res_user).toMatchObject(mainUser.user);
-
-        // Expect to emit notebook_closed event to otherUser
-        mainUser.socketClient.close();
       })
     );
     otherUser.socketClient.on(
@@ -70,6 +67,25 @@ describe('Connection', () => {
           expect(res_triggered_by).toEqual(mainUser.user.uid);
           expect(res_user).toMatchObject(mainUser.user);
         }
+      })
+    );
+
+    mainUser.socketClient.on(
+      'notebook_contents',
+      jest.fn((res_notebook, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+        expect(res_notebook.connected_users).toContain(otherUser.user.uid);
+        expect(res_notebook.connected_users).toContain(mainUser.user.uid);
+
+        // Expect to emit notebook_closed event to otherUser
+        mainUser.socketClient.close();
+      })
+    );
+    otherUser.socketClient.on(
+      'notebook_contents',
+      jest.fn((res_notebook, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(otherUser.user.uid);
+        expect(res_notebook.connected_users).toContain(otherUser.user.uid);
       })
     );
 
@@ -108,7 +124,7 @@ describe('Connection', () => {
     );
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
-  }, 2000);
+  }, 5000);
 });
 
 describe('Collaboration', () => {
@@ -365,5 +381,5 @@ describe('Collaboration', () => {
     );
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
-  }, 10000);
+  }, 5000);
 });

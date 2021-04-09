@@ -1,4 +1,10 @@
-import type { DCell, DUser, Notebook, OOutput } from '@actually-colab/editor-types';
+import type {
+  ActiveNotebookContents,
+  DCell,
+  DUser,
+  Notebook,
+  OOutput,
+} from '@actually-colab/editor-types';
 
 import ws from 'websocket';
 import EventEmitter from 'eventemitter3';
@@ -16,6 +22,10 @@ interface SocketConnectionListeners {
 interface SocketMessageListeners {
   notebook_opened: (
     user: DUser,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  notebook_contents: (
+    notebook: ActiveNotebookContents,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
   notebook_closed: (
@@ -93,6 +103,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const user: DUser = eventData.data as any;
             this.emit('notebook_opened', user, eventData.triggered_by);
+            break;
+          }
+          case 'notebook_contents': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const notebook: ActiveNotebookContents = eventData.data as any;
+            this.emit('notebook_contents', notebook, eventData.triggered_by);
             break;
           }
           case 'notebook_closed': {

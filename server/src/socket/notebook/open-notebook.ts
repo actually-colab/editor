@@ -1,15 +1,17 @@
-import { DNotebook } from '@actually-colab/editor-types';
+import type { DNotebook } from '@actually-colab/editor-types';
+
+import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
 } from '../middleware/wrapper';
 
-import createHttpError from 'http-errors';
-
 import { openNotebook } from '../../db/pgsql/models/ActiveSession';
 import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
-import { broadcastToNotebook } from '../client-management';
+import { getActiveNotebookContents } from '../../db/pgsql/models/Notebook';
+
+import { broadcastToNotebook, emitToUser } from '../client-management';
 
 interface TOpenNotebookEventBody {
   data: {
@@ -52,6 +54,22 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
     triggered_by: requestContext.authorizer.uid,
     data: requestContext.authorizer, // TODO: Return something less sensitive
   });
+
+  try {
+    const contents = await getActiveNotebookContents(data.nb_id);
+    if (contents == null) {
+      throw new createHttpError.InternalServerError('Could not query notebook contents');
+    }
+
+    await emitToUser(requestContext, {
+      action: 'notebook_contents',
+      triggered_by: requestContext.authorizer.uid,
+      data: contents,
+    });
+  } catch (err) {
+    console.error('Could not fetch/send notebook_contents');
+    throw err;
+  }
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
