@@ -74,8 +74,13 @@ describe('Connection', () => {
       'notebook_contents',
       jest.fn((res_notebook, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
-        expect(res_notebook.connected_users).toContain(otherUser.user.uid);
-        expect(res_notebook.connected_users).toContain(mainUser.user.uid);
+        expect(res_notebook.connected_users).toEqual(
+          expect.arrayContaining([otherUser.user.uid, mainUser.user.uid])
+        );
+        expect(res_notebook.users).toEqual(
+          expect.arrayContaining(notebook.users.map((u) => expect.objectContaining(u)))
+        );
+        expect(res_notebook.users).toHaveLength(2);
 
         // Expect to emit notebook_closed event to otherUser
         mainUser.socketClient.close();
