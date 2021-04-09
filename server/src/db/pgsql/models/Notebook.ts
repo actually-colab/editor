@@ -276,7 +276,10 @@ export const getActiveNotebookContents = async (
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
     .leftJoin({ aus: tablenames.activeSessionsTableName }, (ausJoin) =>
-      ausJoin.on('aus.nb_id', 'nb.nb_id').andOnNull('aus.time_disconnected')
+      ausJoin
+        .on('aus.nb_id', 'nb.nb_id')
+        .andOn('aus.uid', 'nba.uid')
+        .andOnNull('aus.time_disconnected')
     )
     .where({ 'nb.nb_id': nb_id })
     .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
