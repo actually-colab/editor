@@ -156,4 +156,9 @@ export class ActuallyColabRESTClient {
       })
     ).data.data;
   };
+
+  /**Fetches all workshops that this user has access to. */
+  public getWorkshopsForUser = async (): Promise<Workshop[]> => {
+    return (await this.axiosInstance.get<{ data: Workshop[] }>('/workshops')).data.data;
+  };
 }

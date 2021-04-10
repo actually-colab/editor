@@ -114,7 +114,7 @@ describe('Workshop', () => {
     const expectedTestWorkshop = {
       name: 'Test Workshop',
       description: 'Test Workshop Description',
-      mainNotebook: {
+      main_notebook: {
         name: 'Test Workshop',
         language: 'python',
       },
@@ -129,14 +129,20 @@ describe('Workshop', () => {
     ]);
     expect(newWorkshop.attendees).toHaveLength(0);
 
-    expect(newWorkshop.mainNotebook.users).toEqual([
+    expect(newWorkshop.main_notebook.users).toEqual([
       expect.objectContaining({ ...userForJest, access_level: 'Full Access' }),
     ]);
 
     const notebooks = await apiClient.getNotebooksForUser();
     expect(notebooks).toHaveLength(2);
     expect(notebooks).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedTestWorkshop.mainNotebook)])
+      expect.arrayContaining([
+        expect.objectContaining(expectedTestWorkshop.main_notebook),
+      ])
     );
+
+    const workshops = await apiClient.getWorkshopsForUser();
+    expect(workshops).toHaveLength(1);
+    expect(workshops[0]).toMatchObject(newWorkshop);
   });
 });

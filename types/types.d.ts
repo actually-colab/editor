@@ -97,7 +97,7 @@ export interface DWorkshop extends ModelBase {
 export interface Workshop extends Json, RemoveIndex<DWorkshop> {
   instructors: (WorkshopAccessLevel & { access_level: 'Instructor' })[];
   attendees: (WorkshopAccessLevel & { access_level: 'Attendee' })[];
-  mainNotebook: Notebook;
+  main_notebook: Notebook;
 }
 
 export type WorkshopAccessLevelType = 'Instructor' | 'Attendee';

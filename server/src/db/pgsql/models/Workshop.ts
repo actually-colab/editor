@@ -85,7 +85,7 @@ export const createWorkshop = async (
           ).transacting(trx)
         : [];
 
-    const mainNotebook: Notebook = {
+    const main_notebook: Notebook = {
       ...notebookRecord,
       users: instructorNotebookUALs.concat(attendeeNotebookUALs),
     };
@@ -94,7 +94,86 @@ export const createWorkshop = async (
       ...workshopRecord,
       instructors: instructorWorkshopUALs,
       attendees: attendeeWorkshopUALs,
-      mainNotebook,
+      main_notebook,
     };
   });
+};
+
+/**Queries all workshops for a specific user.
+ *
+ * @param uid the user to query for
+ * @returns the user's workshops, if any
+ */
+export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]> => {
+  return pgsql
+    .select(
+      'ws.*',
+      pgsql.raw(`
+        COALESCE(
+          jsonb_agg(
+            json_build_object(
+              'uid', u.uid, 
+              'email', u.email, 
+              'name', u.name,
+              'image_url', u.image_url,
+              'access_level', wsa.access_level
+            )
+          ) FILTER (WHERE wsa.access_level = 'Instructor'), 
+        '[]'::JSONB) AS instructors
+      `),
+      pgsql.raw(`
+        COALESCE(
+          jsonb_agg(
+            json_build_object(
+              'uid', u.uid, 
+              'email', u.email, 
+              'name', u.name,
+              'image_url', u.image_url,
+              'access_level', wsa.access_level
+            )
+          ) FILTER (WHERE wsa.access_level = 'Attendee'), 
+        '[]'::JSONB) AS attendees
+      `),
+      pgsql.raw(`
+        json_build_object(
+          'nb_id', nb.nb_id,
+          'name', nb.name,
+          'language', nb.language,
+          'time_modified', nb.time_modified,
+          'users', json_agg(
+            json_build_object(
+              'uid', u.uid,
+              'email', u.email,
+              'name', u.name,
+              'image_url', u.image_url,
+              'access_level', nba.access_level
+            )
+          )
+        ) AS main_notebook
+      `)
+    )
+    .from({ ws: tablenames.workshopsTableName })
+    .innerJoin(
+      { wsa: tablenames.workshopAccessLevelsTableName },
+      'wsa.ws_id',
+      '=',
+      'ws.ws_id'
+    )
+    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'wsa.uid')
+    .innerJoin({ nb: tablenames.notebooksTableName }, 'nb.nb_id', '=', 'ws.nb_id')
+    .innerJoin(
+      { nba: tablenames.notebookAccessLevelsTableName },
+      'nba.nb_id',
+      '=',
+      'nb.nb_id'
+    )
+    .whereIn(
+      'nb.nb_id',
+      pgsql
+        .select('nb_id')
+        .from({ sub_nba: tablenames.notebookAccessLevelsTableName })
+        .innerJoin({ sub_u: tablenames.usersTableName }, 'sub_u.uid', '=', 'sub_nba.uid')
+        .where({ 'sub_u.uid': uid })
+    )
+    .groupBy('ws.ws_id', 'nb.nb_id');
 };
