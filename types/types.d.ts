@@ -94,10 +94,20 @@ export interface DWorkshop extends ModelBase {
   capacity?: number; // TODO
 }
 
+export interface Workshop extends Json, RemoveIndex<DWorkshop> {
+  instructors: (WorkshopAccessLevel & { access_level: 'Instructor' })[];
+  attendees: (WorkshopAccessLevel & { access_level: 'Attendee' })[];
+  mainNotebook: Notebook;
+}
+
 export type WorkshopAccessLevelType = 'Instructor' | 'Attendee';
 export interface DWorkshopAccessLevel extends ModelBase {
   ws_id: DWorkshop['ws_id'];
   uid: DUser['uid'];
+  access_level: WorkshopAccessLevelType;
+}
+
+export interface WorkshopAccessLevel extends DUser {
   access_level: WorkshopAccessLevelType;
 }
 
@@ -110,3 +120,10 @@ export interface Json {
 type JsonArray = Array<string | number | boolean | Date | Json | JsonArray>;
 
 export type ModelBase = Record<string, number | string | boolean | null | undefined>;
+
+/**
+ * Get a type with the index signature removed
+ */
+type RemoveIndex<T> = {
+  [P in keyof T as string extends P ? never : number extends P ? never : P]: T[P];
+};

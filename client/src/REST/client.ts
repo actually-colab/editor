@@ -3,6 +3,7 @@ import type {
   DUser,
   Notebook,
   NotebookContents,
+  Workshop,
 } from '@actually-colab/editor-types';
 import type { LoginData } from '../types';
 
@@ -135,6 +136,24 @@ export class ActuallyColabRESTClient {
   ): Promise<Notebook> => {
     return (
       await this.axiosInstance.post(`/notebook/${nb_id}/share`, { email, access_level })
+    ).data.data;
+  };
+
+  /**
+   * Creates the metadata for a new workshop.
+   *
+   * @param name human-readable name of the workshop
+   * @param description human-readable description of the workshop
+   */
+  public createWorkshop = async (
+    name: Workshop['name'],
+    description: Workshop['description']
+  ): Promise<Workshop> => {
+    return (
+      await this.axiosInstance.post<{ data: Workshop }>('/workshop', {
+        name,
+        description,
+      })
     ).data.data;
   };
 }
