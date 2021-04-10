@@ -203,6 +203,15 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   };
 
   /**
+   * Closes a connection to a specific notbeook.
+   *
+   * @param nb_id Notebook to disconnect from
+   */
+  public closeNotebook = (nb_id: Notebook['nb_id']): void => {
+    this.sendEvent('close_notebook', { nb_id });
+  };
+
+  /**
    * Creates a new cell in a notebook.
    *
    * @param nb_id Notebook to create cell in.

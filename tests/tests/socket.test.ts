@@ -83,7 +83,7 @@ describe('Connection', () => {
         expect(res_notebook.users).toHaveLength(2);
 
         // Expect to emit notebook_closed event to otherUser
-        mainUser.socketClient.close();
+        mainUser.socketClient.closeNotebook(notebook.nb_id);
       })
     );
     otherUser.socketClient.on(
@@ -102,6 +102,7 @@ describe('Connection', () => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
 
         // Cleanup
+        mainUser.socketClient.close();
         otherUser.socketClient.close();
 
         expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
