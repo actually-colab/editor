@@ -10,7 +10,7 @@ import ShallotSocketWrapper, {
 import { closeNotebook } from '../../db/pgsql/models/ActiveSession';
 import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
 
-import { broadcastToNotebook } from '../client-management';
+import { broadcastToNotebook, emitToUser } from '../client-management';
 
 interface TCloseNotebookEventBody {
   data: {
@@ -44,11 +44,13 @@ const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
 
   await closeNotebook(requestContext.connectionId, data.nb_id);
 
-  await broadcastToNotebook(requestContext, data.nb_id, {
+  const resEvent = {
     action: 'notebook_closed',
     triggered_by: requestContext.authorizer.uid,
     data: { nb_id: data.nb_id },
-  });
+  };
+  await broadcastToNotebook(requestContext, data.nb_id, resEvent);
+  await emitToUser(requestContext, resEvent);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "ActiveSession" (
   time_connected DOUBLE PRECISION,
   time_disconnected DOUBLE PRECISION,
   last_event DOUBLE PRECISION,
-  UNIQUE ("connectionId", nb_id)
+  UNIQUE ("connectionId", nb_id, time_disconnected)
 );
 
 CREATE TABLE IF NOT EXISTS "Cell" (
