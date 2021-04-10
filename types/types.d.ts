@@ -83,6 +83,24 @@ export interface NotebookAccessLevel extends DUser {
   access_level: NotebookAccessLevelType;
 }
 
+export interface DWorkshop extends ModelBase {
+  ws_id: UUID;
+  name: string;
+  description: string;
+  time_modified: UTCEpochDateTime;
+  nb_id?: DNotebook['nb_id'];
+  start_time?: UTCEpochDateTime;
+  end_time?: UTCEpochDateTime;
+  capacity?: number; // TODO
+}
+
+export type WorkshopAccessLevelType = 'Instructor' | 'Attendee';
+export interface DWorkshopAccessLevel extends ModelBase {
+  ws_id: DWorkshop['ws_id'];
+  uid: DUser['uid'];
+  access_level: WorkshopAccessLevelType;
+}
+
 export type UTCEpochDateTime = number;
 export type UUID = string;
 

@@ -29,9 +29,12 @@ provider:
 
     AC_PGSQL_USERS_TABLE_NAME: ${self:custom.pgsqlTableNames.usersTableName}
     AC_PGSQL_NOTEBOOKS_TABLE_NAME: ${self:custom.pgsqlTableNames.notebooksTableName}
+    AC_PGSQL_NOTEBOOK_ACCESS_LEVELS_TABLE_NAME: ${self:custom.pgsqlTableNames.notebookAccessLevelsTableName}
     AC_PGSQL_CELLS_TABLE_NAME: ${self:custom.pgsqlTableNames.cellsTableName}
     AC_PGSQL_OUTPUTS_TABLE_NAME: ${self:custom.pgsqlTableNames.outputsTableName}
     AC_PGSQL_ACTIVE_SESSIONS_TABLE_NAME: ${self:custom.pgsqlTableNames.activeSessionsTableName}
+    AC_PGSQL_WORKSHOPS_TABLE_NAME: ${self:custom.pgsqlTableNames.workshopsTableName}
+    AC_PGSQL_WORKSHOP_ACCESS_LEVELS_TABLE_NAME: ${self:custom.pgsqlTableNames.workshopAccessLevelsTableName}
 
     GOOGLE_AUTH_WEB_CLIENT_ID: ${env:GOOGLE_AUTH_WEB_CLIENT_ID}
     GOOGLE_AUTH_WEB_CLIENT_SECRET: ${env:GOOGLE_AUTH_WEB_CLIENT_SECRET}
@@ -52,6 +55,8 @@ custom:
     cellsTableName: Cell
     outputsTableName: Output
     activeSessionsTableName: ActiveSession
+    workshopsTableName: Workshop
+    workshopAccessLevelsTableName: WorkshopAccessLevel
 
   customDomain:
     rest:

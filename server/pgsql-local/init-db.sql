@@ -42,3 +42,21 @@ CREATE TABLE IF NOT EXISTS "Cell" (
   cursor_pos SMALLINT,
   language VARCHAR(16)
 );
+
+CREATE TABLE IF NOT EXISTS "Workshop" (
+  ws_id         UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name          VARCHAR(256),
+  description   VARCHAR(256),
+  time_modified DOUBLE PRECISION,
+  nb_id UUID    REFERENCES "Notebook" (nb_id),
+  start_time    DOUBLE PRECISION,
+  end_time      DOUBLE PRECISION,
+  capacity      INT
+);
+
+CREATE TABLE IF NOT EXISTS "WorkshopAccessLevel" (
+  ws_id         UUID REFERENCES "Workshop" (ws_id) NOT NULL,
+  uid           UUID REFERENCES "User" (uid) NOT NULL,
+  access_level  VARCHAR(64) NOT NULL,
+  PRIMARY KEY (ws_id, uid)
+);
