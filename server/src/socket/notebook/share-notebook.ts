@@ -9,7 +9,7 @@ import ShallotSocketWrapper, {
 
 import {
   getUserAccessLevel,
-  grantAccessByEmail,
+  grantAccessByEmails,
 } from '../../db/pgsql/models/NotebookAccessLevel';
 
 import { broadcastToNotebook } from '../client-management';
@@ -17,7 +17,7 @@ import { broadcastToNotebook } from '../client-management';
 interface TShareNotebookEventBody {
   data: {
     nb_id: DNotebookAccessLevel['nb_id'];
-    email: DUser['email'];
+    emails: DUser['email'][];
     access_level: DNotebookAccessLevel['access_level'];
   };
 }
@@ -43,15 +43,15 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
-  if (data?.email == null) {
-    throw new createHttpError.BadRequest('Must specify body.email');
+  if (data?.emails == null) {
+    throw new createHttpError.BadRequest('Must specify body.emails');
   }
 
   if (data?.access_level == null) {
     throw new createHttpError.BadRequest('Must specify body.access_level');
   }
 
-  if (data.email === user.email) {
+  if (data.emails.includes(user.email)) {
     throw new createHttpError.BadRequest('Cannot grant access to yourself!');
   }
 
@@ -61,12 +61,15 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
     throw new createHttpError.Forbidden('Must have Full Access to share a notebook');
   }
 
-  const ual = await grantAccessByEmail(data.email, data.nb_id, data.access_level);
+  const users = await grantAccessByEmails(data.emails, data.nb_id, data.access_level);
 
   await broadcastToNotebook(requestContext, data.nb_id, {
     action: 'notebook_shared',
     triggered_by: user.uid,
-    data: ual,
+    data: {
+      nb_id: data.nb_id,
+      users,
+    },
   });
 };
 

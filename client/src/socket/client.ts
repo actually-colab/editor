@@ -35,7 +35,8 @@ interface SocketMessageListeners {
   ) => void;
 
   notebook_shared: (
-    user: NotebookAccessLevel,
+    nb_id: Notebook['nb_id'],
+    users: NotebookAccessLevel[],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 
@@ -124,9 +125,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             break;
           }
           case 'notebook_shared': {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const user: NotebookAccessLevel = eventData.data as any;
-            this.emit('notebook_shared', user, eventData.triggered_by);
+            const res: {
+              nb_id: Notebook['nb_id'];
+              users: NotebookAccessLevel[];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_shared', res.nb_id, res.users, eventData.triggered_by);
             break;
           }
           case 'cell_created': {
@@ -232,11 +236,11 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param access_level permissions level for the user that the notebook is being shared with
    */
   public shareNotebook = (
-    email: NotebookAccessLevel['email'],
+    emails: NotebookAccessLevel['email'][],
     nb_id: NotebookAccessLevel['nb_id'],
     access_level: NotebookAccessLevel['access_level']
   ): void => {
-    this.sendEvent('share_notebook', { email, nb_id, access_level });
+    this.sendEvent('share_notebook', { emails, nb_id, access_level });
   };
 
   /**

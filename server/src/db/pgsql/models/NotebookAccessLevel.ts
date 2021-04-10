@@ -87,6 +87,33 @@ export const grantAccessByEmail = async (
   });
 };
 
+/**Grants access for a specific user to a specific notebook.
+ *
+ * @param email the user to grant notebook access to
+ * @param nb_id the notebook to grant access to
+ * @param access_level type of access for the user
+ * @returns the access provided, if successful
+ */
+export const grantAccessByEmails = async (
+  emails: DUser['email'][],
+  nb_id: DNotebookAccessLevel['nb_id'],
+  access_level: DNotebookAccessLevel['access_level']
+): Promise<NotebookAccessLevel[]> => {
+  return pgsql.transaction(async (trx) => {
+    const users = await trx<DUser>(tablenames.usersTableName)
+      .select('*')
+      .whereIn('email', emails);
+
+    await trx<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+      .insert(users.map((user) => ({ uid: user.uid, nb_id, access_level })))
+      .onConflict(['nb_id', 'uid'])
+      .merge()
+      .returning('*');
+
+    return users.map((user) => ({ ...user, access_level }));
+  });
+};
+
 /**Queries a user's access level to a specific notebook.
  *
  * @param uid the user to query
