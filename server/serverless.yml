@@ -217,6 +217,13 @@ functions:
       - websocket:
           route: close_notebook
 
+  socket-share-notebook:
+    handler: src/socket/notebook/share-notebook.handler
+
+    events:
+      - websocket:
+          route: share_notebook
+
   socket-edit-cell:
     handler: src/socket/cell/edit-cell.handler
 

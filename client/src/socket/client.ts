@@ -3,6 +3,7 @@ import type {
   DCell,
   DUser,
   Notebook,
+  NotebookAccessLevel,
   OOutput,
 } from '@actually-colab/editor-types';
 
@@ -30,6 +31,11 @@ interface SocketMessageListeners {
   ) => void;
   notebook_closed: (
     nb_id: Notebook['nb_id'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  notebook_shared: (
+    user: NotebookAccessLevel,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 
@@ -115,6 +121,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const notebook: { nb_id: Notebook['nb_id'] } = eventData.data as any;
             this.emit('notebook_closed', notebook.nb_id, eventData.triggered_by);
+            break;
+          }
+          case 'notebook_shared': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const user: NotebookAccessLevel = eventData.data as any;
+            this.emit('notebook_shared', user, eventData.triggered_by);
             break;
           }
           case 'cell_created': {
@@ -209,6 +221,22 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    */
   public closeNotebook = (nb_id: Notebook['nb_id']): void => {
     this.sendEvent('close_notebook', { nb_id });
+  };
+
+  /**
+   * Shares a notebook with another user. The requesting user must have
+   * Full Access to share the notebook.
+   *
+   * @param email user to share with
+   * @param nb_id id of the notebook to share
+   * @param access_level permissions level for the user that the notebook is being shared with
+   */
+  public shareNotebook = (
+    email: NotebookAccessLevel['email'],
+    nb_id: NotebookAccessLevel['nb_id'],
+    access_level: NotebookAccessLevel['access_level']
+  ): void => {
+    this.sendEvent('share_notebook', { email, nb_id, access_level });
   };
 
   /**
