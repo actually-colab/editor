@@ -147,7 +147,7 @@ describe('Collaboration', () => {
           expect(res_user).toMatchObject(mainUser.user);
 
           mainUser.socketClient.shareNotebook(
-            otherUser.user.email,
+            [otherUser.user.email],
             notebook.nb_id,
             'Read Only'
           );
@@ -172,9 +172,12 @@ describe('Collaboration', () => {
 
     mainUser.socketClient.on(
       'notebook_shared',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((res_nb_id, res_users, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
-        expect(res_user).toMatchObject({ ...otherUser.user, access_level: 'Read Only' });
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_users).toEqual(
+          expect.arrayContaining([{ ...otherUser.user, access_level: 'Read Only' }])
+        );
 
         otherUser.socketClient.openNotebook(notebook.nb_id);
       })
