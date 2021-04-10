@@ -4,6 +4,7 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 
 ```json
 {"action": "open_notebook", "data": {"nb_id": ""}}
+{"action": "close_notebook", "data": {"nb_id": ""}}
 {"action": "create_cell", "data": {"nb_id": "", "language": "python"}}
 {"action": "edit_cell", "data": {"nb_id": "", "cell_id": "", "cellData": {"contents": "", "language": "markdown", "cursor_pos": 0}}
 {"action": "lock_cell", "data": {"nb_id": "", "cell_id": ""}}
