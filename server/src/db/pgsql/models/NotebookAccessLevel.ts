@@ -3,6 +3,7 @@ import type {
   DNotebookAccessLevel,
   NotebookAccessLevel,
 } from '@actually-colab/editor-types';
+import { QueryBuilder } from 'knex';
 
 import pgsql from '../connection';
 import tablenames from '../tablenames';
@@ -33,6 +34,31 @@ export const grantAccessById = async (
     return { ...user, access_level };
   });
 };
+
+/**Grants access for many users to a specific notebook.
+ *
+ * @param uids the users to grant notebook access to
+ * @param nb_id the notebook to grant access to
+ * @param access_level type of access for the user
+ * @returns the access provided, if successful
+ */
+export const grantNotebookAccessByIds = (
+  uids: DUser['uid'][],
+  nb_id: DNotebookAccessLevel['nb_id'],
+  access_level: DNotebookAccessLevel['access_level']
+): QueryBuilder<DNotebookAccessLevel, NotebookAccessLevel[]> =>
+  pgsql
+    .with(
+      'updated_uals',
+      pgsql<NotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+        .insert(uids.map((uid) => ({ uid, nb_id, access_level })))
+        .onConflict(['nb_id', 'uid'])
+        .merge()
+        .returning('*')
+    )
+    .select('u.*', 'updated_uals.access_level AS access_level')
+    .from('updated_uals')
+    .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'updated_uals.uid');
 
 /**Grants access for a specific user to a specific notebook.
  *

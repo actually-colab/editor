@@ -105,3 +105,38 @@ describe('Notebook', () => {
     );
   });
 });
+
+describe('Workshop', () => {
+  test('Create Workshop', async () => {
+    const { apiClient, user } = await getTestUser();
+    const userForJest = (user as unknown) as Record<string, unknown>;
+
+    const expectedTestWorkshop = {
+      name: 'Test Workshop',
+      description: 'Test Workshop Description',
+      mainNotebook: {
+        name: 'Test Workshop',
+        language: 'python',
+      },
+    };
+    const newWorkshop = await apiClient.createWorkshop(
+      expectedTestWorkshop.name,
+      expectedTestWorkshop.description
+    );
+    expect(newWorkshop).toMatchObject(expectedTestWorkshop);
+    expect(newWorkshop.instructors).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Instructor' }),
+    ]);
+    expect(newWorkshop.attendees).toHaveLength(0);
+
+    expect(newWorkshop.mainNotebook.users).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Full Access' }),
+    ]);
+
+    const notebooks = await apiClient.getNotebooksForUser();
+    expect(notebooks).toHaveLength(2);
+    expect(notebooks).toEqual(
+      expect.arrayContaining([expect.objectContaining(expectedTestWorkshop.mainNotebook)])
+    );
+  });
+});

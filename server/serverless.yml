@@ -170,6 +170,15 @@ functions:
           cors: ${self:custom.restCorsPolicy}
           authorizer: ${self:custom.restAuthorizerConfig}
 
+  POST-workshop:
+    handler: src/rest/post-workshop.handler
+    events:
+      - http:
+          path: /workshop
+          method: post
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
+
   socket-connection:
     handler: src/socket/connection.handler
 
