@@ -134,6 +134,63 @@ describe('Connection', () => {
 });
 
 describe('Collaboration', () => {
+  test('Share Notebook', async (done) => {
+    const mainUser = await getTestUser();
+    const otherUser = await getTestUser();
+
+    const notebook = await mainUser.apiClient.createNotebook('Test Notebook');
+
+    mainUser.socketClient.on(
+      'notebook_opened',
+      jest.fn((res_user, res_triggered_by) => {
+        if (res_triggered_by === mainUser.user.uid) {
+          expect(res_user).toMatchObject(mainUser.user);
+
+          mainUser.socketClient.shareNotebook(
+            otherUser.user.email,
+            notebook.nb_id,
+            'Read Only'
+          );
+        } else {
+          expect(res_user).toMatchObject(otherUser.user);
+
+          mainUser.socketClient.close();
+          otherUser.socketClient.close();
+
+          expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+          expect(otherUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+
+          expect(
+            mainUser.socketClient.listeners('notebook_shared')[0]
+          ).toHaveBeenCalledTimes(1);
+
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          done!();
+        }
+      })
+    );
+
+    mainUser.socketClient.on(
+      'notebook_shared',
+      jest.fn((res_user, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+        expect(res_user).toMatchObject({ ...otherUser.user, access_level: 'Read Only' });
+
+        otherUser.socketClient.openNotebook(notebook.nb_id);
+      })
+    );
+
+    otherUser.socketClient.on(
+      'notebook_opened',
+      jest.fn((res_user, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(otherUser.user.uid);
+        expect(res_user).toMatchObject(otherUser.user);
+      })
+    );
+
+    mainUser.socketClient.openNotebook(notebook.nb_id);
+  }, 10000);
+
   test('Create, Lock, Edit, and Unlock', async (done) => {
     const mainUser = await getTestUser();
     const otherUser = await getTestUser();
