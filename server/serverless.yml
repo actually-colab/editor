@@ -187,6 +187,13 @@ functions:
       - websocket:
           route: open_notebook
 
+  socket-close-notebook:
+    handler: src/socket/notebook/close-notebook.handler
+
+    events:
+      - websocket:
+          route: close_notebook
+
   socket-edit-cell:
     handler: src/socket/cell/edit-cell.handler
 
