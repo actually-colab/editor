@@ -134,12 +134,7 @@ describe('Workshop', () => {
     ]);
 
     const notebooks = await apiClient.getNotebooksForUser();
-    expect(notebooks).toHaveLength(2);
-    expect(notebooks).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(expectedTestWorkshop.main_notebook),
-      ])
-    );
+    expect(notebooks).toHaveLength(1);
 
     const workshops = await apiClient.getWorkshopsForUser();
     expect(workshops).toHaveLength(1);
