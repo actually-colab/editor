@@ -179,6 +179,15 @@ functions:
           cors: ${self:custom.restCorsPolicy}
           authorizer: ${self:custom.restAuthorizerConfig}
 
+  GET-workshops:
+    handler: src/rest/get-workshops.handler
+    events:
+      - http:
+          path: /workshops
+          method: get
+          cors: ${self:custom.restCorsPolicy}
+          authorizer: ${self:custom.restAuthorizerConfig}
+
   socket-connection:
     handler: src/socket/connection.handler
 

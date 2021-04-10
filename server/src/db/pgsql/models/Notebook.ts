@@ -111,6 +111,7 @@ export const getNotebooksForUser = async (uid: DUser['uid']): Promise<Notebook[]
       'nb.nb_id'
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+    .whereNull('nb.ws_id')
     .whereIn(
       'nb.nb_id',
       pgsql
@@ -207,7 +208,14 @@ export const getNotebookContents = async (
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
     .where({ 'nb.nb_id': nb_id })
-    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
+    .groupBy(
+      'nb.nb_id',
+      'nb.language',
+      'nb.name',
+      'nb.cells',
+      'nb.time_modified',
+      'nb.ws_id'
+    );
 
   if (notebooks.length === 0) {
     return null;
@@ -282,7 +290,14 @@ export const getActiveNotebookContents = async (
         .andOnNull('aus.time_disconnected')
     )
     .where({ 'nb.nb_id': nb_id })
-    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
+    .groupBy(
+      'nb.nb_id',
+      'nb.language',
+      'nb.name',
+      'nb.cells',
+      'nb.time_modified',
+      'nb.ws_id'
+    );
 
   if (notebooks.length === 0) {
     return null;

@@ -49,6 +49,7 @@ export interface DNotebook extends ModelBase {
   name: string;
   language: 'python';
   time_modified: UTCEpochDateTime;
+  ws_id?: DWorkshop['ws_id'];
 }
 
 /**Metadata for a Notebook */
@@ -88,7 +89,6 @@ export interface DWorkshop extends ModelBase {
   name: string;
   description: string;
   time_modified: UTCEpochDateTime;
-  nb_id?: DNotebook['nb_id'];
   start_time?: UTCEpochDateTime;
   end_time?: UTCEpochDateTime;
   capacity?: number; // TODO
@@ -97,7 +97,7 @@ export interface DWorkshop extends ModelBase {
 export interface Workshop extends Json, RemoveIndex<DWorkshop> {
   instructors: (WorkshopAccessLevel & { access_level: 'Instructor' })[];
   attendees: (WorkshopAccessLevel & { access_level: 'Attendee' })[];
-  mainNotebook: Notebook;
+  main_notebook: Notebook;
 }
 
 export type WorkshopAccessLevelType = 'Instructor' | 'Attendee';
