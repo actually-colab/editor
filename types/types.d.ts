@@ -61,6 +61,7 @@ export interface DNotebook extends ModelBase {
   language: 'python';
   time_modified: UTCEpochDateTime;
   ws_id?: DWorkshop['ws_id'];
+  ws_main_notebook?: boolean;
 }
 
 /**Metadata for a Notebook */
@@ -118,6 +119,7 @@ export interface DWorkshopAccessLevel extends ModelBase {
 
 export interface WorkshopAccessLevel extends DUser {
   access_level: WorkshopAccessLevelType;
+  nb_id?: DNotebook['nb_id'];
 }
 
 export type UTCEpochDateTime = number;

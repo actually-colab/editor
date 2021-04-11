@@ -225,7 +225,8 @@ export const getNotebookContents = async (
       'nb.name',
       'nb.cells',
       'nb.time_modified',
-      'nb.ws_id'
+      'nb.ws_id',
+      'nb.ws_main_notebook'
     );
 
   if (notebooks.length === 0) {
@@ -307,7 +308,8 @@ export const getActiveNotebookContents = async (
       'nb.name',
       'nb.cells',
       'nb.time_modified',
-      'nb.ws_id'
+      'nb.ws_id',
+      'nb.ws_main_notebook'
     );
 
   if (notebooks.length === 0) {

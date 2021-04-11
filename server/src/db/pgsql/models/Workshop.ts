@@ -1,4 +1,4 @@
-import type {
+import {
   DWorkshop,
   DUser,
   DNotebook,
@@ -6,6 +6,7 @@ import type {
   Notebook,
   DCell,
   DActiveSession,
+  DWorkshopAccessLevel,
 } from '@actually-colab/editor-types';
 import type { QueryBuilder } from 'knex';
 
@@ -73,6 +74,7 @@ export const createWorkshop = async (
           ws_id: workshopRecord.ws_id,
           name: workshop.name,
           time_modified: Date.now(),
+          ws_main_notebook: true,
         })
         .returning('*')
     )[0];
@@ -114,6 +116,46 @@ export const createWorkshop = async (
       attendees: attendeeWorkshopUALs,
       main_notebook,
     };
+  });
+};
+
+export const createAttendeeWorkshopNotebook = (
+  ws_id: Workshop['ws_id'],
+  uid: DUser['uid']
+): Promise<{
+  attendees: Pick<DUser, 'uid'> & Pick<DNotebook, 'nb_id'>;
+  instructors: DUser['uid'][];
+}> => {
+  return pgsql.transaction(async (trx) => {
+    const workshop = await getWorkshopById(ws_id);
+
+    const notebookRecord: DNotebook = (
+      await trx<DNotebook>(tablenames.notebooksTableName)
+        .insert({
+          language: 'python',
+          ws_id: ws_id,
+          name: workshop.name,
+          time_modified: Date.now(),
+          ws_main_notebook: false,
+        })
+        .returning('*')
+    )[0];
+
+    const instructors: DUser['uid'][] = (
+      await trx<DWorkshopAccessLevel>(tablenames.workshopAccessLevelsTableName)
+        .select('uid')
+        .where({ ws_id, access_level: 'Instructor' })
+    ).map((u) => u.uid);
+
+    const usersToGrant = instructors.concat([uid]);
+
+    await grantNotebookAccessByIds(
+      usersToGrant,
+      notebookRecord.nb_id,
+      'Full Access'
+    ).transacting(trx);
+
+    return { attendees: { uid, nb_id: notebookRecord.nb_id }, instructors };
   });
 };
 
@@ -192,6 +234,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
         json_build_object(
           'nb_id', nb.nb_id,
           'ws_id', nb.ws_id,
+          'ws_main_notebook', nb.ws_main_notebook,
           'name', nb.name,
           'language', nb.language,
           'time_modified', nb.time_modified,
@@ -256,6 +299,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
       'nb.language',
       'nb.name',
       'nb.time_modified',
-      'nb.users'
+      'nb.users',
+      'nb.ws_main_notebook'
     );
 };
