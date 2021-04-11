@@ -3,7 +3,7 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { Workshop, DUser, DWorkshop } from '@actually-colab/editor-types';
+import type { Workshop, DUser, DWorkshop, DCell } from '@actually-colab/editor-types';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
@@ -12,7 +12,9 @@ import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 import { createWorkshop } from '../db/pgsql/models/Workshop';
 
 type RealOmit<T, K extends PropertyKey> = { [P in keyof T as Exclude<P, K>]: T[P] };
-type RWorkshop = RealOmit<DWorkshop, 'ws_id'>;
+type RWorkshop = RealOmit<DWorkshop, 'ws_id'> & {
+  cells?: Pick<DCell, 'language' | 'contents'>[];
+};
 
 type TEvent = TShallotHttpEvent<{ email: string }, unknown, unknown, RWorkshop>;
 
@@ -33,7 +35,12 @@ const _handler: ShallotRawHandler<TEvent, Workshop> = async ({
     throw new createHTTPError.BadRequest('Must specify body.description');
   }
 
-  const workshop = await createWorkshop(body, [user.uid], []);
+  const workshop = await createWorkshop(
+    { name: body.name, description: body.description },
+    [user.uid],
+    [],
+    body.cells
+  );
 
   return { message: 'success', data: workshop };
 };

@@ -3,7 +3,7 @@ import type {
   TShallotHttpEvent,
 } from '@shallot/rest-wrapper/dist/aws';
 
-import type { Notebook, DUser } from '@actually-colab/editor-types';
+import type { Notebook, DUser, DCell } from '@actually-colab/editor-types';
 
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
@@ -13,6 +13,7 @@ import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 
 interface RNotebook {
   name: string;
+  cells?: Pick<DCell, 'language' | 'contents'>[];
 }
 
 type TEvent = TShallotHttpEvent<{ email: string }, unknown, unknown, RNotebook>;
@@ -32,7 +33,8 @@ const _handler: ShallotRawHandler<TEvent, Notebook> = async ({
 
   const notebook = await createNotebook(
     { name: body.name, language: 'python' },
-    user.uid
+    user.uid,
+    body.cells
   );
 
   return { message: 'success', data: notebook };

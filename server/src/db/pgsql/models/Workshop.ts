@@ -4,6 +4,7 @@ import type {
   DNotebook,
   Workshop,
   Notebook,
+  DCell,
 } from '@actually-colab/editor-types';
 import type { QueryBuilder } from 'knex';
 
@@ -36,9 +37,10 @@ export const recordTimeModified = (ws_id: DWorkshop['ws_id']): QueryBuilder =>
  * @returns the notebook, if created successfully
  */
 export const createWorkshop = async (
-  workshop: Partial<DWorkshop>, // TODO: improve type
+  workshop: Pick<DWorkshop, 'name' | 'description'>, // TODO: improve type
   instructors: DUser['uid'][],
-  attendees: DUser['uid'][]
+  attendees: DUser['uid'][],
+  cells?: Pick<DCell, 'language' | 'contents'>[]
 ): Promise<Workshop> => {
   return pgsql.transaction(async (trx) => {
     const workshopRecord: DWorkshop = (
@@ -89,6 +91,16 @@ export const createWorkshop = async (
             'Read Only'
           ).transacting(trx)
         : [];
+
+    if (cells != null && cells.length > 0) {
+      await trx<DCell>(tablenames.cellsTableName).insert(
+        cells.map((cell) => ({
+          ...cell,
+          time_modified: Date.now(),
+          nb_id: notebookRecord.nb_id,
+        }))
+      );
+    }
 
     const main_notebook: Notebook = {
       ...notebookRecord,

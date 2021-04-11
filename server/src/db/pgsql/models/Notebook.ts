@@ -36,8 +36,9 @@ export const recordTimeModified = (nb_id: DNotebook['nb_id']): QueryBuilder =>
  * @returns the notebook, if created successfully
  */
 export const createNotebook = async (
-  notebook: Partial<DNotebook>,
-  uid: DUser['uid']
+  notebook: Pick<DNotebook, 'name' | 'language'>,
+  uid: DUser['uid'],
+  cells?: Pick<DCell, 'language' | 'contents'>[]
 ): Promise<Notebook> => {
   // TODO: Use a transaction
   const notebookRecord: DNotebook = (
@@ -47,6 +48,16 @@ export const createNotebook = async (
   )[0];
 
   const accessLevel = await grantAccessById(uid, notebookRecord.nb_id, 'Full Access');
+
+  if (cells != null && cells.length > 0) {
+    await pgsql<DCell>(tablenames.cellsTableName).insert(
+      cells.map((cell) => ({
+        ...cell,
+        time_modified: Date.now(),
+        nb_id: notebookRecord.nb_id,
+      }))
+    );
+  }
 
   return {
     ...notebookRecord,
