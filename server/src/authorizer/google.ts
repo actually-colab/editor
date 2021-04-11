@@ -20,14 +20,14 @@ const audience = [
   'https://www.googleapis.com/auth/userinfo.email',
 ];
 
-const isIllinoisEmail = (email: string): boolean => {
-  const parts = email.split('@');
-  return (
-    email === 'btincher99@gmail.com' ||
-    email === 'jefftaylorchang@gmail.com' ||
-    (parts.length === 2 && parts[1] === 'illinois.edu')
-  );
-};
+// const isIllinoisEmail = (email: string): boolean => {
+//   const parts = email.split('@');
+//   return (
+//     email === 'btincher99@gmail.com' ||
+//     email === 'jefftaylorchang@gmail.com' ||
+//     (parts.length === 2 && parts[1] === 'illinois.edu')
+//   );
+// };
 
 export const validateGoogleIdToken = async (
   token: string
@@ -56,9 +56,9 @@ export const validateGoogleIdToken = async (
     throw new createHttpError.Forbidden('Google account not verified');
   }
 
-  if (!process.env.IS_OFFLINE && !isIllinoisEmail(payload.email)) {
-    throw new createHttpError.Forbidden('This service requires an @illinois.edu email');
-  }
+  // if (!process.env.IS_OFFLINE && !isIllinoisEmail(payload.email)) {
+  //   throw new createHttpError.Forbidden('This service requires an @illinois.edu email');
+  // }
 
   return {
     googleUID: payload.sub,
