@@ -116,7 +116,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
       pgsql.raw(`
         COALESCE(
           jsonb_agg(
-            json_build_object(
+            DISTINCT jsonb_build_object(
               'uid', u.uid, 
               'email', u.email, 
               'name', u.name,
@@ -129,7 +129,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
       pgsql.raw(`
         COALESCE(
           jsonb_agg(
-            json_build_object(
+            DISTINCT jsonb_build_object(
               'uid', u.uid, 
               'email', u.email, 
               'name', u.name,
@@ -146,19 +146,38 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
           'name', nb.name,
           'language', nb.language,
           'time_modified', nb.time_modified,
-          'users', json_agg(
-            json_build_object(
-              'uid', u.uid,
-              'email', u.email,
-              'name', u.name,
-              'image_url', u.image_url,
-              'access_level', nba.access_level
-            )
-          )
+          'users', nb.users
         ) AS main_notebook
       `)
     )
-    .from({ ws: tablenames.workshopsTableName })
+    .from(
+      pgsql
+        .select(
+          'nb2.*',
+          pgsql.raw(`
+            jsonb_agg(
+              json_build_object(
+                'uid', u2.uid, 
+                'email', u2.email, 
+                'name', u2.name,
+                'image_url', u2.image_url,
+                'access_level', nba2.access_level
+              )
+            ) AS users
+          `)
+        )
+        .from({ nb2: tablenames.notebooksTableName })
+        .innerJoin(
+          { nba2: tablenames.notebookAccessLevelsTableName },
+          'nba2.nb_id',
+          'nb2.nb_id'
+        )
+        .innerJoin({ u2: tablenames.usersTableName }, 'u2.uid', 'nba2.uid')
+        .whereNotNull('nb2.ws_id')
+        .groupBy('nb2.nb_id')
+        .as('nb')
+    )
+    .innerJoin({ ws: tablenames.workshopsTableName }, 'ws.ws_id', 'nb.ws_id')
     .innerJoin(
       { wsa: tablenames.workshopAccessLevelsTableName },
       'wsa.ws_id',
@@ -166,7 +185,6 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
       'ws.ws_id'
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'wsa.uid')
-    .innerJoin({ nb: tablenames.notebooksTableName }, 'nb.ws_id', '=', 'ws.ws_id')
     .innerJoin(
       { nba: tablenames.notebookAccessLevelsTableName },
       'nba.nb_id',
@@ -181,5 +199,14 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
         .innerJoin({ sub_u: tablenames.usersTableName }, 'sub_u.uid', '=', 'sub_nba.uid')
         .where({ 'sub_u.uid': uid })
     )
-    .groupBy('ws.ws_id', 'nb.nb_id');
+    .groupBy(
+      'ws.ws_id',
+      'wsa.ws_id',
+      'nb.ws_id',
+      'nb.nb_id',
+      'nb.language',
+      'nb.name',
+      'nb.time_modified',
+      'nb.users'
+    );
 };

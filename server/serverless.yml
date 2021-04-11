@@ -258,3 +258,10 @@ functions:
     events:
       - websocket:
           route: update_output
+
+  socket-share-workshop:
+    handler: src/socket/workshop/share-workshop.handler
+
+    events:
+      - websocket:
+          route: share_workshop
