@@ -251,7 +251,7 @@ export const getActiveNotebookContents = async (
           'access_level', nba.access_level
         )
       ) AS users`),
-      pgsql.raw('json_agg(aus.uid) AS connected_users')
+      pgsql.raw('json_agg(DISTINCT aus.uid) AS connected_users')
     )
     .from(
       pgsql
