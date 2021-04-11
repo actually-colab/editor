@@ -298,9 +298,9 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * @param access_level permissions level for the user that the workshop is being shared with
    */
   public shareWorkshop = (
-    emails: NotebookAccessLevel['email'][],
+    emails: WorkshopAccessLevel['email'][],
     ws_id: WorkshopAccessLevel['ws_id'],
-    access_level: NotebookAccessLevel['access_level']
+    access_level: WorkshopAccessLevel['access_level']
   ): void => {
     this.sendEvent('share_workshop', { emails, ws_id, access_level });
   };
