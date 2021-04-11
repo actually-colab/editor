@@ -4,6 +4,7 @@ import type {
   DUser,
   Notebook,
   NotebookAccessLevel,
+  OChatMessage,
   OOutput,
   Workshop,
   WorkshopAccessLevel,
@@ -68,6 +69,11 @@ interface SocketMessageListeners {
 
   output_updated: (
     output: OOutput,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  chat_message_sent: (
+    message: OChatMessage,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 }
@@ -199,6 +205,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
                 );
               }
             );
+            break;
+          }
+          case 'chat_message_sent': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const message: OChatMessage = eventData.data as any;
+            this.emit('chat_message_sent', message, eventData.triggered_by);
             break;
           }
           default:
@@ -372,4 +384,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
+
+  /**Echoes a message into the notebook chat.
+   *
+   * @param nb_id The notebook to broadcast to
+   * @param message Text to send
+   */
+  public sendChatMessage = (
+    nb_id: OChatMessage['nb_id'],
+    message: OChatMessage['message']
+  ): void => {
+    this.sendEvent('send_chat_message', { nb_id, message });
+  };
 }

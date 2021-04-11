@@ -265,3 +265,10 @@ functions:
     events:
       - websocket:
           route: share_workshop
+
+  send_chat_message:
+    handler: src/socket/chat/send-chat.handler
+
+    events:
+      - websocket:
+          route: send_chat_message

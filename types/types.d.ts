@@ -42,6 +42,14 @@ export interface OOutput extends ModelBase {
   time_modified?: UTCEpochDateTime;
 }
 
+/**Chat message object model */
+export interface OChatMessage extends ModelBase {
+  uid: DUser['uid'];
+  nb_id: DCell['nb_id'];
+  message: string;
+  timestamp?: UTCEpochDateTime;
+}
+
 /**Model for a notebook */
 export interface DNotebook extends ModelBase {
   /**The notebook's generated id */
