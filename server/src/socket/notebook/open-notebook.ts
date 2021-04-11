@@ -7,7 +7,7 @@ import ShallotSocketWrapper, {
   TShallotSocketEvent,
 } from '../middleware/wrapper';
 
-import { openNotebook } from '../../db/pgsql/models/ActiveSession';
+import { getActiveSessionById, openNotebook } from '../../db/pgsql/models/ActiveSession';
 import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
 import { getActiveNotebookContents } from '../../db/pgsql/models/Notebook';
 
@@ -41,6 +41,14 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
   );
   if (access_level == null) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
+  }
+
+  const activeSession = await getActiveSessionById(
+    requestContext.connectionId,
+    data.nb_id
+  );
+  if (activeSession != null) {
+    throw new createHttpError.BadRequest(`Already connected to notebook ${data.nb_id}`);
   }
 
   await openNotebook(
