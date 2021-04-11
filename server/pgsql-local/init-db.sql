@@ -59,5 +59,6 @@ CREATE TABLE IF NOT EXISTS "Cell" (
   position      SERIAL NOT NULL,
   cursor_row    SMALLINT,
   cursor_col    SMALLINT,
-  language      VARCHAR(16)
+  language      VARCHAR(16),
+  UNIQUE (nb_id, cell_id, position)
 );

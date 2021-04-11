@@ -1,4 +1,5 @@
 import type {
+  DCell,
   DNotebookAccessLevel,
   DUser,
   Notebook,
@@ -114,10 +115,15 @@ export class ActuallyColabRESTClient {
    */
   public createNotebook = async (
     name: Notebook['name'],
-    language: Notebook['language'] = 'python'
+    language: Notebook['language'] = 'python',
+    cells?: Pick<DCell, 'language' | 'contents'>[]
   ): Promise<Notebook> => {
     return (
-      await this.axiosInstance.post<{ data: Notebook }>('/notebook', { name, language })
+      await this.axiosInstance.post<{ data: Notebook }>('/notebook', {
+        name,
+        language,
+        cells,
+      })
     ).data.data;
   };
 
@@ -144,15 +150,18 @@ export class ActuallyColabRESTClient {
    *
    * @param name human-readable name of the workshop
    * @param description human-readable description of the workshop
+   * @param cells cell contents to pre-insert
    */
   public createWorkshop = async (
     name: Workshop['name'],
-    description: Workshop['description']
+    description: Workshop['description'],
+    cells?: Pick<DCell, 'language' | 'contents'>[]
   ): Promise<Workshop> => {
     return (
       await this.axiosInstance.post<{ data: Workshop }>('/workshop', {
         name,
         description,
+        cells,
       })
     ).data.data;
   };

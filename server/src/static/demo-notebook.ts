@@ -1,6 +1,6 @@
 import { DCell } from '@actually-colab/editor-types';
 
-export const DEMO_NOTEBOOK_CELLS: Partial<DCell>[] = [
+export const DEMO_NOTEBOOK_CELLS: Pick<DCell, 'language' | 'contents'>[] = [
   {
     language: 'markdown',
     contents: `# Welcome to Actually Colab
