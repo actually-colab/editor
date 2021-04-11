@@ -102,7 +102,7 @@ const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
       },
     }),
     sendWorkshopSharedEmail(
-      ual.notebook.users.map((u) => u.email),
+      data.emails,
       user.name ?? 'Unknown User',
       workshop?.name,
       workshop?.description

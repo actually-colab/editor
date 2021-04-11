@@ -14,6 +14,8 @@ import {
 } from '../../db/pgsql/models/NotebookAccessLevel';
 
 import { broadcastToNotebook, emitToConnections } from '../client-management';
+import { sendNotebookSharedEmail } from '../../email/mailer';
+import { getNotebookMeta } from '../../db/pgsql/models/Notebook';
 
 interface TShareNotebookEventBody {
   data: {
@@ -83,27 +85,21 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
         },
       }),
     ]);
-
-    // TODO
-    // await emitToConnections(requestContext, revoked.connectionIds, {
-    //   'notebook_closed',
-    //   triggered_by: user.uid,
-    //   data: {
-    //     nb_id: data.nb_id,
-    //     uid:
-    //   }
-    // });
   } else {
     const users = await grantAccessByEmails(data.emails, data.nb_id, data.access_level);
+    const notebook = await getNotebookMeta(data.nb_id);
 
-    await broadcastToNotebook(requestContext, data.nb_id, {
-      action: 'notebook_shared',
-      triggered_by: user.uid,
-      data: {
-        nb_id: data.nb_id,
-        users,
-      },
-    });
+    await Promise.all([
+      sendNotebookSharedEmail(data.emails, user.name ?? 'Unknown User', notebook.name),
+      broadcastToNotebook(requestContext, data.nb_id, {
+        action: 'notebook_shared',
+        triggered_by: user.uid,
+        data: {
+          nb_id: data.nb_id,
+          users,
+        },
+      }),
+    ]);
   }
 };
 
