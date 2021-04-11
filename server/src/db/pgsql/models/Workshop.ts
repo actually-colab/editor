@@ -265,6 +265,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
           'nb2.nb_id'
         )
         .innerJoin({ u2: tablenames.usersTableName }, 'u2.uid', 'nba2.uid')
+        .where({ 'nb2.ws_main_notebook': true })
         .whereNotNull('nb2.ws_id')
         .groupBy('nb2.nb_id')
         .as('nb')
@@ -283,6 +284,7 @@ export const getWorkshopsForUser = async (uid: DUser['uid']): Promise<Workshop[]
       '=',
       'nb.nb_id'
     )
+    .where({ 'nb.ws_main_notebook': true })
     .whereIn(
       'nb.nb_id',
       pgsql

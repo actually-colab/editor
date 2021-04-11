@@ -122,7 +122,7 @@ export const getNotebooksForUser = async (uid: DUser['uid']): Promise<Notebook[]
       'nb.nb_id'
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
-    .whereNull('nb.ws_id')
+    .whereRaw('nb.ws_main_notebook = FALSE OR nb.ws_main_notebook IS NULL')
     .whereIn(
       'nb.nb_id',
       pgsql
