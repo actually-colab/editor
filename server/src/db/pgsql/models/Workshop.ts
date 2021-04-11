@@ -143,6 +143,15 @@ export const startWorkshop = async (
   });
 };
 
+/**fetches workshop metadata.
+ * @param ws_id the workshop
+ */
+export const getWorkshopById = async (ws_id: DWorkshop['ws_id']): Promise<DWorkshop> => {
+  return (
+    await pgsql.select('*').from(tablenames.workshopsTableName).where({ ws_id })
+  )[0];
+};
+
 /**Queries all workshops for a specific user.
  *
  * @param uid the user to query for

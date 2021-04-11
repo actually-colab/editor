@@ -17,5 +17,5 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 {"action": "lock_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135"}}
 {"action": "edit_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135", "cellData": {"contents": "test", "language": "markdown", "cursor_pos": 1}}}
 {"action": "unlock_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135"}}
-{"action": "share_workshop", "data": {"ws_id": "9c5adad7-7a21-4d42-b9c4-03f755c226f7", "uid": "e607fa6e-5cd2-4305-91c7-ca3baddf554b", "access_level": "Instructor"}}
+{"action": "share_workshop", "data": {"ws_id": "3215dfad-f50e-4bd4-863b-f7558ac71a74", "emails": ["btincher99@gmail.com"], "access_level": "Instructor"}}
 ```
