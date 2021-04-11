@@ -40,6 +40,10 @@ provider:
     GOOGLE_AUTH_WEB_CLIENT_SECRET: ${env:GOOGLE_AUTH_WEB_CLIENT_SECRET}
     PROD_AUTH_SECRET: ${env:PROD_AUTH_SECRET}
 
+    MAIL_HOST: ${env:MAIL_HOST}
+    MAIL_USERNAME: ${env:MAIL_USERNAME}
+    MAIL_PASSWORD: ${env:MAIL_PASSWORD}
+
 package:
   individually: true
 

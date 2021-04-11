@@ -17,6 +17,8 @@ import {
 } from '../../db/pgsql/models/WorkshopAccessLevel';
 
 import { broadcastToNotebook } from '../client-management';
+import { sendWorkshopSharedEmail } from '../../email/mailer';
+import { getWorkshopById } from '../../db/pgsql/models/Workshop';
 
 interface TShareWorkshopEventBody {
   data: {
@@ -82,6 +84,8 @@ const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
     nb_access_level
   );
 
+  const workshop = await getWorkshopById(data.ws_id);
+
   await Promise.all([
     broadcastToNotebook(requestContext, ual.notebook.nb_id, {
       action: 'notebook_shared',
@@ -97,6 +101,12 @@ const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
         instructors: data.access_level === 'Instructor' ? ual.workshop.users : [],
       },
     }),
+    sendWorkshopSharedEmail(
+      ual.notebook.users.map((u) => u.email),
+      user.name ?? 'Unknown User',
+      workshop?.name,
+      workshop?.description
+    ),
   ]);
 };
 
