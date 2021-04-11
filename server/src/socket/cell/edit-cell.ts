@@ -10,7 +10,7 @@ import ShallotSocketWrapper, {
 import { broadcastToNotebook } from '../client-management';
 
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
-import { editCell } from '../../db/pgsql/models/Cell';
+import { deleteCell, editCell } from '../../db/pgsql/models/Cell';
 
 interface TEditCellEventBody {
   data: {
@@ -29,7 +29,7 @@ type TEditCellEvent = TShallotSocketEvent<
 
 const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, body }) => {
   const data = body?.data;
-  if (data?.cell_id == null || data.nb_id == null || data.cellData == null) {
+  if (data?.cell_id == null || data.nb_id == null || data.cellData === undefined) {
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
@@ -40,16 +40,30 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
 
-  const cell = await editCell(session, data.nb_id, data.cell_id, data.cellData);
-  if (cell == null) {
-    throw new createHttpError.BadRequest('Could not edit cell');
-  }
+  if (data.cellData == null) {
+    // TODO: Check lock
+    await deleteCell(session, data.nb_id, data.cell_id);
 
-  await broadcastToNotebook(requestContext, session.nb_id, {
-    action: 'cell_edited',
-    triggered_by: requestContext.authorizer.uid,
-    data: cell,
-  });
+    await broadcastToNotebook(requestContext, session.nb_id, {
+      action: 'cell_deleted',
+      triggered_by: requestContext.authorizer.uid,
+      data: {
+        cell_id: data.cell_id,
+        nb_id: data.nb_id,
+      },
+    });
+  } else {
+    const cell = await editCell(session, data.nb_id, data.cell_id, data.cellData);
+    if (cell == null) {
+      throw new createHttpError.BadRequest('Could not edit cell');
+    }
+
+    await broadcastToNotebook(requestContext, session.nb_id, {
+      action: 'cell_edited',
+      triggered_by: requestContext.authorizer.uid,
+      data: cell,
+    });
+  }
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
