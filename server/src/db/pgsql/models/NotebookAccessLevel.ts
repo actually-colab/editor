@@ -2,6 +2,8 @@ import type {
   DUser,
   DNotebookAccessLevel,
   NotebookAccessLevel,
+  DActiveSession,
+  DCell,
 } from '@actually-colab/editor-types';
 import { QueryBuilder } from 'knex';
 
@@ -89,7 +91,7 @@ export const grantAccessByEmail = async (
 
 /**Grants access for a specific user to a specific notebook.
  *
- * @param email the user to grant notebook access to
+ * @param emails the users to grant notebook access to
  * @param nb_id the notebook to grant access to
  * @param access_level type of access for the user
  * @returns the access provided, if successful
@@ -111,6 +113,63 @@ export const grantAccessByEmails = async (
       .returning('*');
 
     return users.map((user) => ({ ...user, access_level }));
+  });
+};
+
+/**Revokes access for specific users from a specific notebook.
+ *
+ * @param emails the user to grant notebook access to
+ * @param nb_id the notebook to grant access to
+ * @returns the uids revoked
+ */
+export const revokeAccessByEmails = async (
+  emails: DUser['email'][],
+  nb_id: DNotebookAccessLevel['nb_id']
+): Promise<{ uids: DUser['uid'][]; connectionIds: DActiveSession['connectionId'][] }> => {
+  return pgsql.transaction(async (trx) => {
+    const users = await trx<DUser>(tablenames.usersTableName)
+      .select('*')
+      .whereIn('email', emails);
+
+    await trx<DNotebookAccessLevel>(tablenames.notebookAccessLevelsTableName)
+      .where({ nb_id })
+      .whereIn(
+        'uid',
+        users.map((user) => user.uid)
+      )
+      .del();
+
+    const time_disconnected = Date.now();
+    const sessions = await trx<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        time_disconnected: time_disconnected,
+        last_event: time_disconnected,
+      })
+      .whereNull('time_disconnected')
+      .where({ nb_id })
+      .whereIn(
+        'uid',
+        users.map((user) => user.uid)
+      )
+      .returning('*');
+
+    if (sessions.length > 0) {
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: null,
+          cursor_col: null,
+          cursor_row: null,
+          time_modified: Date.now(),
+        })
+        .where({
+          lock_held_by: sessions[0].uid,
+        });
+    }
+
+    return {
+      uids: users.map((user) => user.uid),
+      connectionIds: sessions.map((session) => session.connectionId),
+    };
   });
 };
 
