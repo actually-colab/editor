@@ -27,8 +27,11 @@ export interface DCell extends ModelBase {
   time_modified: UTCEpochDateTime;
   contents: string;
   /**Position of the lock-holding-user's cursor in the cell */
-  cursor_pos?: number | null;
+  cursor_row?: number | null;
+  /**Position of the lock-holding-user's cursor in the cell */
+  cursor_col?: number | null;
   language: 'python' | 'markdown';
+  /**Position of cell with respect to others within the notebook */
   position: number;
 }
 

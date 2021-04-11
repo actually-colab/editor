@@ -9,5 +9,5 @@ export default knex({
     database: process.env.AC_PGSQL_DATABASE,
   },
   debug: process.env.IS_OFFLINE != null,
-  pool: { min: 0, max: 3 },
+  pool: { min: 0, max: 200 },
 });
