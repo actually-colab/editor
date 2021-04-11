@@ -421,8 +421,8 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     ): void => {
       this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
     },
-    1000,
-    { maxWait: 5000 },
+    500,
+    { maxWait: 1000 },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
@@ -463,8 +463,8 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
         });
       });
     },
-    3000,
-    { maxWait: 5000 },
+    1000,
+    { maxWait: 2000 },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
