@@ -9,6 +9,10 @@ import {
   ActuallyColabSocketClient,
 } from '@actually-colab/editor-client';
 
+const sleep = async (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 const getTestUser = async (): Promise<{
   apiClient: ActuallyColabRESTClient;
   socketClient: ActuallyColabSocketClient;
@@ -454,9 +458,11 @@ describe('Collaboration', () => {
 
     mainUser.socketClient.on(
       'cell_deleted',
-      jest.fn((nb_id, _, triggered_by) => {
+      jest.fn(async (nb_id, _, triggered_by) => {
         expect(triggered_by).toEqual(mainUser.user.uid);
         expect(nb_id).toEqual(notebook.nb_id);
+
+        await sleep(1000);
 
         mainUser.socketClient.close();
         otherUser.socketClient.close();
@@ -600,4 +606,82 @@ describe('Collaboration', () => {
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
   }, 5000);
+});
+
+describe('Workshops', () => {
+  test('Start Workshop', async (done) => {
+    const mainUser = await getTestUser();
+    const otherUser = await getTestUser();
+
+    const workshop = await mainUser.apiClient.createWorkshop(
+      'Test Workshop',
+      'test workshop'
+    );
+
+    mainUser.socketClient.on(
+      'notebook_opened',
+      jest.fn(() => {
+        mainUser.socketClient.shareWorkshop(
+          [otherUser.user.email],
+          workshop.ws_id,
+          'Attendee'
+        );
+      })
+    );
+
+    mainUser.socketClient.on(
+      'workshop_shared',
+      jest.fn((ws_id, attendees, instructors, triggered_by) => {
+        expect(ws_id).toEqual(workshop.ws_id);
+        expect(attendees).toHaveLength(1);
+        expect(instructors).toHaveLength(0);
+        expect(triggered_by).toEqual(mainUser.user.uid);
+
+        mainUser.socketClient.startWorkshop(workshop.ws_id);
+      })
+    );
+    otherUser.socketClient.on('workshop_shared', jest.fn());
+
+    mainUser.socketClient.on(
+      'workshop_started',
+      jest.fn(async (res_ws_id, res_triggered_by) => {
+        expect(res_ws_id).toEqual(workshop.ws_id);
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+
+        await sleep(1000);
+
+        mainUser.socketClient.close();
+        otherUser.socketClient.close();
+
+        expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+        expect(otherUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+
+        expect(
+          mainUser.socketClient.listeners('workshop_shared')[0]
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          otherUser.socketClient.listeners('workshop_shared')[0]
+        ).not.toHaveBeenCalled();
+
+        expect(
+          mainUser.socketClient.listeners('workshop_started')[0]
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          otherUser.socketClient.listeners('workshop_started')[0]
+        ).toHaveBeenCalledTimes(1);
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        done!();
+      })
+    );
+    otherUser.socketClient.on(
+      'workshop_started',
+      jest.fn((res_ws_id, res_triggered_by) => {
+        expect(res_ws_id).toEqual(workshop.ws_id);
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+      })
+    );
+
+    mainUser.socketClient.openNotebook(workshop.main_notebook.nb_id);
+  }, 10000);
 });

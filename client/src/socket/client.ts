@@ -57,6 +57,10 @@ interface SocketMessageListeners {
     instructors: Workshop['instructors'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
+  workshop_started: (
+    ws_id: Workshop['ws_id'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
   cell_created: (
     cell: DCell,
@@ -189,6 +193,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
               accessLevel.instructors,
               eventData.triggered_by
             );
+            break;
+          }
+          case 'workshop_started': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const ws: Pick<Workshop, 'ws_id'> = eventData.data as any;
+            this.emit('workshop_started', ws.ws_id, eventData.triggered_by);
             break;
           }
 
@@ -344,6 +354,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     access_level: WorkshopAccessLevel['access_level']
   ): void => {
     this.sendEvent('share_workshop', { emails, ws_id, access_level });
+  };
+
+  /**
+   * Starts a new workshop. The requesting user must have
+   * Instructor access.
+   *
+   * @param ws_id id of the workshop to share
+   */
+  public startWorkshop = (ws_id: WorkshopAccessLevel['ws_id']): void => {
+    this.sendEvent('start_workshop', { ws_id });
   };
 
   /**

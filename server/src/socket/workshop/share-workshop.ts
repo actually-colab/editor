@@ -18,7 +18,7 @@ import {
 
 import { broadcastToNotebook } from '../client-management';
 
-interface TShareNotebookEventBody {
+interface TShareWorkshopEventBody {
   data: {
     ws_id: DWorkshopAccessLevel['ws_id'];
     emails: DUser['email'][];
@@ -26,14 +26,14 @@ interface TShareNotebookEventBody {
   };
 }
 
-type TShareNotebookEvent = TShallotSocketEvent<
+type TShareWorkshopEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TShareNotebookEventBody
+  TShareWorkshopEventBody
 >;
 
-const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
+const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
   requestContext,
   body,
 }) => {
