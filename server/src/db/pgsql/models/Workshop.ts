@@ -5,6 +5,7 @@ import type {
   Workshop,
   Notebook,
   DCell,
+  DActiveSession,
 } from '@actually-colab/editor-types';
 import type { QueryBuilder } from 'knex';
 
@@ -113,6 +114,32 @@ export const createWorkshop = async (
       attendees: attendeeWorkshopUALs,
       main_notebook,
     };
+  });
+};
+
+/**Starts a workshop
+ *
+ * @param ws_id
+ * @returns active users to notify
+ */
+export const startWorkshop = async (
+  ws_id: DWorkshop['ws_id']
+): Promise<Pick<DActiveSession, 'connectionId' | 'uid'>[]> => {
+  return pgsql.transaction(async (trx) => {
+    await trx<DWorkshop>(tablenames.workshopsTableName)
+      .update({ start_time: Date.now() })
+      .where({ ws_id });
+
+    const sessions = await pgsql
+      .select('as.connectionId', 'as.uid')
+      .from({ as: tablenames.activeSessionsTableName })
+      .innerJoin({ wsa: tablenames.workshopAccessLevelsTableName }, 'wsa.uid', 'as.uid')
+      .where({ 'wsa.ws_id': ws_id })
+      .whereNull('as.time_disconnected')
+      .groupBy('as.connectionId', 'as.uid')
+      .transacting(trx);
+
+    return sessions;
   });
 };
 

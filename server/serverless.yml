@@ -266,6 +266,13 @@ functions:
       - websocket:
           route: share_workshop
 
+  socket-start-workshop:
+    handler: src/socket/workshop/start-workshop.handler
+
+    events:
+      - websocket:
+          route: start_workshop
+
   send_chat_message:
     handler: src/socket/chat/send-chat.handler
 
