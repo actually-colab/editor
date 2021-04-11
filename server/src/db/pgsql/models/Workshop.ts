@@ -124,19 +124,20 @@ export const createWorkshop = async (
  */
 export const startWorkshop = async (
   ws_id: DWorkshop['ws_id']
-): Promise<Pick<DActiveSession, 'connectionId' | 'uid'>[]> => {
+): Promise<(Pick<DActiveSession, 'connectionId' | 'uid'> & Pick<DUser, 'email'>)[]> => {
   return pgsql.transaction(async (trx) => {
     await trx<DWorkshop>(tablenames.workshopsTableName)
       .update({ start_time: Date.now() })
       .where({ ws_id });
 
     const sessions = await pgsql
-      .select('as.connectionId', 'as.uid')
+      .select('as.connectionId', 'as.uid', 'u.email')
       .from({ as: tablenames.activeSessionsTableName })
       .innerJoin({ wsa: tablenames.workshopAccessLevelsTableName }, 'wsa.uid', 'as.uid')
+      .innerJoin({ u: tablenames.usersTableName }, 'u.uid', 'as.uid')
       .where({ 'wsa.ws_id': ws_id })
       .whereNull('as.time_disconnected')
-      .groupBy('as.connectionId', 'as.uid')
+      .groupBy('as.connectionId', 'as.uid', 'u.email')
       .transacting(trx);
 
     return sessions;

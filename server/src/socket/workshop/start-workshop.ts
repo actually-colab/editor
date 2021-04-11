@@ -8,9 +8,10 @@ import ShallotSocketWrapper, {
 } from '../middleware/wrapper';
 
 import { getWorkshopAccessLevel } from '../../db/pgsql/models/WorkshopAccessLevel';
-import { startWorkshop } from '../../db/pgsql/models/Workshop';
+import { startWorkshop, getWorkshopById } from '../../db/pgsql/models/Workshop';
 
 import { emitToConnections } from '../client-management';
+import { sendWorkshopStartedEmail } from '../../email/mailer';
 
 interface TStartWorkshopEventBody {
   data: {
@@ -46,18 +47,26 @@ const _handler: ShallotRawHandler<TStartWorkshopEvent> = async ({
   }
 
   const sessions = await startWorkshop(data.ws_id);
+  const workshop = await getWorkshopById(data.ws_id);
 
-  await emitToConnections(
-    requestContext,
-    sessions.map((s) => s.connectionId),
-    {
-      action: 'workshop_started',
-      triggered_by: user.uid,
-      data: {
-        ws_id: data.ws_id,
-      },
-    }
-  );
+  await Promise.all([
+    sendWorkshopStartedEmail(
+      sessions.map((u) => u.email),
+      workshop.name,
+      workshop.description
+    ),
+    emitToConnections(
+      requestContext,
+      sessions.map((s) => s.connectionId),
+      {
+        action: 'workshop_started',
+        triggered_by: user.uid,
+        data: {
+          ws_id: data.ws_id,
+        },
+      }
+    ),
+  ]);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

@@ -3,6 +3,7 @@
 import nodemailer from 'nodemailer';
 
 import workshopSharedHTML from '../static/email-templates/workshop-shared';
+import workshopStartedHTML from '../static/email-templates/workshop-started';
 
 const senderAddress = process.env['MAIL_USERNAME'];
 const emailTransporter = nodemailer.createTransport({
@@ -27,7 +28,7 @@ export const sendEmails = async (
 
   await emailTransporter.sendMail({
     from: `Actually Colab <${senderAddress}>`,
-    to: emails,
+    bcc: emails,
     subject,
     text,
     html,
@@ -47,5 +48,20 @@ export const sendWorkshopSharedEmail = async (
     'Check it out at https://app.actuallycolab.org',
   ].join('\n');
   const html = workshopSharedHTML(triggered_by_name, workshop_name, description);
+  await sendEmails(emails, subject, text, html);
+};
+
+export const sendWorkshopStartedEmail = async (
+  emails: string[],
+  workshop_name: string,
+  description: string
+): Promise<void> => {
+  const subject = `The workshop ${workshop_name} has started!`;
+  const text = [
+    subject,
+    description,
+    'Check it out at https://app.actuallycolab.org',
+  ].join('\n');
+  const html = workshopStartedHTML(workshop_name, description);
   await sendEmails(emails, subject, text, html);
 };
