@@ -166,6 +166,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
               accessLevel.instructors,
               eventData.triggered_by
             );
+            break;
           }
           case 'cell_created': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
