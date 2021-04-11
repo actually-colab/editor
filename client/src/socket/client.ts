@@ -5,6 +5,8 @@ import type {
   Notebook,
   NotebookAccessLevel,
   OOutput,
+  Workshop,
+  WorkshopAccessLevel,
 } from '@actually-colab/editor-types';
 
 import ws from 'websocket';
@@ -37,6 +39,13 @@ interface SocketMessageListeners {
   notebook_shared: (
     nb_id: Notebook['nb_id'],
     users: NotebookAccessLevel[],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  workshop_shared: (
+    ws_id: Workshop['ws_id'],
+    attendees: Workshop['attendees'],
+    instructors: Workshop['instructors'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 
@@ -132,6 +141,20 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             } = eventData.data as any;
             this.emit('notebook_shared', res.nb_id, res.users, eventData.triggered_by);
             break;
+          }
+          case 'workshop_shared': {
+            const accessLevel: Pick<
+              Workshop,
+              'ws_id' | 'attendees' | 'instructors'
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            > = eventData.data as any;
+            this.emit(
+              'workshop_shared',
+              accessLevel.ws_id,
+              accessLevel.attendees,
+              accessLevel.instructors,
+              eventData.triggered_by
+            );
           }
           case 'cell_created': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -241,6 +264,22 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     access_level: NotebookAccessLevel['access_level']
   ): void => {
     this.sendEvent('share_notebook', { emails, nb_id, access_level });
+  };
+
+  /**
+   * Shares a workshop with another user. The requesting user must have
+   * Instructor access to share the notebook.
+   *
+   * @param email user to share with
+   * @param ws_id id of the workshop to share
+   * @param access_level permissions level for the user that the workshop is being shared with
+   */
+  public shareWorkshop = (
+    email: NotebookAccessLevel['email'],
+    ws_id: WorkshopAccessLevel['ws_id'],
+    access_level: NotebookAccessLevel['access_level']
+  ): void => {
+    this.sendEvent('share_workshop', { email, ws_id, access_level });
   };
 
   /**
