@@ -72,7 +72,7 @@ export const grantWorkshopAccessByEmails = async (
   nb_access_level: DNotebookAccessLevel['access_level']
 ): Promise<{
   notebook: Pick<Notebook, 'nb_id' | 'users'>;
-  workshop: Pick<Workshop, 'ws_id' | 'users'>;
+  workshop: Pick<Workshop, 'ws_id'> & { users: WorkshopAccessLevel[] };
 }> => {
   return pgsql.transaction(async (trx) => {
     const users = await trx<DUser>(tablenames.usersTableName)

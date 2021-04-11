@@ -18,7 +18,10 @@ import {
 
 import { broadcastToNotebook } from '../client-management';
 import { sendWorkshopSharedEmail } from '../../email/mailer';
-import { getWorkshopById } from '../../db/pgsql/models/Workshop';
+import {
+  createAttendeeWorkshopNotebook,
+  getWorkshopById,
+} from '../../db/pgsql/models/Workshop';
 
 interface TShareWorkshopEventBody {
   data: {
@@ -85,6 +88,12 @@ const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
   );
 
   const workshop = await getWorkshopById(data.ws_id);
+  if (data.access_level === 'Attendee') {
+    const attendeeUids = ual.workshop.users.map((user) => user.uid);
+    Promise.all(
+      attendeeUids.map((uid) => createAttendeeWorkshopNotebook(data.ws_id, uid))
+    );
+  }
 
   await Promise.all([
     broadcastToNotebook(requestContext, ual.notebook.nb_id, {

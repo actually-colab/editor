@@ -160,6 +160,7 @@ describe('Workshop', () => {
       main_notebook: {
         name: 'Test Workshop',
         language: 'python',
+        ws_main_notebook: true,
       },
     };
     const newWorkshop = await apiClient.createWorkshop(
@@ -208,6 +209,7 @@ describe('Workshop', () => {
       main_notebook: {
         name: 'Test Workshop',
         language: 'python',
+        ws_main_notebook: true,
       },
     };
 

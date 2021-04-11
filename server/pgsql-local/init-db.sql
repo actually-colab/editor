@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS "Notebook" (
   name          VARCHAR(256),
   time_modified DOUBLE PRECISION,
   language      VARCHAR(256),
-  ws_id         UUID REFERENCES "Workshop" (ws_id)
+  ws_id         UUID REFERENCES "Workshop" (ws_id),
+  ws_main_notebook boolean
 );
 
 CREATE TABLE IF NOT EXISTS "NotebookAccessLevel" (
