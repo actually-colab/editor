@@ -198,8 +198,11 @@ describe('Collaboration', () => {
     const mainUser = await getTestUser();
     const otherUser = await getTestUser();
 
-    const newCellEdit: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>> = {
-      cursor_pos: 1,
+    const newCellEdit: Required<
+      Pick<DCell, 'cursor_col' | 'cursor_row' | 'contents' | 'language'>
+    > = {
+      cursor_col: 1,
+      cursor_row: 1,
       contents: 'exit(1)',
       language: 'markdown',
     };

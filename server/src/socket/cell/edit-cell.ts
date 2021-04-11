@@ -16,7 +16,7 @@ interface TEditCellEventBody {
   data: {
     cell_id: DCell['cell_id'];
     nb_id: DCell['nb_id'];
-    cellData: Pick<DCell, 'cursor_pos' | 'contents' | 'language'>;
+    cellData: Pick<DCell, 'cursor_col' | 'cursor_row' | 'contents' | 'language'>;
   };
 }
 

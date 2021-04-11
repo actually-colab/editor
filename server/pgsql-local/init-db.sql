@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS "Cell" (
   time_modified DOUBLE PRECISION,
   contents      TEXT,
   position      SERIAL NOT NULL,
-  cursor_pos    SMALLINT,
+  cursor_row    SMALLINT,
+  cursor_col    SMALLINT,
   language      VARCHAR(16)
 );

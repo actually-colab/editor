@@ -155,7 +155,8 @@ export const unlockCell = async (
       await trx<DCell>(tablenames.cellsTableName)
         .update({
           lock_held_by: null,
-          cursor_pos: null,
+          cursor_col: null,
+          cursor_row: null,
           time_modified: Date.now(),
         })
         .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
