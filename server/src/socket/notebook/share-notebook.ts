@@ -10,15 +10,16 @@ import ShallotSocketWrapper, {
 import {
   getUserAccessLevel,
   grantAccessByEmails,
+  revokeAccessByEmails,
 } from '../../db/pgsql/models/NotebookAccessLevel';
 
-import { broadcastToNotebook } from '../client-management';
+import { broadcastToNotebook, emitToConnections } from '../client-management';
 
 interface TShareNotebookEventBody {
   data: {
     nb_id: DNotebookAccessLevel['nb_id'];
     emails: DUser['email'][];
-    access_level: DNotebookAccessLevel['access_level'];
+    access_level?: DNotebookAccessLevel['access_level'] | null;
   };
 }
 
@@ -47,7 +48,7 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Must specify body.emails');
   }
 
-  if (data?.access_level == null) {
+  if (data?.access_level === undefined) {
     throw new createHttpError.BadRequest('Must specify body.access_level');
   }
 
@@ -61,16 +62,49 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
     throw new createHttpError.Forbidden('Must have Full Access to share a notebook');
   }
 
-  const users = await grantAccessByEmails(data.emails, data.nb_id, data.access_level);
+  if (data.access_level === null) {
+    const revoked = await revokeAccessByEmails(data.emails, data.nb_id);
 
-  await broadcastToNotebook(requestContext, data.nb_id, {
-    action: 'notebook_shared',
-    triggered_by: user.uid,
-    data: {
-      nb_id: data.nb_id,
-      users,
-    },
-  });
+    await Promise.all([
+      broadcastToNotebook(requestContext, data.nb_id, {
+        action: 'notebook_unshared',
+        triggered_by: user.uid,
+        data: {
+          nb_id: data.nb_id,
+          uids: revoked.uids,
+        },
+      }),
+      emitToConnections(requestContext, revoked.connectionIds, {
+        action: 'notebook_unshared',
+        triggered_by: user.uid,
+        data: {
+          nb_id: data.nb_id,
+          uids: revoked.uids,
+        },
+      }),
+    ]);
+
+    // TODO
+    // await emitToConnections(requestContext, revoked.connectionIds, {
+    //   'notebook_closed',
+    //   triggered_by: user.uid,
+    //   data: {
+    //     nb_id: data.nb_id,
+    //     uid:
+    //   }
+    // });
+  } else {
+    const users = await grantAccessByEmails(data.emails, data.nb_id, data.access_level);
+
+    await broadcastToNotebook(requestContext, data.nb_id, {
+      action: 'notebook_shared',
+      triggered_by: user.uid,
+      data: {
+        nb_id: data.nb_id,
+        users,
+      },
+    });
+  }
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

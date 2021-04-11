@@ -192,7 +192,68 @@ describe('Collaboration', () => {
     );
 
     mainUser.socketClient.openNotebook(notebook.nb_id);
-  }, 10000);
+  }, 5000);
+
+  test('Share and Unshare Notebook', async (done) => {
+    const mainUser = await getTestUser();
+    const otherUser = await getTestUser();
+
+    const notebook = await mainUser.apiClient.createNotebook('Test Notebook');
+
+    mainUser.socketClient.on(
+      'notebook_opened',
+      jest.fn((res_user, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+        expect(res_user).toMatchObject(mainUser.user);
+
+        mainUser.socketClient.shareNotebook(
+          [otherUser.user.email],
+          notebook.nb_id,
+          'Read Only'
+        );
+      })
+    );
+
+    mainUser.socketClient.on(
+      'notebook_shared',
+      jest.fn((res_nb_id, res_users, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_users).toEqual(
+          expect.arrayContaining([{ ...otherUser.user, access_level: 'Read Only' }])
+        );
+
+        mainUser.socketClient.unshareNotebook([otherUser.user.email], notebook.nb_id);
+      })
+    );
+
+    mainUser.socketClient.on(
+      'notebook_unshared',
+      jest.fn((res_nb_id, res_uids, res_triggered_by) => {
+        expect(res_triggered_by).toEqual(mainUser.user.uid);
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uids).toEqual([otherUser.user.uid]);
+
+        mainUser.socketClient.close();
+        otherUser.socketClient.close();
+
+        expect(mainUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+        expect(otherUser.socketClient.listeners('error')[0]).not.toHaveBeenCalled();
+
+        expect(
+          mainUser.socketClient.listeners('notebook_shared')[0]
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          mainUser.socketClient.listeners('notebook_unshared')[0]
+        ).toHaveBeenCalledTimes(1);
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        done!();
+      })
+    );
+
+    mainUser.socketClient.openNotebook(notebook.nb_id);
+  }, 5000);
 
   test('Create, Lock, Edit, and Unlock', async (done) => {
     const mainUser = await getTestUser();

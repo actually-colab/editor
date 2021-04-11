@@ -42,6 +42,11 @@ interface SocketMessageListeners {
     users: NotebookAccessLevel[],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
+  notebook_unshared: (
+    nb_id: Notebook['nb_id'],
+    uids: NotebookAccessLevel['uid'][],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
   workshop_shared: (
     ws_id: Workshop['ws_id'],
@@ -144,6 +149,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             this.emit('notebook_closed', notebook.nb_id, eventData.triggered_by);
             break;
           }
+
           case 'notebook_shared': {
             const res: {
               nb_id: Notebook['nb_id'];
@@ -153,6 +159,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             this.emit('notebook_shared', res.nb_id, res.users, eventData.triggered_by);
             break;
           }
+          case 'notebook_unshared': {
+            const res: {
+              nb_id: Notebook['nb_id'];
+              uids: NotebookAccessLevel['uid'][];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_unshared', res.nb_id, res.uids, eventData.triggered_by);
+            break;
+          }
+
           case 'workshop_shared': {
             const accessLevel: Pick<
               Workshop,
@@ -168,6 +184,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             );
             break;
           }
+
           case 'cell_created': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
@@ -198,6 +215,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             this.emit('cell_unlocked', cell, eventData.triggered_by);
             break;
           }
+
           case 'output_updated': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const output: OOutput = eventData.data as any;
@@ -219,6 +237,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             );
             break;
           }
+
           case 'chat_message_sent': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const message: OChatMessage = eventData.data as any;
@@ -288,6 +307,20 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     access_level: NotebookAccessLevel['access_level']
   ): void => {
     this.sendEvent('share_notebook', { emails, nb_id, access_level });
+  };
+
+  /**
+   * Revokes notebook access from another user. The requesting user must have
+   * Full Access to share the notebook.
+   *
+   * @param emails users to revoke access from
+   * @param nb_id id of the notebook
+   */
+  public unshareNotebook = (
+    emails: NotebookAccessLevel['email'][],
+    nb_id: NotebookAccessLevel['nb_id']
+  ): void => {
+    this.sendEvent('share_notebook', { emails, nb_id, access_level: null });
   };
 
   /**
