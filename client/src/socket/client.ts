@@ -66,6 +66,11 @@ interface SocketMessageListeners {
     cell: DCell,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
+  cell_deleted: (
+    nb_id: DCell['nb_id'],
+    cell_id: DCell['nb_id'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
   output_updated: (
     output: OOutput,
@@ -166,6 +171,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
             this.emit('cell_created', cell, eventData.triggered_by);
+            break;
+          }
+          case 'cell_deleted': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cell: Pick<DCell, 'nb_id' | 'cell_id'> = eventData.data as any;
+            this.emit('cell_deleted', cell.nb_id, cell.cell_id, eventData.triggered_by);
             break;
           }
           case 'cell_edited': {
@@ -352,6 +363,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
+
+  /**
+   * Deletes a specific cell from a specific notebook
+   *
+   * @param nb_id Notebook containing the cell
+   * @param cell_id Cell to delete
+   */
+  public deleteCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
+    this.sendEvent('edit_cell', { nb_id, cell_id, cellData: null });
+  };
 
   /**
    * Sends a compressed output for a cell to be shared with users in the notebook.
