@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 
 import workshopSharedHTML from '../static/email-templates/workshop-shared';
 import workshopStartedHTML from '../static/email-templates/workshop-started';
+import notebookSharedHTML from '../static/email-templates/notebook-shared';
 
 const senderAddress = process.env['MAIL_USERNAME'];
 const emailTransporter = nodemailer.createTransport({
@@ -33,6 +34,17 @@ export const sendEmails = async (
     text,
     html,
   });
+};
+
+export const sendNotebookSharedEmail = async (
+  emails: string[],
+  triggered_by_name: string,
+  notebook_name: string
+): Promise<void> => {
+  const subject = `${triggered_by_name} has invited you to collaborate on their notebook ${notebook_name}`;
+  const text = [subject, 'Check it out at https://app.actuallycolab.org'].join('\n');
+  const html = notebookSharedHTML(triggered_by_name, notebook_name);
+  await sendEmails(emails, subject, text, html);
 };
 
 export const sendWorkshopSharedEmail = async (
