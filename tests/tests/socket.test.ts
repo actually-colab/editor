@@ -49,23 +49,23 @@ describe('Connection', () => {
 
     mainUser.socketClient.on(
       'notebook_opened',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((_n, res_uid, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
-        expect(res_user).toMatchObject(mainUser.user);
+        expect(res_uid).toEqual(mainUser.user.uid);
       })
     );
     otherUser.socketClient.on(
       'notebook_opened',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((_n, res_uid, res_triggered_by) => {
         if (res_triggered_by === otherUser.user.uid) {
           expect(res_triggered_by).toEqual(otherUser.user.uid);
-          expect(res_user).toMatchObject(otherUser.user);
+          expect(res_uid).toEqual(otherUser.user.uid);
 
           // Now that otherUser has notebook opened, open notebook for mainUser
           mainUser.socketClient.openNotebook(notebook.nb_id);
         } else {
           expect(res_triggered_by).toEqual(mainUser.user.uid);
-          expect(res_user).toMatchObject(mainUser.user);
+          expect(res_uid).toEqual(mainUser.user.uid);
         }
       })
     );
@@ -97,8 +97,9 @@ describe('Connection', () => {
     mainUser.socketClient.on('notebook_closed', jest.fn());
     otherUser.socketClient.on(
       'notebook_closed',
-      jest.fn((res_nb_id, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uid).toEqual(mainUser.user.uid);
         expect(res_triggered_by).toEqual(mainUser.user.uid);
 
         // Cleanup
@@ -142,9 +143,10 @@ describe('Collaboration', () => {
 
     mainUser.socketClient.on(
       'notebook_opened',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         if (res_triggered_by === mainUser.user.uid) {
-          expect(res_user).toMatchObject(mainUser.user);
+          expect(res_nb_id).toEqual(notebook.nb_id);
+          expect(res_uid).toEqual(mainUser.user.uid);
 
           mainUser.socketClient.shareNotebook(
             [otherUser.user.email],
@@ -152,7 +154,7 @@ describe('Collaboration', () => {
             'Read Only'
           );
         } else {
-          expect(res_user).toMatchObject(otherUser.user);
+          expect(res_uid).toEqual(otherUser.user.uid);
 
           mainUser.socketClient.close();
           otherUser.socketClient.close();
@@ -185,9 +187,10 @@ describe('Collaboration', () => {
 
     otherUser.socketClient.on(
       'notebook_opened',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         expect(res_triggered_by).toEqual(otherUser.user.uid);
-        expect(res_user).toMatchObject(otherUser.user);
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uid).toEqual(otherUser.user.uid);
       })
     );
 
@@ -202,9 +205,10 @@ describe('Collaboration', () => {
 
     mainUser.socketClient.on(
       'notebook_opened',
-      jest.fn((res_user, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
-        expect(res_user).toMatchObject(mainUser.user);
+        expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uid).toEqual(mainUser.user.uid);
 
         mainUser.socketClient.shareNotebook(
           [otherUser.user.email],
@@ -278,7 +282,7 @@ describe('Collaboration', () => {
     mainUser.socketClient.on('notebook_opened', jest.fn());
     otherUser.socketClient.on(
       'notebook_opened',
-      jest.fn((_, res_triggered_by) => {
+      jest.fn((_n, _u, res_triggered_by) => {
         if (res_triggered_by === otherUser.user.uid) {
           // Now that otherUser has notebook opened, open notebook for mainUser
           mainUser.socketClient.openNotebook(notebook.nb_id);
@@ -360,8 +364,9 @@ describe('Collaboration', () => {
 
     otherUser.socketClient.on(
       'notebook_closed',
-      jest.fn((res_nb_id, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uid).toEqual(mainUser.user.uid);
         expect(res_triggered_by).toEqual(mainUser.user.uid);
 
         // Cleanup
@@ -420,7 +425,7 @@ describe('Collaboration', () => {
     mainUser.socketClient.on('notebook_opened', jest.fn());
     otherUser.socketClient.on(
       'notebook_opened',
-      jest.fn((_, res_triggered_by) => {
+      jest.fn((_n, _u, res_triggered_by) => {
         if (res_triggered_by === otherUser.user.uid) {
           // Now that otherUser has notebook opened, open notebook for mainUser
           mainUser.socketClient.openNotebook(notebook.nb_id);
@@ -508,7 +513,7 @@ describe('Collaboration', () => {
     mainUser.socketClient.on('notebook_opened', jest.fn());
     otherUser.socketClient.on(
       'notebook_opened',
-      jest.fn((_, res_triggered_by) => {
+      jest.fn((_n, _u, res_triggered_by) => {
         if (res_triggered_by === otherUser.user.uid) {
           // Now that otherUser has notebook opened, open notebook for mainUser
           mainUser.socketClient.openNotebook(notebook.nb_id);
@@ -563,8 +568,9 @@ describe('Collaboration', () => {
 
     otherUser.socketClient.on(
       'notebook_closed',
-      jest.fn((res_nb_id, res_triggered_by) => {
+      jest.fn((res_nb_id, res_uid, res_triggered_by) => {
         expect(res_nb_id).toEqual(notebook.nb_id);
+        expect(res_uid).toEqual(mainUser.user.uid);
         expect(res_triggered_by).toEqual(mainUser.user.uid);
 
         // Cleanup

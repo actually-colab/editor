@@ -47,7 +47,7 @@ const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
   const resEvent = {
     action: 'notebook_closed',
     triggered_by: requestContext.authorizer.uid,
-    data: { nb_id: data.nb_id },
+    data: { nb_id: data.nb_id, uid: requestContext.authorizer.uid },
   };
   await broadcastToNotebook(requestContext, data.nb_id, resEvent);
   await emitToUser(requestContext, resEvent);

@@ -60,7 +60,7 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
   await broadcastToNotebook(requestContext, data.nb_id, {
     action: 'notebook_opened',
     triggered_by: requestContext.authorizer.uid,
-    data: requestContext.authorizer, // TODO: Return something less sensitive
+    data: { nb_id: data.nb_id, uid: requestContext.authorizer.uid },
   });
 
   try {
