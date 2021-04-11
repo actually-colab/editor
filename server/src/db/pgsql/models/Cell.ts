@@ -87,6 +87,27 @@ export const createCell = async (
   });
 };
 
+/**Deletes an existing cell.
+ *
+ * @param session The active user session initiating the request
+ * @param nb_id The notebook containing the cell
+ * @param cell_id The cell
+ */
+export const deleteCell = async (
+  session: DActiveSession,
+  nb_id: DCell['nb_id'],
+  cell_id: DCell['cell_id']
+): Promise<void> => {
+  return pgsql.transaction(async (trx) => {
+    await Promise.all([
+      recordLastEvent(session).transacting(trx),
+      recordTimeModified(nb_id).transacting(trx),
+    ]);
+
+    await trx<DCell>(tablenames.cellsTableName).where({ nb_id, cell_id }).del();
+  });
+};
+
 /**Acquires a cell lock for an active user session.
  *
  * @param session The active user session initiating the request
@@ -134,7 +155,8 @@ export const unlockCell = async (
       await trx<DCell>(tablenames.cellsTableName)
         .update({
           lock_held_by: null,
-          cursor_pos: null,
+          cursor_col: null,
+          cursor_row: null,
           time_modified: Date.now(),
         })
         .andWhere({ cell_id, nb_id, lock_held_by: session.uid })

@@ -27,8 +27,11 @@ export interface DCell extends ModelBase {
   time_modified: UTCEpochDateTime;
   contents: string;
   /**Position of the lock-holding-user's cursor in the cell */
-  cursor_pos?: number | null;
+  cursor_row?: number | null;
+  /**Position of the lock-holding-user's cursor in the cell */
+  cursor_col?: number | null;
   language: 'python' | 'markdown';
+  /**Position of cell with respect to others within the notebook */
   position: number;
 }
 
@@ -42,6 +45,14 @@ export interface OOutput extends ModelBase {
   time_modified?: UTCEpochDateTime;
 }
 
+/**Chat message object model */
+export interface OChatMessage extends ModelBase {
+  uid: DUser['uid'];
+  nb_id: DCell['nb_id'];
+  message: string;
+  timestamp?: UTCEpochDateTime;
+}
+
 /**Model for a notebook */
 export interface DNotebook extends ModelBase {
   /**The notebook's generated id */
@@ -49,12 +60,12 @@ export interface DNotebook extends ModelBase {
   name: string;
   language: 'python';
   time_modified: UTCEpochDateTime;
+  ws_id?: DWorkshop['ws_id'];
+  ws_main_notebook?: boolean;
 }
 
 /**Metadata for a Notebook */
-export interface Notebook
-  extends Json,
-    Pick<DNotebook, 'nb_id' | 'name' | 'language' | 'time_modified'> {
+export interface Notebook extends Json, RemoveIndex<DNotebook> {
   users: Array<NotebookAccessLevel>;
 }
 
@@ -83,6 +94,34 @@ export interface NotebookAccessLevel extends DUser {
   access_level: NotebookAccessLevelType;
 }
 
+export interface DWorkshop extends ModelBase {
+  ws_id: UUID;
+  name: string;
+  description: string;
+  time_modified: UTCEpochDateTime;
+  start_time?: UTCEpochDateTime;
+  end_time?: UTCEpochDateTime;
+  capacity?: number; // TODO
+}
+
+export interface Workshop extends Json, RemoveIndex<DWorkshop> {
+  instructors: (WorkshopAccessLevel & { access_level: 'Instructor' })[];
+  attendees: (WorkshopAccessLevel & { access_level: 'Attendee' })[];
+  main_notebook: Notebook;
+}
+
+export type WorkshopAccessLevelType = 'Instructor' | 'Attendee';
+export interface DWorkshopAccessLevel extends ModelBase {
+  ws_id: DWorkshop['ws_id'];
+  uid: DUser['uid'];
+  access_level: WorkshopAccessLevelType;
+}
+
+export interface WorkshopAccessLevel extends DUser {
+  access_level: WorkshopAccessLevelType;
+  nb_id?: DNotebook['nb_id'];
+}
+
 export type UTCEpochDateTime = number;
 export type UUID = string;
 
@@ -92,3 +131,10 @@ export interface Json {
 type JsonArray = Array<string | number | boolean | Date | Json | JsonArray>;
 
 export type ModelBase = Record<string, number | string | boolean | null | undefined>;
+
+/**
+ * Get a type with the index signature removed
+ */
+type RemoveIndex<T> = {
+  [P in keyof T as string extends P ? never : number extends P ? never : P]: T[P];
+};

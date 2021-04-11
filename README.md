@@ -8,4 +8,6 @@
 
 # Actually Colab Editor API
 
-See setup/usage info in the respective [Client](client/README.md) and [Server](server/README.md) directories
+To get started see the local setup documentation in the respective [Client](client/README.md) and [Server](server/README.md) directories
+
+For complete API docs and other information about the project, visit our [docs site](https://docs.actuallycolab.org).

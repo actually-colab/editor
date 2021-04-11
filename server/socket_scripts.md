@@ -4,6 +4,7 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 
 ```json
 {"action": "open_notebook", "data": {"nb_id": ""}}
+{"action": "close_notebook", "data": {"nb_id": ""}}
 {"action": "create_cell", "data": {"nb_id": "", "language": "python"}}
 {"action": "edit_cell", "data": {"nb_id": "", "cell_id": "", "cellData": {"contents": "", "language": "markdown", "cursor_pos": 0}}
 {"action": "lock_cell", "data": {"nb_id": "", "cell_id": ""}}
@@ -16,4 +17,5 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 {"action": "lock_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135"}}
 {"action": "edit_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135", "cellData": {"contents": "test", "language": "markdown", "cursor_pos": 1}}}
 {"action": "unlock_cell", "data": {"nb_id": "805d4aef-f78a-4519-a546-aaed09586666", "cell_id": "4565720b-d243-48a9-8e4b-33971289e135"}}
+{"action": "share_workshop", "data": {"ws_id": "3215dfad-f50e-4bd4-863b-f7558ac71a74", "emails": ["btincher99@gmail.com"], "access_level": "Instructor"}}
 ```

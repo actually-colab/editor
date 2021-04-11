@@ -1,4 +1,9 @@
-import type { DNotebook, Json, DUser } from '@actually-colab/editor-types';
+import type {
+  DNotebook,
+  Json,
+  DUser,
+  DActiveSession,
+} from '@actually-colab/editor-types';
 import type { WebSocketRequestContext } from './connection';
 
 import { ApiGatewayManagementApi } from 'aws-sdk';
@@ -75,4 +80,28 @@ export const emitToUser = async (
     console.error('Could not reach', context.connectionId);
     throw new Error(err);
   }
+};
+
+export const emitToConnections = async (
+  context: WebSocketRequestContext,
+  connectionIds: DActiveSession['connectionId'][],
+  data: ACSocketEventData
+): Promise<void> => {
+  const eventBody = JSON.stringify(data);
+
+  const apigApi = getManagementApi(context);
+  await Promise.all(
+    connectionIds.map(async (connectionId) => {
+      try {
+        await apigApi
+          .postToConnection({
+            ConnectionId: connectionId,
+            Data: eventBody,
+          })
+          .promise();
+      } catch (err) {
+        console.error('Could not reach', connectionId);
+      }
+    })
+  );
 };

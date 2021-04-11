@@ -1,9 +1,14 @@
 import type {
   ActiveNotebookContents,
   DCell,
+  DNotebook,
   DUser,
   Notebook,
+  NotebookAccessLevel,
+  OChatMessage,
   OOutput,
+  Workshop,
+  WorkshopAccessLevel,
 } from '@actually-colab/editor-types';
 
 import ws from 'websocket';
@@ -21,7 +26,8 @@ interface SocketConnectionListeners {
 
 interface SocketMessageListeners {
   notebook_opened: (
-    user: DUser,
+    nb_id: DNotebook['nb_id'],
+    uid: DUser['uid'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
   notebook_contents: (
@@ -30,6 +36,29 @@ interface SocketMessageListeners {
   ) => void;
   notebook_closed: (
     nb_id: Notebook['nb_id'],
+    uid: DUser['uid'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  notebook_shared: (
+    nb_id: Notebook['nb_id'],
+    users: NotebookAccessLevel[],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  notebook_unshared: (
+    nb_id: Notebook['nb_id'],
+    uids: NotebookAccessLevel['uid'][],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  workshop_shared: (
+    ws_id: Workshop['ws_id'],
+    attendees: Workshop['attendees'],
+    instructors: Workshop['instructors'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+  workshop_started: (
+    ws_id: Workshop['ws_id'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 
@@ -49,9 +78,19 @@ interface SocketMessageListeners {
     cell: DCell,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
+  cell_deleted: (
+    nb_id: DCell['nb_id'],
+    cell_id: DCell['nb_id'],
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
 
   output_updated: (
     output: OOutput,
+    triggered_by: ActuallyColabEventData['triggered_by']
+  ) => void;
+
+  chat_message_sent: (
+    message: OChatMessage,
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 }
@@ -100,9 +139,10 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
         const eventData: ActuallyColabEventData = JSON.parse(message.data);
         switch (eventData.action) {
           case 'notebook_opened': {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const user: DUser = eventData.data as any;
-            this.emit('notebook_opened', user, eventData.triggered_by);
+            const res: { uid: DUser['uid']; nb_id: DNotebook['nb_id'] } =
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              eventData.data as any;
+            this.emit('notebook_opened', res.nb_id, res.uid, eventData.triggered_by);
             break;
           }
           case 'notebook_contents': {
@@ -112,15 +152,66 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             break;
           }
           case 'notebook_closed': {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const notebook: { nb_id: Notebook['nb_id'] } = eventData.data as any;
-            this.emit('notebook_closed', notebook.nb_id, eventData.triggered_by);
+            const res: {
+              nb_id: Notebook['nb_id'];
+              uid: DUser['uid'];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_closed', res.nb_id, res.uid, eventData.triggered_by);
             break;
           }
+
+          case 'notebook_shared': {
+            const res: {
+              nb_id: Notebook['nb_id'];
+              users: NotebookAccessLevel[];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_shared', res.nb_id, res.users, eventData.triggered_by);
+            break;
+          }
+          case 'notebook_unshared': {
+            const res: {
+              nb_id: Notebook['nb_id'];
+              uids: NotebookAccessLevel['uid'][];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_unshared', res.nb_id, res.uids, eventData.triggered_by);
+            break;
+          }
+
+          case 'workshop_shared': {
+            const accessLevel: Pick<
+              Workshop,
+              'ws_id' | 'attendees' | 'instructors'
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            > = eventData.data as any;
+            this.emit(
+              'workshop_shared',
+              accessLevel.ws_id,
+              accessLevel.attendees,
+              accessLevel.instructors,
+              eventData.triggered_by
+            );
+            break;
+          }
+          case 'workshop_started': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const ws: Pick<Workshop, 'ws_id'> = eventData.data as any;
+            this.emit('workshop_started', ws.ws_id, eventData.triggered_by);
+            break;
+          }
+
           case 'cell_created': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const cell: DCell = eventData.data as any;
             this.emit('cell_created', cell, eventData.triggered_by);
+            break;
+          }
+          case 'cell_deleted': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const cell: Pick<DCell, 'nb_id' | 'cell_id'> = eventData.data as any;
+            this.emit('cell_deleted', cell.nb_id, cell.cell_id, eventData.triggered_by);
             break;
           }
           case 'cell_edited': {
@@ -141,6 +232,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             this.emit('cell_unlocked', cell, eventData.triggered_by);
             break;
           }
+
           case 'output_updated': {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const output: OOutput = eventData.data as any;
@@ -160,6 +252,13 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
                 );
               }
             );
+            break;
+          }
+
+          case 'chat_message_sent': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const message: OChatMessage = eventData.data as any;
+            this.emit('chat_message_sent', message, eventData.triggered_by);
             break;
           }
           default:
@@ -203,6 +302,71 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   };
 
   /**
+   * Closes a connection to a specific notbeook.
+   *
+   * @param nb_id Notebook to disconnect from
+   */
+  public closeNotebook = (nb_id: Notebook['nb_id']): void => {
+    this.sendEvent('close_notebook', { nb_id });
+  };
+
+  /**
+   * Shares a notebook with another user. The requesting user must have
+   * Full Access to share the notebook.
+   *
+   * @param email user to share with
+   * @param nb_id id of the notebook to share
+   * @param access_level permissions level for the user that the notebook is being shared with
+   */
+  public shareNotebook = (
+    emails: NotebookAccessLevel['email'][],
+    nb_id: NotebookAccessLevel['nb_id'],
+    access_level: NotebookAccessLevel['access_level']
+  ): void => {
+    this.sendEvent('share_notebook', { emails, nb_id, access_level });
+  };
+
+  /**
+   * Revokes notebook access from another user. The requesting user must have
+   * Full Access to share the notebook.
+   *
+   * @param emails users to revoke access from
+   * @param nb_id id of the notebook
+   */
+  public unshareNotebook = (
+    emails: NotebookAccessLevel['email'][],
+    nb_id: NotebookAccessLevel['nb_id']
+  ): void => {
+    this.sendEvent('share_notebook', { emails, nb_id, access_level: null });
+  };
+
+  /**
+   * Shares a workshop with another user. The requesting user must have
+   * Instructor access to share the notebook.
+   *
+   * @param emails users to share with
+   * @param ws_id id of the workshop to share
+   * @param access_level permissions level for the user that the workshop is being shared with
+   */
+  public shareWorkshop = (
+    emails: WorkshopAccessLevel['email'][],
+    ws_id: WorkshopAccessLevel['ws_id'],
+    access_level: WorkshopAccessLevel['access_level']
+  ): void => {
+    this.sendEvent('share_workshop', { emails, ws_id, access_level });
+  };
+
+  /**
+   * Starts a new workshop. The requesting user must have
+   * Instructor access.
+   *
+   * @param ws_id id of the workshop to share
+   */
+  public startWorkshop = (ws_id: WorkshopAccessLevel['ws_id']): void => {
+    this.sendEvent('start_workshop', { ws_id });
+  };
+
+  /**
    * Creates a new cell in a notebook.
    *
    * @param nb_id Notebook to create cell in.
@@ -232,7 +396,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
   public unlockCell = (
     nb_id: Notebook['nb_id'],
     cell_id: DCell['cell_id'],
-    cellData: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>>
+    cellData: Required<Pick<DCell, 'cursor_col' | 'cursor_row' | 'contents' | 'language'>>
   ): void => {
     this.editCell.flush(nb_id, cell_id, cellData);
     this.sendEvent('unlock_cell', { nb_id, cell_id });
@@ -251,15 +415,27 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     (
       nb_id: Notebook['nb_id'],
       cell_id: DCell['cell_id'],
-      cellData: Required<Pick<DCell, 'cursor_pos' | 'contents' | 'language'>>
+      cellData: Required<
+        Pick<DCell, 'cursor_col' | 'cursor_row' | 'contents' | 'language'>
+      >
     ): void => {
       this.sendEvent('edit_cell', { nb_id, cell_id, cellData });
     },
-    1000,
-    { maxWait: 5000 },
+    500,
+    { maxWait: 1000 },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
+
+  /**
+   * Deletes a specific cell from a specific notebook
+   *
+   * @param nb_id Notebook containing the cell
+   * @param cell_id Cell to delete
+   */
+  public deleteCell = (nb_id: Notebook['nb_id'], cell_id: DCell['cell_id']): void => {
+    this.sendEvent('edit_cell', { nb_id, cell_id, cellData: null });
+  };
 
   /**
    * Sends a compressed output for a cell to be shared with users in the notebook.
@@ -287,9 +463,21 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
         });
       });
     },
-    3000,
-    { maxWait: 5000 },
+    1000,
+    { maxWait: 2000 },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_nb_id, _cell_id, _) => _nb_id + _cell_id
   );
+
+  /**Echoes a message into the notebook chat.
+   *
+   * @param nb_id The notebook to broadcast to
+   * @param message Text to send
+   */
+  public sendChatMessage = (
+    nb_id: OChatMessage['nb_id'],
+    message: OChatMessage['message']
+  ): void => {
+    this.sendEvent('send_chat_message', { nb_id, message });
+  };
 }

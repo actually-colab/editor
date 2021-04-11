@@ -4,7 +4,7 @@ import { test, describe, expect } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 
-import { DUser, NotebookAccessLevelType } from '@actually-colab/editor-types';
+import { DCell, DUser, NotebookAccessLevelType } from '@actually-colab/editor-types';
 import { ActuallyColabRESTClient } from '@actually-colab/editor-client';
 
 const getTestUser = async (): Promise<{
@@ -68,6 +68,49 @@ describe('Notebook', () => {
     );
   });
 
+  test('Create Notebook with Cells', async () => {
+    const { apiClient, user } = await getTestUser();
+
+    const expectedCells: Pick<DCell, 'language' | 'contents'>[] = [
+      {
+        contents: 'test1',
+        language: 'python',
+      },
+      {
+        contents: 'test2',
+        language: 'markdown',
+      },
+      {
+        contents: 'test3',
+        language: 'markdown',
+      },
+    ];
+    const expectedTestNotebook = {
+      name: 'Test Notebook',
+      language: 'python',
+    };
+    const newNotebook = await apiClient.createNotebook(
+      expectedTestNotebook.name,
+      'python',
+      expectedCells
+    );
+    expect(newNotebook).toMatchObject(expectedTestNotebook);
+    expect(newNotebook.users).toEqual([
+      expect.objectContaining((user as unknown) as Record<string, unknown>),
+    ]);
+
+    const notebooks = await apiClient.getNotebooksForUser();
+    expect(notebooks).toHaveLength(2);
+    expect(notebooks).toEqual(
+      expect.arrayContaining([expect.objectContaining(expectedTestNotebook)])
+    );
+
+    const notebookContents = await apiClient.getNotebookContents(newNotebook.nb_id);
+    expect(
+      Object.values(notebookContents.cells).sort((a, b) => a.position - b.position)
+    ).toEqual(expectedCells.map((cell) => expect.objectContaining(cell)));
+  });
+
   test('Share Notebook', async () => {
     const accessLevels: NotebookAccessLevelType[] = [
       'Full Access',
@@ -103,5 +146,100 @@ describe('Notebook', () => {
         expectedUserAccessLevels.map((ual) => expect.objectContaining(ual))
       )
     );
+  });
+});
+
+describe('Workshop', () => {
+  test('Create Workshop', async () => {
+    const { apiClient, user } = await getTestUser();
+    const userForJest = (user as unknown) as Record<string, unknown>;
+
+    const expectedTestWorkshop = {
+      name: 'Test Workshop',
+      description: 'Test Workshop Description',
+      main_notebook: {
+        name: 'Test Workshop',
+        language: 'python',
+        ws_main_notebook: true,
+      },
+    };
+    const newWorkshop = await apiClient.createWorkshop(
+      expectedTestWorkshop.name,
+      expectedTestWorkshop.description
+    );
+    expect(newWorkshop).toMatchObject(expectedTestWorkshop);
+    expect(newWorkshop.instructors).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Instructor' }),
+    ]);
+    expect(newWorkshop.attendees).toHaveLength(0);
+
+    expect(newWorkshop.main_notebook.users).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Full Access' }),
+    ]);
+
+    const notebooks = await apiClient.getNotebooksForUser();
+    expect(notebooks).toHaveLength(1);
+
+    const workshops = await apiClient.getWorkshopsForUser();
+    expect(workshops).toHaveLength(1);
+    expect(workshops[0]).toMatchObject(newWorkshop);
+  });
+
+  test('Create Workshop with Cells', async () => {
+    const { apiClient, user } = await getTestUser();
+    const userForJest = (user as unknown) as Record<string, unknown>;
+
+    const expectedCells: Pick<DCell, 'language' | 'contents'>[] = [
+      {
+        contents: 'test1',
+        language: 'python',
+      },
+      {
+        contents: 'test2',
+        language: 'markdown',
+      },
+      {
+        contents: 'test3',
+        language: 'markdown',
+      },
+    ];
+    const expectedTestWorkshop = {
+      name: 'Test Workshop',
+      description: 'Test Workshop Description',
+      main_notebook: {
+        name: 'Test Workshop',
+        language: 'python',
+        ws_main_notebook: true,
+      },
+    };
+
+    const newWorkshop = await apiClient.createWorkshop(
+      expectedTestWorkshop.name,
+      expectedTestWorkshop.description,
+      expectedCells
+    );
+    expect(newWorkshop).toMatchObject(expectedTestWorkshop);
+    expect(newWorkshop.instructors).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Instructor' }),
+    ]);
+    expect(newWorkshop.attendees).toHaveLength(0);
+
+    expect(newWorkshop.main_notebook.users).toEqual([
+      expect.objectContaining({ ...userForJest, access_level: 'Full Access' }),
+    ]);
+
+    const notebooks = await apiClient.getNotebooksForUser();
+    expect(notebooks).toHaveLength(1);
+
+    const workshops = await apiClient.getWorkshopsForUser();
+    expect(workshops).toHaveLength(1);
+    expect(workshops[0]).toMatchObject(newWorkshop);
+
+    const workshopNotebook = await apiClient.getNotebookContents(
+      workshops[0].main_notebook.nb_id
+    );
+    expect(
+      Object.values(workshopNotebook.cells).sort((a, b) => a.position - b.position)
+    ).toEqual(expectedCells.map((cell) => expect.objectContaining(cell)));
   });
 });

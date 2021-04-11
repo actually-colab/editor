@@ -36,7 +36,8 @@ export const disconnect = async (
       await trx<DCell>(tablenames.cellsTableName)
         .update({
           lock_held_by: null,
-          cursor_pos: null,
+          cursor_col: null,
+          cursor_row: null,
           time_modified: Date.now(),
         })
         .where({
@@ -106,5 +107,42 @@ export const openNotebook = async (
     nb_id,
     time_connected: Date.now(),
     last_event: Date.now(),
+  });
+};
+
+/**Closes an established session for a user for a specific notebook.
+ *
+ * @param connectionId Session connection ID that is disconnected.
+ * @param time_disconnected epoch time
+ *
+ * @returns notebook sessions the user is now disconnected from
+ */
+export const closeNotebook = async (
+  connectionId: DActiveSession['connectionId'],
+  nb_id: DActiveSession['nb_id']
+): Promise<void> => {
+  return pgsql.transaction(async (trx) => {
+    const time_disconnected = Date.now();
+    const sessions = await trx<DActiveSession>(tablenames.activeSessionsTableName)
+      .update({
+        time_disconnected: time_disconnected,
+        last_event: time_disconnected,
+      })
+      .whereNull('time_disconnected')
+      .andWhere({ connectionId, nb_id })
+      .returning('*');
+
+    if (sessions.length > 0) {
+      await trx<DCell>(tablenames.cellsTableName)
+        .update({
+          lock_held_by: null,
+          cursor_col: null,
+          cursor_row: null,
+          time_modified: Date.now(),
+        })
+        .where({
+          lock_held_by: sessions[0].uid,
+        });
+    }
   });
 };

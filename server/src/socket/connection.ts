@@ -78,7 +78,7 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
           broadcastToNotebook(event.requestContext, session.nb_id, {
             action: 'notebook_closed',
             triggered_by: session.uid,
-            data: { nb_id: session.nb_id },
+            data: { nb_id: session.nb_id, uid: session.uid },
           })
         )
       );

@@ -36,8 +36,9 @@ export const recordTimeModified = (nb_id: DNotebook['nb_id']): QueryBuilder =>
  * @returns the notebook, if created successfully
  */
 export const createNotebook = async (
-  notebook: Partial<DNotebook>,
-  uid: DUser['uid']
+  notebook: Pick<DNotebook, 'name' | 'language'>,
+  uid: DUser['uid'],
+  cells?: Pick<DCell, 'language' | 'contents'>[]
 ): Promise<Notebook> => {
   // TODO: Use a transaction
   const notebookRecord: DNotebook = (
@@ -47,6 +48,16 @@ export const createNotebook = async (
   )[0];
 
   const accessLevel = await grantAccessById(uid, notebookRecord.nb_id, 'Full Access');
+
+  if (cells != null && cells.length > 0) {
+    await pgsql<DCell>(tablenames.cellsTableName).insert(
+      cells.map((cell) => ({
+        ...cell,
+        time_modified: Date.now(),
+        nb_id: notebookRecord.nb_id,
+      }))
+    );
+  }
 
   return {
     ...notebookRecord,
@@ -111,6 +122,7 @@ export const getNotebooksForUser = async (uid: DUser['uid']): Promise<Notebook[]
       'nb.nb_id'
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
+    .whereRaw('nb.ws_main_notebook = FALSE OR nb.ws_main_notebook IS NULL')
     .whereIn(
       'nb.nb_id',
       pgsql
@@ -207,7 +219,15 @@ export const getNotebookContents = async (
     )
     .innerJoin({ u: tablenames.usersTableName }, 'u.uid', '=', 'nba.uid')
     .where({ 'nb.nb_id': nb_id })
-    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
+    .groupBy(
+      'nb.nb_id',
+      'nb.language',
+      'nb.name',
+      'nb.cells',
+      'nb.time_modified',
+      'nb.ws_id',
+      'nb.ws_main_notebook'
+    );
 
   if (notebooks.length === 0) {
     return null;
@@ -243,7 +263,7 @@ export const getActiveNotebookContents = async (
           'access_level', nba.access_level
         )
       ) AS users`),
-      pgsql.raw('json_agg(aus.uid) AS connected_users')
+      pgsql.raw('json_agg(DISTINCT aus.uid) AS connected_users')
     )
     .from(
       pgsql
@@ -282,7 +302,15 @@ export const getActiveNotebookContents = async (
         .andOnNull('aus.time_disconnected')
     )
     .where({ 'nb.nb_id': nb_id })
-    .groupBy('nb.nb_id', 'nb.language', 'nb.name', 'nb.cells', 'nb.time_modified');
+    .groupBy(
+      'nb.nb_id',
+      'nb.language',
+      'nb.name',
+      'nb.cells',
+      'nb.time_modified',
+      'nb.ws_id',
+      'nb.ws_main_notebook'
+    );
 
   if (notebooks.length === 0) {
     return null;

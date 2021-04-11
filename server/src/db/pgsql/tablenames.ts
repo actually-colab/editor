@@ -5,4 +5,7 @@ export default {
   notebooksTableName: process.env.AC_PGSQL_NOTEBOOKS_TABLE_NAME ?? 'Notebook',
   notebookAccessLevelsTableName:
     process.env.AC_PGSQL_NOTEBOOK_ACCESS_LEVELS_TABLE_NAME ?? 'NotebookAccessLevel',
+  workshopsTableName: process.env.AC_PGSQL_WORKSHOPS_TABLE_NAME ?? 'Workshop',
+  workshopAccessLevelsTableName:
+    process.env.AC_PGSQL_WORKSHOP_ACCESS_LEVELS_TABLE_NAME ?? 'WorkshopAccessLevel',
 };
