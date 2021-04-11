@@ -1,6 +1,7 @@
 import type {
   ActiveNotebookContents,
   DCell,
+  DNotebook,
   DUser,
   Notebook,
   NotebookAccessLevel,
@@ -25,7 +26,8 @@ interface SocketConnectionListeners {
 
 interface SocketMessageListeners {
   notebook_opened: (
-    user: DUser,
+    nb_id: DNotebook['nb_id'],
+    uid: DUser['uid'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
   notebook_contents: (
@@ -34,6 +36,7 @@ interface SocketMessageListeners {
   ) => void;
   notebook_closed: (
     nb_id: Notebook['nb_id'],
+    uid: DUser['uid'],
     triggered_by: ActuallyColabEventData['triggered_by']
   ) => void;
 
@@ -132,9 +135,10 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
         const eventData: ActuallyColabEventData = JSON.parse(message.data);
         switch (eventData.action) {
           case 'notebook_opened': {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const user: DUser = eventData.data as any;
-            this.emit('notebook_opened', user, eventData.triggered_by);
+            const res: { uid: DUser['uid']; nb_id: DNotebook['nb_id'] } =
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              eventData.data as any;
+            this.emit('notebook_opened', res.nb_id, res.uid, eventData.triggered_by);
             break;
           }
           case 'notebook_contents': {
@@ -144,9 +148,12 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
             break;
           }
           case 'notebook_closed': {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const notebook: { nb_id: Notebook['nb_id'] } = eventData.data as any;
-            this.emit('notebook_closed', notebook.nb_id, eventData.triggered_by);
+            const res: {
+              nb_id: Notebook['nb_id'];
+              uid: DUser['uid'];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } = eventData.data as any;
+            this.emit('notebook_closed', res.nb_id, res.uid, eventData.triggered_by);
             break;
           }
 
