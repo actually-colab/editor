@@ -282,16 +282,16 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
    * Shares a workshop with another user. The requesting user must have
    * Instructor access to share the notebook.
    *
-   * @param email user to share with
+   * @param emails users to share with
    * @param ws_id id of the workshop to share
    * @param access_level permissions level for the user that the workshop is being shared with
    */
   public shareWorkshop = (
-    email: NotebookAccessLevel['email'],
+    emails: NotebookAccessLevel['email'][],
     ws_id: WorkshopAccessLevel['ws_id'],
     access_level: NotebookAccessLevel['access_level']
   ): void => {
-    this.sendEvent('share_workshop', { email, ws_id, access_level });
+    this.sendEvent('share_workshop', { emails, ws_id, access_level });
   };
 
   /**
