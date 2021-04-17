@@ -1,0 +1,40 @@
+name: Actually Colab PR Linting
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies for root
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies for client
+        run: cd client && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for server
+        run: cd server && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for types
+        run: cd types && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for tests
+        run: cd tests && yarn install --frozen-lockfile && cd ..
+
+      - name: Linting
+        run: yarn ci:lint
+
+      - name: Check Formatting
+        run: yarn ci:format
