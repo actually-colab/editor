@@ -5,7 +5,7 @@ const esModules = ['@actually-colab/editor-types', '@actually-colab/editor-clien
 );
 
 const config: Config.InitialOptions = {
-  forceExit: true,
+  // forceExit: true,
   preset: 'ts-jest',
   verbose: true,
   transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
