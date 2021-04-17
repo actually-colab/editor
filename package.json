@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "The REST and WebSocket API for Actually Colab.",
   "repository": "https://github.com/actually-colab/editor",
-  "author": "Bailey Tincher <btincher99@gmail.com>",
+  "author": "Bailey Tincher <bailey@actuallycolab.org>",
   "license": "MIT",
   "private": false,
   "scripts": {
