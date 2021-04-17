@@ -14,6 +14,7 @@
     "@types/node": "^14.14.31",
     "@types/uuid": "^8.3.0",
     "jest": "^26.6.3",
+    "tree-kill": "^1.2.2",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.5",
@@ -25,7 +26,7 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "test": "jest",
+    "test": "yarn ts-node run-tests.ts",
     "reinstall:client": "yarn remove:types; yarn remove:client; yarn add:client; yarn add:types",
     "remove:types": "yarn remove @actually-colab/editor-types",
     "add:types": "yarn add --dev file:../types",
