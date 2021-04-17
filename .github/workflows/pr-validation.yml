@@ -68,4 +68,4 @@ jobs:
         run: cd tests && yarn install --frozen-lockfile && cd ..
 
       - name: API Tests
-        run: yarn test
+        run: cd tests && yarn test
