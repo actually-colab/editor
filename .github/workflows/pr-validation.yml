@@ -59,7 +59,7 @@ jobs:
         run: cd types && yarn install --frozen-lockfile && cd ..
 
       - name: Install dependencies for client
-        run: cd client && yarn install --frozen-lockfile && cd ..
+        run: cd client && yarn install --frozen-lockfile && yarn build && cd ..
 
       - name: Install dependencies for server
         run: cd server && yarn install --frozen-lockfile && cd ..
