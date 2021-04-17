@@ -67,5 +67,5 @@ jobs:
       - name: Install dependencies for tests
         run: cd tests && yarn install --frozen-lockfile && cd ..
 
-      - name: Linting
+      - name: API Tests
         run: yarn test
