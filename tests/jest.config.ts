@@ -5,12 +5,10 @@ const esModules = ['@actually-colab/editor-types', '@actually-colab/editor-clien
 );
 
 const config: Config.InitialOptions = {
-  // forceExit: true,
   preset: 'ts-jest',
   verbose: true,
   transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
   testEnvironment: 'node',
-  // setupFilesAfterEnv: ['<rootDir>/start-offline.ts'],
 };
 
 export default config;
