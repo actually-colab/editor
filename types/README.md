@@ -1,3 +1,5 @@
-# Actually Colab Editor API Types
+# Actually Colab Editor Type Definitions
 
-Exports type definitions for the Actually Colab API
+Type definitions for the [Actually Colab](https://actuallycolab.org) API
+
+Visit the [docs](https://docs.actuallycolab.org) for usage info
