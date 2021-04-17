@@ -23,9 +23,8 @@ type ParsedJSON = Record<string | number | symbol, unknown>;
 export type RequestDataBase = ParsedJSON | unknown;
 export type ResultDataBase = ParsedJSON | Array<ParsedJSON> | unknown;
 
-export type ShallotRawHandler<
-  TEvent extends TShallotSocketEvent = TShallotSocketEvent
-> = Handler<TEvent, void>;
+export type ShallotRawHandler<TEvent extends TShallotSocketEvent = TShallotSocketEvent> =
+  Handler<TEvent, void>;
 
 export type TShallotSocketEvent<
   TQueryStringParameters extends RequestDataBase = unknown,
