@@ -3,17 +3,19 @@
   "version": "0.1.0",
   "description": "API Client for Actually Colab's editor",
   "keywords": [
-    "typescript"
+    "typescript",
+    "jupyter",
+    "colab",
+    "Actually Colab"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/actually-colab/editor",
-  "author": "Bailey Tincher <bailey.tincher@btin.io>",
+  "author": "Bailey Tincher <bailey@actuallycolab.org>",
   "license": "MIT",
   "private": false,
   "scripts": {
     "build": "yarn reinstall:types; yarn install && rm -rf dist && webpack",
-    "test": "jest",
     "postversion": "git push && git push --tags",
     "reinstall:types": "yarn remove:types; yarn add:types",
     "remove:types": "yarn remove @actually-colab/editor-types",
