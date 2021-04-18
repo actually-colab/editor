@@ -1,0 +1,19 @@
+{
+  "parent": "20d6b094-d20f-4248-bd86-07890f8f2628",
+  "pid": 28486,
+  "argv": [
+    "/usr/local/Cellar/node/15.13.0/bin/node",
+    "/usr/local/Cellar/yarn/1.22.10/libexec/bin/yarn.js",
+    "sls",
+    "offline",
+    "start"
+  ],
+  "execArgv": [],
+  "cwd": "/Users/bt/code/actually-colab/editor/server",
+  "time": 1618680171165,
+  "ppid": 28485,
+  "coverageFilename": "/Users/bt/code/actually-colab/editor/server/.nyc_output/d83412f6-985d-486b-ba1e-309aa57fbc38.json",
+  "externalId": "",
+  "uuid": "d83412f6-985d-486b-ba1e-309aa57fbc38",
+  "files": []
+}

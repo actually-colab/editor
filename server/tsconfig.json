@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "baseUrl": "src"
   },
-  "include": ["src"]
+  "include": ["src", "webpack.config.ts"]
 }

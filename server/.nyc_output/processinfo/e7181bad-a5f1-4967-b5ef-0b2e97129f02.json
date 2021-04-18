@@ -1,0 +1,35 @@
+{
+  "parent": "d83412f6-985d-486b-ba1e-309aa57fbc38",
+  "pid": 28487,
+  "argv": [
+    "/usr/local/Cellar/node/15.13.0/bin/node",
+    "/Users/bt/code/actually-colab/editor/server/node_modules/.bin/sls",
+    "offline",
+    "start"
+  ],
+  "execArgv": [],
+  "cwd": "/Users/bt/code/actually-colab/editor/server",
+  "time": 1618680171496,
+  "ppid": 28486,
+  "coverageFilename": "/Users/bt/code/actually-colab/editor/server/.nyc_output/e7181bad-a5f1-4967-b5ef-0b2e97129f02.json",
+  "externalId": "",
+  "uuid": "e7181bad-a5f1-4967-b5ef-0b2e97129f02",
+  "files": [
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/authorizer/lambda-authorizer.js",
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/lambda-authorizer.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/token.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/User.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/connection.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/tablenames.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/Notebook.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/NotebookAccessLevel.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/static/demo-notebook.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/ActiveSession.ts",
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/get-notebook-contents.js",
+    "/Users/bt/code/actually-colab/editor/server/src/rest/get-notebook-contents.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/rest/route-helpers.ts",
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/authorizer/login.js",
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/login.ts",
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/google.ts"
+  ]
+}

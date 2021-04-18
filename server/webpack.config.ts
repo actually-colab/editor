@@ -20,13 +20,26 @@ const config: Configuration = {
   },
   module: {
     rules: [
-      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+      // {
+      //   test: /\.ts$/,
+      //   loader: 'ts-loader',
+      //   options: {
+      //     transpileOnly: !slsw.lib.webpack.isLocal,
+      //   },
+      // },
       {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          transpileOnly: !slsw.lib.webpack.isLocal,
-        },
+        test: /\.ts$/,
+        use: [
+          { loader: 'istanbul-instrumenter-loader', options: { esModules: true } },
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
+        enforce: 'post',
+        include: path.resolve('src/'),
       },
     ],
   },

@@ -1,0 +1,205 @@
+{
+  "processes": {
+    "20d6b094-d20f-4248-bd86-07890f8f2628": {
+      "parent": null,
+      "children": ["d83412f6-985d-486b-ba1e-309aa57fbc38"]
+    },
+    "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995": { "parent": null, "children": [] },
+    "d83412f6-985d-486b-ba1e-309aa57fbc38": {
+      "parent": "20d6b094-d20f-4248-bd86-07890f8f2628",
+      "children": []
+    }
+  },
+  "files": {
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/authorizer/lambda-authorizer.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/authorizer/login.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/get-notebook-contents.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/get-notebooks.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/get-workshops.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/post-notebook.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/post-workshop.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/rest/share-notebook.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/cell/create-cell.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/cell/edit-cell.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/cell/lock-cell.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/cell/unlock-cell.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/cell/update-output.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/chat/send-chat.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/connection.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/notebook/close-notebook.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/notebook/open-notebook.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/notebook/share-notebook.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/workshop/share-workshop.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/.webpack/service/src/socket/workshop/start-workshop.js": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/google.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/lambda-authorizer.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/login.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/authorizer/token.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/connection.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/ActiveSession.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/Cell.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/Notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/NotebookAccessLevel.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/User.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/Workshop.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/models/WorkshopAccessLevel.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/pgsql/tablenames.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/s3/bucket-names.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/db/s3/models/Output.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/email/mailer.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/get-notebook-contents.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/get-notebooks.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/get-workshops.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/post-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/post-workshop.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/route-helpers.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/rest/share-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/cell/create-cell.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/cell/edit-cell.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/cell/lock-cell.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/cell/unlock-cell.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/cell/update-output.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/chat/send-chat.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/client-management.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/connection.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/middleware/custom/authorizer.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/middleware/custom/json-body-parser.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/middleware/wrapper.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/notebook/close-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/notebook/open-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/notebook/share-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/workshop/share-workshop.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/socket/workshop/start-workshop.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/static/demo-notebook.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/static/email-templates/notebook-shared.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/static/email-templates/workshop-shared.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ],
+    "/Users/bt/code/actually-colab/editor/server/src/static/email-templates/workshop-started.ts": [
+      "5e64e8ef-12ae-4db8-8e4c-a3bc0d302995"
+    ]
+  },
+  "externalIds": {}
+}

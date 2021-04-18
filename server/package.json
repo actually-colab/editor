@@ -23,7 +23,8 @@
     "deploy:domain:prod": "yarn deploy:domain -s production",
     "reinstall:types": "yarn remove:types; yarn add:types",
     "remove:types": "yarn remove @actually-colab/editor-types",
-    "add:types": "yarn add --dev file:../types"
+    "add:types": "yarn add --dev file:../types",
+    "start:coverage": "yarn start:pgsql && nyc yarn offline"
   },
   "dependencies": {
     "@shallot/http-error-handler": "^1.0.2",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@actually-colab/editor-types": "file:../types",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/aws-lambda": "^8.10.67",
     "@types/aws-sdk": "^2.7.0",
     "@types/http-errors": "^1.8.0",
@@ -48,6 +50,8 @@
     "@types/node": "^14.14.35",
     "@types/uuid": "^8.3.0",
     "@types/webpack-node-externals": "^2.5.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "nyc": "^15.1.0",
     "raw-loader": "^4.0.2",
     "serverless": "^2.31.0",
     "serverless-domain-manager": "^5.1.0",
