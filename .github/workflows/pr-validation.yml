@@ -31,7 +31,7 @@ jobs:
         run: cd types && yarn install --frozen-lockfile && cd ..
 
       - name: Install dependencies for tests
-        run: cd tests && yarn install --frozen-lockfile && cd ..
+        run: cd tests && yarn install --frozen-lockfile && yarn add:types && yarn add:client && cd ..
 
       - name: Linting
         run: yarn ci:lint
