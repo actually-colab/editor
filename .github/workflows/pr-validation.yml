@@ -76,7 +76,4 @@ jobs:
         run: cd tests && yarn install --frozen-lockfile && yarn add:types && yarn add:client && cd ..
 
       - name: API Tests
-        run: cd tests && yarn test -t 'Open and Close Notebook' tests/socket.test.ts
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_ACCES_KEY_SECRET: ${{ secrets.AWS_ACCES_KEY_SECRET }}
+        run: cd tests && yarn test
