@@ -136,7 +136,7 @@ describe('Connection', () => {
     );
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
-  }, 20000);
+  }, 5000);
 });
 
 describe('Collaboration', () => {
