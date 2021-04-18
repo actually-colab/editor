@@ -43,6 +43,7 @@ describe('Connection', () => {
   test('Open and Close Notebook', async (done) => {
     const mainUser = await getTestUser();
     const otherUser = await getTestUser();
+    console.log('got test users');
 
     const notebook = await mainUser.apiClient.createNotebook('Test Notebook');
     await mainUser.apiClient.shareNotebook(
@@ -51,16 +52,20 @@ describe('Connection', () => {
       'Read Only'
     );
 
+    console.log('setup notebook');
+
     mainUser.socketClient.on(
       'notebook_opened',
       jest.fn((_n, res_uid, res_triggered_by) => {
         expect(res_triggered_by).toEqual(mainUser.user.uid);
         expect(res_uid).toEqual(mainUser.user.uid);
+        console.log('main: notebook opened');
       })
     );
     otherUser.socketClient.on(
       'notebook_opened',
       jest.fn((_n, res_uid, res_triggered_by) => {
+        console.log('other: notebook opened');
         if (res_triggered_by === otherUser.user.uid) {
           expect(res_triggered_by).toEqual(otherUser.user.uid);
           expect(res_uid).toEqual(otherUser.user.uid);
@@ -136,7 +141,8 @@ describe('Connection', () => {
     );
 
     otherUser.socketClient.openNotebook(notebook.nb_id);
-  }, 5000);
+    console.log('started socket event');
+  }, 20000);
 });
 
 describe('Collaboration', () => {
