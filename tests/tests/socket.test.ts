@@ -32,6 +32,7 @@ const getTestUser = async (): Promise<{
   socketClient.on(
     'error',
     jest.fn((error) => {
+      console.error(error);
       throw error;
     })
   );
