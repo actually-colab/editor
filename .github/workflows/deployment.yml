@@ -1,8 +1,7 @@
 name: Actually Colab API Deployment
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch
 
 jobs:
   server:
@@ -37,7 +36,7 @@ jobs:
           envkey_MAIL_HOST: ${{ secrets.MAIL_HOST }}
           envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           envkey_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-          
+
           directory: ./server
           file_name: .env.production
 
