@@ -28,12 +28,7 @@ const getTestUser = async (): Promise<{
     'http://localhost:3001/test',
     sessionToken
   );
-  socketClient.on(
-    'connect',
-    jest.fn(() => {
-      console.log('connected for test');
-    })
-  );
+  socketClient.on('connect', jest.fn());
   socketClient.on(
     'error',
     jest.fn((error) => {
@@ -134,6 +129,7 @@ describe('Connection', () => {
           otherUser.socketClient.listeners('notebook_closed')[0]
         ).toHaveBeenCalledTimes(1);
 
+        console.log('completed test');
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         done!();
       })
