@@ -1,6 +1,8 @@
 import knex from 'knex';
 
-console.log(process.env.AC_PGSQL_USER);
+console.error('PGSQL HOST', process.env.AC_PGSQL_HOST);
+console.error('PGSQL USER', process.env.AC_PGSQL_USER);
+console.error('PGSQL DB', process.env.AC_PGSQL_DATABASE);
 
 export default knex({
   client: 'pg',
