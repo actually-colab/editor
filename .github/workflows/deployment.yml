@@ -41,7 +41,7 @@ jobs:
       #     file_name: .env.production
 
       - name: Create Dotenv File
-        uses: actually-colab/github-action-create-env-file@v2
+        uses: actually-colab/github-action-create-env-file@v2.1
         with:
           envkey_GOOGLE_AUTH_WEB_CLIENT_ID: test1
           envkey_GOOGLE_AUTH_WEB_CLIENT_SECRET: test2
