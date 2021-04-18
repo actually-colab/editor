@@ -1,5 +1,7 @@
 import knex from 'knex';
 
+console.log(process.env.AC_PGSQL_USER);
+
 export default knex({
   client: 'pg',
   connection: {
