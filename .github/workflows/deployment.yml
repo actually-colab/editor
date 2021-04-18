@@ -20,45 +20,62 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      # - name: Make .env.production file
+      #   uses: SpicyPizza/create-envfile@v1
+      #   with:
+      #     envkey_GOOGLE_AUTH_WEB_CLIENT_ID: ${{ secrets.GOOGLE_AUTH_WEB_CLIENT_ID }}
+      #     envkey_GOOGLE_AUTH_WEB_CLIENT_SECRET: ${{ secrets.GOOGLE_AUTH_WEB_CLIENT_SECRET }}
+
+      #     envkey_PROD_AUTH_SECRET: ${{ secrets.PROD_AUTH_SECRET }}
+
+      #     envkey_DB_HOST: ${{ secrets.DB_HOST }}
+      #     envkey_DB_NAME: ${{ secrets.DB_NAME }}
+      #     envkey_DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      #     envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+      #     envkey_MAIL_HOST: ${{ secrets.MAIL_HOST }}
+      #     envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      #     envkey_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+
+      #     directory: ./server
+      #     file_name: .env.production
+
       - name: Make .env.production file
         uses: SpicyPizza/create-envfile@v1
         with:
-          envkey_GOOGLE_AUTH_WEB_CLIENT_ID: ${{ secrets.GOOGLE_AUTH_WEB_CLIENT_ID }}
-          envkey_GOOGLE_AUTH_WEB_CLIENT_SECRET: ${{ secrets.GOOGLE_AUTH_WEB_CLIENT_SECRET }}
-
-          envkey_PROD_AUTH_SECRET: ${{ secrets.PROD_AUTH_SECRET }}
-
-          envkey_DB_HOST: ${{ secrets.DB_HOST }}
-          envkey_DB_NAME: ${{ secrets.DB_NAME }}
-          envkey_DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          envkey_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          envkey_GOOGLE_AUTH_WEB_CLIENT_ID: test1
+          envkey_GOOGLE_AUTH_WEB_CLIENT_SECRET: test2
 
           envkey_MAIL_HOST: ${{ secrets.MAIL_HOST }}
-          envkey_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-          envkey_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
           directory: ./server
           file_name: .env.production
+      
+      - name: Debug .env
+        run: ls ./server
+      
+      - name: Debug .env
+        run: cat ./server/.env.production
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 12
 
-      - name: Install dependencies for root
-        run: yarn install --frozen-lockfile
+      # - name: Install dependencies for root
+      #   run: yarn install --frozen-lockfile
 
-      - name: Install dependencies for types
-        run: yarn install --frozen-lockfile
-        working-directory: ./types
+      # - name: Install dependencies for types
+      #   run: yarn install --frozen-lockfile
+      #   working-directory: ./types
 
-      - name: Install dependencies for server
-        run: yarn install --frozen-lockfile
-        working-directory: ./server
+      # - name: Install dependencies for server
+      #   run: yarn install --frozen-lockfile
+      #   working-directory: ./server
 
-      - name: Deploy API
-        run: yarn deploy:prod:ci
-        working-directory: ./server
-        env: 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Deploy API
+      #   run: yarn deploy:prod:ci
+      #   working-directory: ./server
+      #   env: 
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
