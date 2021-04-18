@@ -17,9 +17,9 @@ const startSLSOffline = (): Promise<unknown> =>
     console.log(`Serverless: Offline started with PID : ${serverProcess.pid}`);
 
     serverProcess.stdout.on('data', (data) => {
-      console.log(data.toString().trim());
       if (data.includes('Offline [http for websocket] listening on')) {
-        // serverProcess.stdout.removeAllListeners();
+        console.log('Serverless: Offline ready');
+        serverProcess.stdout.removeAllListeners();
         resolve();
       }
     });
