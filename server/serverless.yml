@@ -11,7 +11,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: ${opt:stage,'dev'}
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
 
   logs:
@@ -50,6 +50,7 @@ package:
 custom:
   stages:
     - dev
+    - test
     - production
 
   pgsqlTableNames:

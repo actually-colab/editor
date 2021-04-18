@@ -1,0 +1,79 @@
+name: Actually Colab PR Linting
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies for root
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies for client
+        run: cd client && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for server
+        run: cd server && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for types
+        run: cd types && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for tests
+        run: cd tests && yarn install --frozen-lockfile && yarn add:types && yarn add:client && cd ..
+
+      - name: Linting
+        run: yarn ci:lint
+
+      - name: Check Formatting
+        run: yarn ci:format
+
+  tests:
+    environment: SLS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.release.target_commitish }}    
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies for root
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies for types
+        run: cd types && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for client
+        run: cd client && yarn install --frozen-lockfile && yarn build && cd ..
+
+      - name: Install dependencies for server
+        run: cd server && yarn install --frozen-lockfile && cd ..
+
+      - name: Install dependencies for tests
+        run: cd tests && yarn install --frozen-lockfile && yarn add:types && yarn add:client && cd ..
+
+      - name: API Tests
+        run: cd tests && yarn test

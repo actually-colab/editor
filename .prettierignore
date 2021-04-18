@@ -9,3 +9,4 @@
 **/.serverless
 **/.husky
 **/*.sql
+**/.env*

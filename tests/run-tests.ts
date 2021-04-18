@@ -10,13 +10,16 @@ const sleep = async (ms: number): Promise<void> => {
 const startSLSOffline = (): Promise<unknown> =>
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   new Promise<void>((resolve, _reject) => {
-    serverProcess = spawn('yarn', ['start'], { cwd: '../server' });
+    serverProcess = spawn('yarn', ['start:test'], {
+      cwd: '../server',
+    });
 
     console.log(`Serverless: Offline started with PID : ${serverProcess.pid}`);
 
     serverProcess.stdout.on('data', (data) => {
-      if (data.includes('[HTTP] server ready')) {
-        console.log(data.toString().trim());
+      if (data.includes('Offline [http for websocket] listening on')) {
+        console.log('Serverless: Offline ready');
+        serverProcess.stdout.removeAllListeners();
         resolve();
       }
     });
