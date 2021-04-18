@@ -25,7 +25,7 @@ const getTestUser = async (): Promise<{
   );
 
   const socketClient = new ActuallyColabSocketClient(
-    'http://localhost:3001/test',
+    'ws://localhost:3001/test',
     sessionToken
   );
   socketClient.on('connect', jest.fn());

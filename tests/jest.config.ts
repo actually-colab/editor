@@ -9,6 +9,7 @@ const config: Config.InitialOptions = {
   verbose: true,
   transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
   testEnvironment: 'node',
+  forceExit: true,
 };
 
 export default config;
