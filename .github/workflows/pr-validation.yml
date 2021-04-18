@@ -65,7 +65,7 @@ jobs:
         run: cd server && yarn install --frozen-lockfile && cd ..
 
       - name: Install dependencies for tests
-        run: cd tests && yarn install --frozen-lockfile && cd ..
+        run: cd tests && yarn install --frozen-lockfile && yarn add:types && yarn add:client && cd ..
 
       - name: API Tests
         run: cd tests && yarn test
