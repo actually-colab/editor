@@ -40,6 +40,7 @@ jobs:
         run: yarn ci:format
 
   tests:
+    environment: SLS
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
