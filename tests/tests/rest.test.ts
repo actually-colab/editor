@@ -11,7 +11,7 @@ const getTestUser = async (): Promise<{
   apiClient: ActuallyColabRESTClient;
   user: DUser;
 }> => {
-  const apiClient = new ActuallyColabRESTClient('http://localhost:3000/dev');
+  const apiClient = new ActuallyColabRESTClient('http://localhost:3000/test');
   const { user } = await apiClient.devLogin(
     `${uuid()}@test.actuallycolab.org`,
     'Test User'

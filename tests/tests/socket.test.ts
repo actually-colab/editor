@@ -18,14 +18,14 @@ const getTestUser = async (): Promise<{
   socketClient: ActuallyColabSocketClient;
   user: DUser;
 }> => {
-  const apiClient = new ActuallyColabRESTClient('http://localhost:3000/dev');
+  const apiClient = new ActuallyColabRESTClient('http://localhost:3000/test');
   const { user, sessionToken } = await apiClient.devLogin(
     `${uuid()}@test.actuallycolab.org`,
     'Test User'
   );
 
   const socketClient = new ActuallyColabSocketClient(
-    'ws://localhost:3001/dev',
+    'ws://localhost:3001/test',
     sessionToken
   );
   socketClient.on('connect', jest.fn());

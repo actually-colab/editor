@@ -10,7 +10,7 @@ const sleep = async (ms: number): Promise<void> => {
 const startSLSOffline = (): Promise<unknown> =>
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   new Promise<void>((resolve, _reject) => {
-    serverProcess = spawn('yarn', ['start'], { cwd: '../server' });
+    serverProcess = spawn('yarn', ['start', '-s', 'test'], { cwd: '../server' });
 
     console.log(`Serverless: Offline started with PID : ${serverProcess.pid}`);
 
