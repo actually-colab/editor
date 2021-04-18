@@ -57,7 +57,7 @@ jobs:
         working-directory: ./server
 
       - name: Deploy API
-        run: yarn deploy:prod
+        run: yarn deploy:prod:ci
         working-directory: ./server
         env: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
