@@ -13,6 +13,7 @@
   "scripts": {
     "offline": "NODE_ENV='development' yarn sls offline start",
     "start": "yarn start:pgsql && yarn offline",
+    "start:test": "yarn start:pgsql && yarn sls offline start --stage test",
     "start:pgsql": "yarn pgsql:up && sleep 3 && yarn pgsql:init",
     "pgsql:init": "psql -h localhost -U admin -d AC-dev -f ./pgsql-local/init-db.sql -w",
     "pgsql:up": "docker-compose -p AC-pgsql-local -f ./pgsql-local/docker-compose.yml up -d --build",
@@ -51,7 +52,7 @@
     "raw-loader": "^4.0.2",
     "serverless": "^2.31.0",
     "serverless-domain-manager": "^5.1.0",
-    "serverless-offline": "^6.1.5",
+    "serverless-offline": "^6.9.0",
     "serverless-stage-manager": "^1.0.5",
     "serverless-webpack": "^5.4.0",
     "source-map-support": "^0.5.19",
