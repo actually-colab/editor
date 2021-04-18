@@ -40,8 +40,8 @@ jobs:
       #     directory: ./server
       #     file_name: .env.production
 
-      - name: Make .env.production file
-        uses: SpicyPizza/create-envfile@v1
+      - name: Create Dotenv File
+        uses: actually-colab/github-action-create-env-file@v2
         with:
           envkey_GOOGLE_AUTH_WEB_CLIENT_ID: test1
           envkey_GOOGLE_AUTH_WEB_CLIENT_SECRET: test2
