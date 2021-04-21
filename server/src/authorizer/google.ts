@@ -26,6 +26,7 @@ const isIllinoisEmail = (email: string): boolean => {
     email === 'btincher99@gmail.com' ||
     email === 'jefftaylorchang@gmail.com' ||
     email === 'yiyinnyc@gmail.com' ||
+    email === 'molear@utexas.edu' ||
     (parts.length === 2 && parts[1] === 'illinois.edu')
   );
 };
