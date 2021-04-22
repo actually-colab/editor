@@ -4,7 +4,7 @@
   "description": "The REST and WebSocket API for Actually Colab.",
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "private": false,
   "scripts": {
     "lint": "eslint --ext .ts,.js --fix .",

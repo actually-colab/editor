@@ -11,3 +11,7 @@
 To get started see the local setup documentation in the respective [Client](client/README.md) and [Server](server/README.md) directories
 
 For complete API docs and other information about the project, visit our [docs site](https://docs.actuallycolab.org).
+
+## License
+
+`@actually-colab/editor` is [BUSL-1.1 licensed](./LICENSE)
