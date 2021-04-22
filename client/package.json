@@ -12,7 +12,7 @@
   "types": "dist/src/index.d.ts",
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "private": false,
   "scripts": {
     "build": "yarn reinstall:types; yarn install && rm -rf dist && webpack",

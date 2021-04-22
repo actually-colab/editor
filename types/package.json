@@ -11,7 +11,7 @@
   "types": "types.d.ts",
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "private": false,
   "scripts": {
     "build": "rm -rf dist && webpack",

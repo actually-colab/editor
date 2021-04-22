@@ -54,3 +54,7 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 {"action": "lock_cell", "data": {"nb_id": "", "cell_id": ""}}
 {"action": "unlock_cell", "data": {"nb_id": "", "cell_id": ""}}
 ```
+
+## License
+
+`@actually-colab/editor-server` is [BUSL-1.1 licensed](./LICENSE)
