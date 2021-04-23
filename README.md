@@ -3,7 +3,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/actually-colab/editor)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/actually-colab/editor)
 [![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/actually-colab/editor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/actually-colab/editor/context:javascript)
-![License](https://img.shields.io/github/license/actually-colab/editor)
+![License](https://img.shields.io/badge/license-BUSL--1.1-orange)
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 
 # Actually Colab Editor API
