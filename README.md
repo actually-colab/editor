@@ -14,4 +14,4 @@ For complete API docs and other information about the project, visit our [docs s
 
 ## License
 
-`@actually-colab/editor` is [BUSL-1.1 licensed](./LICENSE)
+`@actually-colab/editor` is [BUSL-1.1 licensed](https://github.com/actually-colab/editor/blob/main/LICENSE)

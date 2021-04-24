@@ -57,4 +57,4 @@ yarn wscat -c ws://localhost:3001 -H "Bearer <token>"
 
 ## License
 
-`@actually-colab/editor-server` is [BUSL-1.1 licensed](./LICENSE)
+`@actually-colab/editor-server` is [BUSL-1.1 licensed](https://github.com/actually-colab/editor/blob/main/server/LICENSE)
