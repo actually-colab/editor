@@ -112,7 +112,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to NPM
-        run: yarn publish
+        run: yarn publish --access public
         working-directory: ./types
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -151,7 +151,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to NPM
-        run: yarn publish
+        run: yarn publish --access public
         working-directory: ./client
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
