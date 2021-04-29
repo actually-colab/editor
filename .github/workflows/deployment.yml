@@ -157,6 +157,10 @@ jobs:
         run: yarn install --frozen-lockfile
         working-directory: ./client
 
+      - name: Build client
+        run: yarn build
+        working-directory: ./client
+
       - name: Create a new release version
         run: yarn version --new-version ${{ github.event.release.tag_name }} --no-git-tag-version
         working-directory: ./client
