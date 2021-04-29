@@ -73,3 +73,4 @@ jobs:
           workflow: Actually Colab API Deployment
           repo: actually-colab/docs
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          ref: master
