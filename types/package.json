@@ -1,6 +1,6 @@
 {
   "name": "@actually-colab/editor-types",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Type definitions for Actually Colab's editor API",
   "keywords": [
     "typescript",
