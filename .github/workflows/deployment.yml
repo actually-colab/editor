@@ -6,8 +6,7 @@ on:
 
 jobs:
   bump-version:
-    name: Deploy editor/server
-    environment: SLS
+    name: Bump repository version tags
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
