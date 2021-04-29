@@ -2,10 +2,8 @@
 # yarn lockfile v1
 
 
-"@actually-colab/editor-client@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@actually-colab/editor-client/-/editor-client-0.2.2.tgz#35c508b762013142ea8d20098ccb8d55cc0fb699"
-  integrity sha512-Pn5KwVP0YFuMCkqt+Ah4oVtt06zLs+cQ68ipnFzGepJX4hPsuJLqOh67f/OH13f29/lZ3dikIZySv8dKwR5MQA==
+"@actually-colab/editor-client@file:../client":
+  version "0.2.1"
   dependencies:
     axios "^0.21.1"
     axios-retry "^3.1.9"
@@ -15,10 +13,8 @@
     lzutf8 "^0.6.0"
     websocket "^1.0.33"
 
-"@actually-colab/editor-types@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@actually-colab/editor-types/-/editor-types-0.2.2.tgz#3243b28866b3c09384ad81f9c797c6f648d9a025"
-  integrity sha512-GTeyajUUsrqdWuWGRUfn5Tn2OZcuIy08OL83hjNzRjso0i0e5/mj0chiI11fzrnOfpPWiem5T03Tbc5Hx5DEhg==
+"@actually-colab/editor-types@file:../types":
+  version "0.2.1"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13":
   version "7.12.13"
@@ -1554,9 +1550,9 @@ find-up@^4.0.0, find-up@^4.1.0:
     path-exists "^4.0.0"
 
 follow-redirects@^1.10.0:
-  version "1.13.3"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
-  integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.0.tgz#f5d260f95c5f8c105894491feee5dc8993b402fe"
+  integrity sha512-0vRwd7RKQBTt+mgu87mtYeofLFZpTas2S9zY+jIeuLJMNvudIgF52nr19q40HOwH5RrhWIPuj9puybzSJiRrVg==
 
 for-in@^1.0.2:
   version "1.0.2"

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "WebSocket server for a synced editor component",
   "license": "BUSL-1.1",
+  "private": true,
   "keywords": [
     "typescript",
     "lambda",
