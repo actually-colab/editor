@@ -89,7 +89,6 @@ Become a sponsor and we'll add your logo to our README and link to you on our we
 - [Jeff Taylor-Chang](https://github.com/jtaylorchang)
 - [Bailey Tincher](https://github.com/baileytincher)
 
-
 ## License
 
 `@actually-colab/editor` is [BUSL-1.1 licensed](https://github.com/actually-colab/editor/blob/main/LICENSE)

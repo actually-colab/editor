@@ -1,11 +1,12 @@
-import type { DCell } from '@actually-colab/editor-types';
+import type { DCell, DUser } from '@actually-colab/editor-types';
 
 import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { broadcastToNotebook } from '../client-management';
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
@@ -22,7 +23,8 @@ type TCreateCellEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TCreateCellEventBody
+  TCreateCellEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TCreateCellEvent> = async ({
@@ -55,4 +57,4 @@ const _handler: ShallotRawHandler<TCreateCellEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

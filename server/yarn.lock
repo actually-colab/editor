@@ -11,7 +11,7 @@
     es5-ext "^0.10.47"
 
 "@actually-colab/editor-types@file:../types":
-  version "0.1.0"
+  version "0.2.1"
 
 "@hapi/accept@^3.2.4":
   version "3.2.4"
@@ -600,6 +600,20 @@
     type "^2.5.0"
     uuid "^8.3.2"
     write-file-atomic "^3.0.3"
+
+"@shallot/aws-websocket-wrapper@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@shallot/aws-websocket-wrapper/-/aws-websocket-wrapper-1.0.7.tgz#1595fe5aa22c1e9099af82b0173eebbe09ca3c40"
+  integrity sha512-cHLGBrBkA4NW7xgbaCbmdM9h3TFznb3aPdvQIx2Ahjp3YGSDHR7/3ASrlDA26xEFgrsaIjD0idreMk2fVJ3pqw==
+  dependencies:
+    "@shallot/aws" "^1.0.6"
+    "@shallot/http-error-handler" "^1.0.2"
+    http-errors "^1.8.0"
+
+"@shallot/aws@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@shallot/aws/-/aws-1.0.6.tgz#fbc13e73eab7dd01a97acd33653497722d13fb89"
+  integrity sha512-+ntMuXEdtMpNH1rkJn0KBqjG9KwcyCthbyiJ2ewX3VRGN/dTaj2nsvsAci4opuYcQC9+Ht0Ya4FI+Z2ychBAJQ==
 
 "@shallot/http-cors@^1.0.1":
   version "1.0.1"

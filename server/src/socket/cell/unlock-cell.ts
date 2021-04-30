@@ -1,11 +1,12 @@
-import { DCell } from '@actually-colab/editor-types';
+import { DCell, DUser } from '@actually-colab/editor-types';
 
 import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { broadcastToNotebook } from '../client-management';
 
@@ -23,7 +24,8 @@ type TUnlockCellEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TUnlockCellEventBody
+  TUnlockCellEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TUnlockCellEvent> = async ({
@@ -56,4 +58,4 @@ const _handler: ShallotRawHandler<TUnlockCellEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());
