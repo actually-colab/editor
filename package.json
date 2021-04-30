@@ -5,6 +5,7 @@
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
   "license": "SEE LICENSE IN ./LICENSE",
+  "private": false,
   "scripts": {
     "lint": "eslint --ext .ts,.js --fix .",
     "format": "prettier --write \"**/*.{ts,js,json,yml,md}\"",
