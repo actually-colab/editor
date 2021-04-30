@@ -12,8 +12,8 @@
   "types": "./dist/src/index.d.ts",
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
-  "license": "BUSL-1.1",
-  "private": true,
+  "license": "SEE LICENSE IN ./LICENSE",
+  "private": "false",
   "scripts": {
     "build": "yarn reinstall:types; yarn install && rm -rf dist && webpack",
     "postversion": "git push && git push --tags",

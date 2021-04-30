@@ -2,8 +2,7 @@
   "name": "@actually-colab/editor-server",
   "version": "0.1.0",
   "description": "WebSocket server for a synced editor component",
-  "license": "BUSL-1.1",
-  "private": true,
+  "license": "SEE LICENSE IN ./LICENSE",
   "keywords": [
     "typescript",
     "lambda",
