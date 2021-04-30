@@ -213,6 +213,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: open_notebook
 
   socket-close-notebook:
@@ -220,6 +221,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: close_notebook
 
   socket-share-notebook:
@@ -227,6 +229,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: share_notebook
 
   socket-edit-cell:
@@ -234,6 +237,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: edit_cell
 
   socket-create-cell:
@@ -241,6 +245,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: create_cell
 
   socket-lock-cell:
@@ -248,6 +253,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: lock_cell
 
   socket-unlock-cell:
@@ -255,6 +261,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: unlock_cell
 
   socket-update-output:
@@ -262,6 +269,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: update_output
 
   socket-share-workshop:
@@ -269,6 +277,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: share_workshop
 
   socket-start-workshop:
@@ -276,6 +285,7 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: start_workshop
 
   send_chat_message:
@@ -283,4 +293,5 @@ functions:
 
     events:
       - websocket:
+          routeResponseSelectionExpression: $default
           route: send_chat_message
