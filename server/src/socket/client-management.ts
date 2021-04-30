@@ -4,7 +4,7 @@ import type {
   DUser,
   DActiveSession,
 } from '@actually-colab/editor-types';
-import type { WebSocketRequestContext } from './connection';
+import type { WebSocketRequestContext } from '@shallot/aws-websocket-wrapper';
 
 import { ApiGatewayManagementApi } from 'aws-sdk';
 

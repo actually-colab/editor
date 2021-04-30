@@ -135,7 +135,7 @@ export class ActuallyColabSocketClient extends EventEmitter<ActuallyColabEventLi
     };
 
     this.socketClient.onmessage = (message): void => {
-      if (typeof message.data === 'string') {
+      if (typeof message.data === 'string' && message.data !== '') {
         const eventData: ActuallyColabEventData = JSON.parse(message.data);
         switch (eventData.action) {
           case 'notebook_opened': {
