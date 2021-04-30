@@ -29,6 +29,8 @@
     "add:types": "yarn add --dev file:../types"
   },
   "dependencies": {
+    "@shallot/aws": "^1.0.6",
+    "@shallot/aws-websocket-wrapper": "^1.0.7",
     "@shallot/http-error-handler": "^1.0.2",
     "@shallot/rest-wrapper": "^1.1.3",
     "aws-sdk": "^2.842.0",
@@ -38,7 +40,6 @@
     "knex": "^0.21.17",
     "nodemailer": "^6.5.0",
     "pg": "^8.5.1",
-    "shallot": "^1.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

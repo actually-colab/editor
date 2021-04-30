@@ -5,7 +5,8 @@ import createHttpError from 'http-errors';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { getWorkshopAccessLevel } from '../../db/pgsql/models/WorkshopAccessLevel';
 import { startWorkshop, getWorkshopById } from '../../db/pgsql/models/Workshop';
@@ -23,7 +24,8 @@ type TStartWorkshopEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TStartWorkshopEventBody
+  TStartWorkshopEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TStartWorkshopEvent> = async ({
@@ -71,4 +73,4 @@ const _handler: ShallotRawHandler<TStartWorkshopEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

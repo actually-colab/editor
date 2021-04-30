@@ -8,7 +8,7 @@ import type {
 import { DUser } from '@actually-colab/editor-types';
 
 import { getUserFromBearerToken } from './token';
-import { ShallotAWS } from 'shallot';
+import ShallotAWS from '@shallot/aws';
 
 const generatePolicy = (
   principalId: string,

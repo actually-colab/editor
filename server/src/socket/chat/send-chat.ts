@@ -1,11 +1,12 @@
-import type { DCell } from '@actually-colab/editor-types';
+import type { DCell, DUser } from '@actually-colab/editor-types';
 
 import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { broadcastToNotebook } from '../client-management';
 
@@ -22,7 +23,8 @@ type TSendChatEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TSendChatEventBody
+  TSendChatEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TSendChatEvent> = async ({ requestContext, body }) => {
@@ -51,4 +53,4 @@ const _handler: ShallotRawHandler<TSendChatEvent> = async ({ requestContext, bod
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

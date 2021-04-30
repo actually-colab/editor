@@ -1,8 +1,8 @@
-import type { ShallotMiddlewareWithOptions } from 'shallot/dist/aws/core';
-import type { APIGatewayProxyResult } from 'aws-lambda';
+import { DUser } from '@actually-colab/editor-types';
+import type { ShallotAWSMiddlewareWithOptions } from '@shallot/aws';
+import type { TShallotSocketEvent } from '@shallot/aws-websocket-wrapper';
 
 import HttpError from 'http-errors';
-import { APIGatewayWebSocketEvent } from '../wrapper';
 import { getUserFromConnectionId } from '../../../authorizer/token';
 import { forceDisconnect } from '../../client-management';
 
@@ -11,9 +11,8 @@ import { forceDisconnect } from '../../client-management';
  *
  * @param config optional object to pass config options
  */
-const ShallotSocketAuthorizer: ShallotMiddlewareWithOptions<
-  APIGatewayWebSocketEvent,
-  APIGatewayProxyResult
+const ShallotSocketAuthorizer: ShallotAWSMiddlewareWithOptions<
+  TShallotSocketEvent<unknown, unknown, unknown, unknown, DUser>
 > = () => ({
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   before: async ({ event }) => {

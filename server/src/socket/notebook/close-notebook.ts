@@ -1,11 +1,11 @@
-import type { DNotebook } from '@actually-colab/editor-types';
-
-import createHttpError from 'http-errors';
-
+import type { DNotebook, DUser } from '@actually-colab/editor-types';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
+
+import createHttpError from 'http-errors';
 
 import { closeNotebook } from '../../db/pgsql/models/ActiveSession';
 import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
@@ -22,7 +22,8 @@ type TCloseNotebookEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TCloseNotebookEventBody
+  TCloseNotebookEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
@@ -55,4 +56,4 @@ const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

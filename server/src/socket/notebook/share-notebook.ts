@@ -5,7 +5,8 @@ import createHttpError from 'http-errors';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import {
   getUserAccessLevel,
@@ -29,7 +30,8 @@ type TShareNotebookEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TShareNotebookEventBody
+  TShareNotebookEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
@@ -105,4 +107,4 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

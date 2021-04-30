@@ -1,11 +1,12 @@
-import type { OOutput } from '@actually-colab/editor-types';
+import type { DUser, OOutput } from '@actually-colab/editor-types';
 
 import createHttpError from 'http-errors';
 
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { broadcastToNotebook } from '../client-management';
 
@@ -22,7 +23,8 @@ type TUpdateOutputEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TUpdateOutputEventBody
+  TUpdateOutputEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TUpdateOutputEvent> = async ({
@@ -57,4 +59,4 @@ const _handler: ShallotRawHandler<TUpdateOutputEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());

@@ -9,7 +9,8 @@ import createHttpError from 'http-errors';
 import ShallotSocketWrapper, {
   ShallotRawHandler,
   TShallotSocketEvent,
-} from '../middleware/wrapper';
+} from '@shallot/aws-websocket-wrapper';
+import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import {
   getWorkshopAccessLevel,
@@ -35,7 +36,8 @@ type TShareWorkshopEvent = TShallotSocketEvent<
   undefined,
   undefined,
   undefined,
-  TShareWorkshopEventBody
+  TShareWorkshopEventBody,
+  DUser
 >;
 
 const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
@@ -121,4 +123,4 @@ const _handler: ShallotRawHandler<TShareWorkshopEvent> = async ({
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {
   HttpErrorHandlerOpts: { catchAllErrors: true },
-});
+}).use(ShallotSocketAuthorizer());
