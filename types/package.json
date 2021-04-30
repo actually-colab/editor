@@ -12,7 +12,7 @@
   "repository": "https://github.com/actually-colab/editor",
   "author": "Bailey Tincher <bailey@actuallycolab.org>",
   "license": "SEE LICENSE IN ./LICENSE",
-  "private": "false",
+  "private": false,
   "scripts": {
     "build": "rm -rf dist && webpack",
     "postversion": "git push && git push --tags"
