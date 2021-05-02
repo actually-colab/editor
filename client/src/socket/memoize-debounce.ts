@@ -1,15 +1,24 @@
 import _ from 'lodash';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface MemoizeDebouncedFunction<F extends (...args: any[]) => any>
+type AnyFunction = (...args: any[]) => any;
+
+export interface MemoizeDebouncedFunction<F extends AnyFunction>
   extends _.DebouncedFunc<F> {
   (...args: Parameters<F>): ReturnType<F> | undefined;
   flush: (...args: Parameters<F>) => ReturnType<F> | undefined;
   cancel: (...args: Parameters<F>) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function memoizeDebounce<F extends (...args: any[]) => any>(
+/**Combines Lodash's _.debounce with _.memoize to allow for debouncing
+ * based on parameters passed to the function during runtime.
+ *
+ * @param func The function to debounce.
+ * @param wait The number of milliseconds to delay.
+ * @param options Lodash debounce options object.
+ * @param resolver The function to resolve the cache key.
+ */
+export function memoizeDebounce<F extends AnyFunction>(
   func: F,
   wait = 0,
   options: _.DebounceSettings = {},
@@ -31,11 +40,13 @@ export function memoizeDebounce<F extends (...args: any[]) => any>(
   const flush: MemoizeDebouncedFunction<F>['flush'] = (...args) => {
     return debounceMemo(...args).flush();
   };
-  wrappedFunction.flush = flush;
 
-  wrappedFunction.cancel = (...args: Parameters<F>): void => {
+  const cancel: MemoizeDebouncedFunction<F>['cancel'] = (...args) => {
     return debounceMemo(...args).cancel();
   };
+
+  wrappedFunction.flush = flush;
+  wrappedFunction.cancel = cancel;
 
   return wrappedFunction;
 }
