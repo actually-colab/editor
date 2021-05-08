@@ -3,10 +3,12 @@
 ![GitHub issues](https://img.shields.io/github/issues/actually-colab/editor)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/actually-colab/editor)
 [![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/actually-colab/editor.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/actually-colab/editor/context:javascript)
+[![Lines of Code](https://tokei.rs/b1/github/actually-colab/editor)](https://github.com/actually-colab/editor)
+
 ![License](https://img.shields.io/badge/license-BUSL--1.1-orange)
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 
-[![Open Collective](https://opencollective.com/actuallycolab/tiers/badge.svg)](https://opencollective.com/actuallycolab) [![Patreon](https://img.shields.io/badge/Patreon-F96854?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/actuallycolab) [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ParNlHsbSrY) [![HackIllinois](https://img.shields.io/badge/HackIllinois%201st%20place%20🏆-0A3E54?style=flat&logo=dev.to&logoColor=white)](https://devpost.com/software/actually-colab-real-time-collaborative-jupyter-editor)
+[![Open Collective](https://opencollective.com/actuallycolab/tiers/badge.svg)](https://opencollective.com/actuallycolab) [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ParNlHsbSrY) [![HackIllinois](https://img.shields.io/badge/HackIllinois%201st%20place%20🏆-0A3E54?style=flat&logo=dev.to&logoColor=white)](https://devpost.com/software/actually-colab-real-time-collaborative-jupyter-editor)
 
 # Actually Colab Editor API
 
