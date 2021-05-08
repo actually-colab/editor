@@ -411,14 +411,14 @@
     node-fetch "^2.6.0"
     shortid "^2.2.14"
 
-"@serverless/components@^3.7.6":
-  version "3.7.7"
-  resolved "https://registry.yarnpkg.com/@serverless/components/-/components-3.7.7.tgz#c564d81a3f5ec89ba421a3cc02ba5c2da2693a6f"
-  integrity sha512-GMo0wOyrfMiekRKZuOI046bxinM/cSsAkLivaT6J0rAG6DV+C8yZHLis5090kya50XndidiSdfshlaP0lv21lQ==
+"@serverless/components@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@serverless/components/-/components-3.9.2.tgz#710d8539cd16d45af0033e2d177a76941778ee69"
+  integrity sha512-bCz2Ii+zr/ojKhWDTTEsBlM3kK+L17+wDEM/oIMAjDfkWJ59LRT+eOb41eE0GBdiQhtKvTETffTgrGgQtzrAZw==
   dependencies:
     "@serverless/platform-client" "^4.2.2"
     "@serverless/platform-client-china" "^2.1.9"
-    "@serverless/utils" "^3.1.0"
+    "@serverless/utils" "^4.0.0"
     adm-zip "^0.5.4"
     ansi-escapes "^4.3.1"
     chalk "^4.1.0"
@@ -454,13 +454,13 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/enterprise-plugin@^4.5.2":
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/@serverless/enterprise-plugin/-/enterprise-plugin-4.5.2.tgz#3eda4c7410569396a4a20ce529ece3f70ef71265"
-  integrity sha512-Y/7WK0BAL7oVK3QDV9nL1qUKTC4p/gKWI8W1Ozp+P4RA9RPIqDHmdqmu8Uhc/rUS0nD64LijfLlapeXq2qITVg==
+"@serverless/enterprise-plugin@^4.5.3":
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/@serverless/enterprise-plugin/-/enterprise-plugin-4.5.3.tgz#78fa81c9a76d3ee323290c613f237c1481e9c4bc"
+  integrity sha512-/JwlHoBSmxP8bAaWD3dIGePkJU1sLRHhEgvMyXuDo9i9tN5D6kyZypM2GUVNx4MpUR/XPJtCUgCSp5xI4aSsxg==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
-    "@serverless/platform-client" "^4.2.1"
+    "@serverless/platform-client" "^4.2.2"
     "@serverless/utils" "^4.0.0"
     chalk "^4.1.0"
     child-process-ext "^2.1.1"
@@ -468,7 +468,7 @@
     cli-color "^2.0.0"
     flat "^5.0.2"
     fs-extra "^9.1.0"
-    js-yaml "^3.14.1"
+    js-yaml "^4.0.0"
     jszip "^3.6.0"
     lodash "^4.17.21"
     memoizee "^0.4.15"
@@ -476,7 +476,7 @@
     node-dir "^0.1.17"
     node-fetch "^2.6.1"
     open "^7.4.2"
-    semver "^7.3.4"
+    semver "^7.3.5"
     simple-git "^2.37.0"
     uuid "^8.3.2"
     yamljs "^0.3.0"
@@ -510,7 +510,7 @@
     urlencode "^1.1.0"
     ws "^7.3.1"
 
-"@serverless/platform-client@^4.2.1", "@serverless/platform-client@^4.2.2":
+"@serverless/platform-client@^4.2.2":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@serverless/platform-client/-/platform-client-4.2.2.tgz#72d0bce97a95e65143a669487ee1f92dc8769ac0"
   integrity sha512-8jP72e0POFGEW7HKtDzK0qt1amYtvlB7bYSal8JUCXbeY2qk3xRJZuLWCZBBKRGz4ha4eBNjlz7iniACb9biLg==
@@ -571,21 +571,6 @@
     uuid "^3.4.0"
     write-file-atomic "^2.4.3"
 
-"@serverless/utils@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@serverless/utils/-/utils-3.1.0.tgz#99906d3640898a69bb3ef75a432a7b5a6960694a"
-  integrity sha512-HhmnTtfGt4gKCNGHg0q9pioltChh+dWbdA7y1aP7vNqjwpZ/pUDAqJf/M3GFozTnhlFpwCY9Ik1tOpDkgP3oiA==
-  dependencies:
-    chalk "^4.1.0"
-    inquirer "^7.3.3"
-    js-yaml "^4.0.0"
-    jwt-decode "^3.1.2"
-    lodash "^4.17.20"
-    ncjsm "^4.1.0"
-    type "^2.1.0"
-    uuid "^8.3.2"
-    write-file-atomic "^3.0.3"
-
 "@serverless/utils@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@serverless/utils/-/utils-4.0.0.tgz#5080995bb1021efd77787bb7220c32a7ac83a1ad"
@@ -594,6 +579,22 @@
     chalk "^4.1.0"
     inquirer "^7.3.3"
     js-yaml "^4.0.0"
+    jwt-decode "^3.1.2"
+    lodash "^4.17.21"
+    ncjsm "^4.1.0"
+    type "^2.5.0"
+    uuid "^8.3.2"
+    write-file-atomic "^3.0.3"
+
+"@serverless/utils@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@serverless/utils/-/utils-4.1.0.tgz#99574f446509eac8935f58013399d7af89945b4b"
+  integrity sha512-cl5uPaGg72z0sCUpF0zsOhwYYUV72Gxc1FwFfxltO8hSvMeFDvwD7JrNE4kHcIcKRjwPGbSH0fdVPUpErZ8Mog==
+  dependencies:
+    chalk "^4.1.0"
+    ci-info "^3.1.1"
+    inquirer "^7.3.3"
+    js-yaml "^4.1.0"
     jwt-decode "^3.1.2"
     lodash "^4.17.21"
     ncjsm "^4.1.0"
@@ -1374,10 +1375,10 @@ aws-sdk@^2.834.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-aws-sdk@^2.869.0:
-  version "2.874.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.874.0.tgz#2f1f1ff232e473ddf2a398b276c44f24e5828e2c"
-  integrity sha512-YF2LYIfIuywFTzojGwwUwAiq+pgSM3IWRF/uDoJa28xRQSfYD1uMeZLCqqMt+L0/yxe2UJDYKTVPhB9eEqOxEQ==
+aws-sdk@^2.901.0:
+  version "2.903.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.903.0.tgz#4c8252723370ebbdaffe69f4dfddc5973b1dab4a"
+  integrity sha512-BP/giYLP8QJ63Jta59kph1F76oPITxRt/wNr3BdoEs9BtshWlGKk149UaseDB4wJtI+0TER5jtzBIUBcP6E+wA==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -1446,7 +1447,7 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bestzip@^2.1.7:
+bestzip@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/bestzip/-/bestzip-2.2.0.tgz#a6757c04469eeb503708881e1910a4b413155ee7"
   integrity sha512-MCuN3sjLA//zKhheXSOAMlFtj4oZEHKCa+gHGLYUDnL2VRuuwARVV+QKMwtbDk5CL2AQs+3Dw20h8KJJrbENSg==
@@ -1526,6 +1527,20 @@ boxen@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/boxen/-/boxen-5.0.0.tgz#64fe9b16066af815f51057adcc800c3730120854"
   integrity sha512-5bvsqw+hhgUi3oYGK0Vf4WpIkyemp60WBInn7+WNfoISzAqk/HX4L7WNROq38E6UR/y3YADpv6pEm4BfkeEAdA==
+  dependencies:
+    ansi-align "^3.0.0"
+    camelcase "^6.2.0"
+    chalk "^4.1.0"
+    cli-boxes "^2.2.1"
+    string-width "^4.2.0"
+    type-fest "^0.20.2"
+    widest-line "^3.1.0"
+    wrap-ansi "^7.0.0"
+
+boxen@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/boxen/-/boxen-5.0.1.tgz#657528bdd3f59a772b8279b831f27ec2c744664b"
+  integrity sha512-49VBlw+PrWEF51aCmy7QIteYPIFZxSpvqBdP/2itCPPlJ49kj9zg/XPRFrdkne2W+CfwXUls8exMvu1RysZpKA==
   dependencies:
     ansi-align "^3.0.0"
     camelcase "^6.2.0"
@@ -1645,7 +1660,7 @@ buffers@~0.1.1:
   resolved "https://registry.yarnpkg.com/buffers/-/buffers-0.1.1.tgz#b24579c3bed4d6d396aeee6d9a8ae7f5482ab7bb"
   integrity sha1-skV5w77U1tOWru5tmorn9Ugqt7s=
 
-builtin-modules@^3.0.0, builtin-modules@^3.1.0:
+builtin-modules@^3.0.0, builtin-modules@^3.1.0, builtin-modules@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-3.2.0.tgz#45d5db99e7ee5e6bc4f362e008bf917ab5049887"
   integrity sha512-lGzLKcioL90C7wMczpkY0n/oART3MbBa8R9OFGE1rJxoVI86u4WAGfEk8Wjv10eKSyTHVGkSo3bvBylCEtk7LA==
@@ -1765,6 +1780,14 @@ chalk@^4.0.0, chalk@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.0.tgz#4e14870a618d9e2edd97dd8345fd9d9dc315646a"
   integrity sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
+chalk@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
+  integrity sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
@@ -2420,6 +2443,11 @@ dotenv@^8.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
+dotenv@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
+  integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
+
 download@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/download/-/download-8.0.0.tgz#afc0b309730811731aae9f5371c9f46be73e51b1"
@@ -2994,10 +3022,10 @@ filenamify@^3.0.0:
     strip-outer "^1.0.0"
     trim-repeated "^1.0.0"
 
-filesize@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/filesize/-/filesize-6.1.0.tgz#e81bdaa780e2451d714d71c0d7a4f3238d37ad00"
-  integrity sha512-LpCHtPQ3sFx67z+uh2HnSyWSLLu5Jxo21795uRDuar/EOuYWXib5EmPaGIBuSnRqH2IODiKA2k5re/K9OnN/Yg==
+filesize@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/filesize/-/filesize-6.3.0.tgz#dff53cfb3f104c9e422f346d53be8dbcc971bf11"
+  integrity sha512-ytx0ruGpDHKWVoiui6+BY/QMNngtDQ/pJaFwfBpQif0J63+E8DLdFyqS3NkKQn7vIruUEpoGD9JUJSg7Kp+I0g==
 
 fill-range@^4.0.0:
   version "4.0.0"
@@ -3169,7 +3197,7 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
-fs2@^0.3.8:
+fs2@^0.3.8, fs2@^0.3.9:
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/fs2/-/fs2-0.3.9.tgz#3869e5b2ec7e0622eaa5f4373df540d3d427a9fb"
   integrity sha512-WsOqncODWRlkjwll+73bAxVW3JPChDgaPX3DT4iTTm73UmG4VgALa7LaFblP232/DN60itkOrPZ8kaP1feksGQ==
@@ -3826,10 +3854,10 @@ is-buffer@^1.1.5:
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
 
-is-builtin-module@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/is-builtin-module/-/is-builtin-module-3.0.0.tgz#137d3d2425023a19a660fb9dd6ddfabe52c03466"
-  integrity sha512-/93sDihsAD652hrMEbJGbMAVBf1qc96kyThHQ0CAOONHaE3aROLpTjDe4WQ5aoC5ITHFxEq1z8XqSU7km+8amw==
+is-builtin-module@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/is-builtin-module/-/is-builtin-module-3.1.0.tgz#6fdb24313b1c03b75f8b9711c0feb8c30b903b00"
+  integrity sha512-OV7JjAgOTfAFJmHZLvpSTb4qi0nIILDV1gWPYDnDJUTNFM5aGlRAhk4QcT8i7TuAleeEV5Fdkqn3t4mS+Q11fg==
   dependencies:
     builtin-modules "^3.0.0"
 
@@ -3894,10 +3922,15 @@ is-descriptor@^1.0.0, is-descriptor@^1.0.2:
     is-data-descriptor "^1.0.0"
     kind-of "^6.0.2"
 
-is-docker@^2.0.0, is-docker@^2.1.1:
+is-docker@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/is-docker/-/is-docker-2.1.1.tgz#4125a88e44e450d384e09047ede71adc2d144156"
   integrity sha512-ZOoqiXfEwtGknTiuDEy8pN2CfE3TxMHprvNer1mXiqwkOT77Rw3YVrUQ52EqAOU3QAWDQ+bQdx7HJzrv7LS2Hw==
+
+is-docker@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/is-docker/-/is-docker-2.2.1.tgz#33eeabe23cfe86f14bde4408a02c0cfb853acdaa"
+  integrity sha512-F+i2BKsFrH66iaUFc0woD8sLy8getkwTwtOBjvs56Cx4CgJDeKQeqfz8wAYiSb8JOprWhHH5p77PbmYCvvUuXQ==
 
 is-extendable@^0.1.0, is-extendable@^0.1.1:
   version "0.1.1"
@@ -4171,6 +4204,13 @@ js-yaml@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.0.0.tgz#f426bc0ff4b4051926cd588c71113183409a121f"
   integrity sha512-pqon0s+4ScYUvX30wxQi3PogGFAlUyH0awepWvwkj4jD4v+ova3RiYw8bmA6x2rDrEaj8i/oWKoRxpVNW+Re8Q==
+  dependencies:
+    argparse "^2.0.1"
+
+js-yaml@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
+  integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
 
@@ -4787,6 +4827,14 @@ micromatch@^4.0.0, micromatch@^4.0.2:
     braces "^3.0.1"
     picomatch "^2.0.5"
 
+micromatch@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.4.tgz#896d519dfe9db25fce94ceb7a500919bf881ebf9"
+  integrity sha512-pRmzw/XUcwXGpD9aI9q/0XOwLNygjETJ8y0ao0wdqprrzDa4YnxLcz7fQRZr8voh8V10kGhABbNcHVk5wHgWwg==
+  dependencies:
+    braces "^3.0.1"
+    picomatch "^2.2.3"
+
 mime-db@1.44.0:
   version "1.44.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.44.0.tgz#fa11c5eb0aca1334b4233cb4d52f10c5a6272f92"
@@ -4967,6 +5015,19 @@ ncjsm@^4.1.0:
     find-requires "^1.0.0"
     fs2 "^0.3.8"
     type "^2.0.0"
+
+ncjsm@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/ncjsm/-/ncjsm-4.2.0.tgz#7b2d752c3a42db5f6a2c5ff6934cf66fb1bb5e38"
+  integrity sha512-L2Qij4PTy7Bs4TB24zs7FLIAYJTaR5JPvSig5hIcO059LnMCNgy6MfHHNyg8s/aekPKrTqKX90gBGt3NNGvhdw==
+  dependencies:
+    builtin-modules "^3.2.0"
+    deferred "^0.7.11"
+    es5-ext "^0.10.53"
+    es6-set "^0.1.5"
+    find-requires "^1.0.0"
+    fs2 "^0.3.9"
+    type "^2.5.0"
 
 neo-async@^2.6.2:
   version "2.6.2"
@@ -5254,7 +5315,7 @@ p-is-promise@^1.1.0:
   resolved "https://registry.yarnpkg.com/p-is-promise/-/p-is-promise-1.1.0.tgz#9c9456989e9f6588017b0434d56097675c3da05e"
   integrity sha1-nJRWmJ6fZYgBewQ01WCXZ1w9oF4=
 
-p-limit@^3.0.2, p-limit@^3.1.0:
+p-limit@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-3.1.0.tgz#e1daccbe78d0d1388ca18c64fea38e3e57e3706b"
   integrity sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==
@@ -5405,6 +5466,11 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
+path2@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/path2/-/path2-0.1.0.tgz#639828942cdbda44a41a45b074ae8873483b4efa"
+  integrity sha1-Y5golCzb2kSkGkWwdK6Ic0g7Tvo=
+
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
@@ -5470,6 +5536,11 @@ picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
   integrity sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
+
+picomatch@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.3.tgz#465547f359ccc206d3c48e46a1bcb89bf7ee619d"
+  integrity sha512-KpELjfwcCDUb9PeigTs2mBJzXUPzAuP2oPcA989He8Rte0+YUAjw1JVedDhuTKPkHjSYzMN3npC9luThGYEKdg==
 
 pify@^2.3.0:
   version "2.3.0"
@@ -6081,10 +6152,10 @@ serverless-domain-manager@^5.1.0:
     aws-sdk "^2.756.0"
     chalk "^4.1.0"
 
-serverless-offline@^6.9.0:
-  version "6.9.0"
-  resolved "https://registry.yarnpkg.com/serverless-offline/-/serverless-offline-6.9.0.tgz#a87fee3561f34808be9ac8ab06db9278cea8fa5f"
-  integrity sha512-toKcyXUv0rFM7nGk/0QcCxP1Zlv/37IAf3vQiUlOh5XHPl6pFWfHUVF4HelMkosAeWJqJt1SngNmK38uiAsLtg==
+serverless-offline@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/serverless-offline/-/serverless-offline-7.0.0.tgz#dc72a401d196bb7bded248338c19321adf985ad8"
+  integrity sha512-PrbRqS9796Bbb0A0JMHdBudL2+JsMJGHI8bwu3xtD4adAsYUCAONqTfNIBtbwk3KNuA1i/pdW9IIn63E0UNi0Q==
   dependencies:
     "@hapi/boom" "^7.4.11"
     "@hapi/h2o2" "^8.3.2"
@@ -6121,66 +6192,66 @@ serverless-stage-manager@^1.0.5:
   resolved "https://registry.yarnpkg.com/serverless-stage-manager/-/serverless-stage-manager-1.0.5.tgz#28f9d8c1742d95044564e81ef06a19113f1e064d"
   integrity sha1-KPnYwXQtlQRFZOge8GoZET8eBk0=
 
-serverless-webpack@^5.4.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/serverless-webpack/-/serverless-webpack-5.4.0.tgz#75a9201629c4285da43d795b59f27733f84763bf"
-  integrity sha512-d/BrLoiyBUmzhtDcqm4XiZSIwv/NDnEGBASfsbu4DJBiMv1Kgw3EXrn+QPKfSv+a0a2qcfUahT75IzrdJR2Irw==
+serverless-webpack@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/serverless-webpack/-/serverless-webpack-5.4.2.tgz#ba6d5ffc6f9b75f74b529d92da2fd1e6b778b6bf"
+  integrity sha512-QX3ZQbCItACW8midkQf/w5gNdT2glSB4Aoxad5RU2xzXoWww/f9VOF5Et2bOLNFr+jlXTOk8XbcZxxL6AIan/A==
   dependencies:
-    bestzip "^2.1.7"
+    bestzip "^2.2.0"
     bluebird "^3.7.2"
     fs-extra "^9.1.0"
     glob "^7.1.6"
-    is-builtin-module "^3.0.0"
+    is-builtin-module "^3.1.0"
     lodash "^4.17.21"
-    semver "^7.3.4"
+    semver "^7.3.5"
   optionalDependencies:
     ts-node ">= 8.3.0"
 
-serverless@^2.31.0:
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/serverless/-/serverless-2.31.0.tgz#cdbcc370e02218f1494d827c06ecd5a3402a1748"
-  integrity sha512-gqjiMemQKvOEYgAQB8IuPA4v6GMg83kkxREy8i55oHnv4xwMJQ2RX11Z83Sk05qPR5fl59e3ZNuLgvXZKoOgBA==
+serverless@^2.40.0:
+  version "2.40.0"
+  resolved "https://registry.yarnpkg.com/serverless/-/serverless-2.40.0.tgz#b872d4bc45269387f355a44dbc130d6927ce2bd2"
+  integrity sha512-egrxZr3s/2BrIWOG8PO/IxJzt1/tlYhPz+/T7DQu+gQbNGnUz10/aDr6n/oD6/qj+GQ/gST5WIi91KL+13Q1bw==
   dependencies:
     "@serverless/cli" "^1.5.2"
-    "@serverless/components" "^3.7.6"
-    "@serverless/enterprise-plugin" "^4.5.2"
-    "@serverless/utils" "^4.0.0"
+    "@serverless/components" "^3.9.2"
+    "@serverless/enterprise-plugin" "^4.5.3"
+    "@serverless/utils" "^4.1.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.869.0"
+    aws-sdk "^2.901.0"
     bluebird "^3.7.2"
-    boxen "^5.0.0"
+    boxen "^5.0.1"
     cachedir "^2.3.0"
-    chalk "^4.1.0"
+    chalk "^4.1.1"
     child-process-ext "^2.1.1"
     ci-info "^3.1.1"
     d "^1.0.1"
     dayjs "^1.10.4"
     decompress "^4.2.1"
-    dotenv "^8.2.0"
+    dotenv "^8.6.0"
     download "^8.0.0"
     essentials "^1.1.1"
     fastest-levenshtein "^1.0.12"
-    filesize "^6.1.0"
+    filesize "^6.3.0"
     fs-extra "^9.1.0"
     get-stdin "^8.0.0"
     globby "^11.0.3"
     got "^11.8.2"
     graceful-fs "^4.2.6"
     https-proxy-agent "^5.0.0"
-    is-docker "^2.1.1"
+    is-docker "^2.2.1"
     is-wsl "^2.2.0"
-    js-yaml "^4.0.0"
+    js-yaml "^4.1.0"
     json-cycle "^1.3.0"
     json-refs "^3.0.15"
     lodash "^4.17.21"
     memoizee "^0.4.15"
-    micromatch "^4.0.2"
-    ncjsm "^4.1.0"
+    micromatch "^4.0.4"
+    ncjsm "^4.2.0"
     node-fetch "^2.6.1"
     object-hash "^2.1.1"
-    p-limit "^3.1.0"
+    path2 "^0.1.0"
     promise-queue "^2.2.5"
     replaceall "^0.1.6"
     semver "^7.3.5"
