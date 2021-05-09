@@ -51,6 +51,7 @@ custom:
   stages:
     - dev
     - test
+    - staging
     - production
 
   pgsqlTableNames:

@@ -22,6 +22,8 @@
     "deploy:domain": "yarn serverless create_domain --aws-profile ac-bailey",
     "deploy:prod": "yarn deploy -s production",
     "deploy:prod:ci": "NODE_OPTIONS=\"--max-old-space-size=4096\" yarn serverless deploy --stage production",
+    "deploy:staging": "yarn deploy -s staging",
+    "deploy:staging:ci": "NODE_OPTIONS=\"--max-old-space-size=4096\" yarn serverless deploy --stage staging",
     "deploy:domain:prod": "yarn deploy:domain -s production",
     "reinstall:types": "yarn remove:types; yarn add:types",
     "remove:types": "yarn remove @actually-colab/editor-types",
