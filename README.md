@@ -1,4 +1,4 @@
-<img src=".readme/img/header.png" width="100%" />
+<img src="https://raw.githubusercontent.com/actually-colab/graphics/master/header/header.png" width="100%" />
 
 ![GitHub issues](https://img.shields.io/github/issues/actually-colab/editor)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/actually-colab/editor)
