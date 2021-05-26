@@ -13,7 +13,7 @@ import { getNotebookContents } from '../db/pgsql/models/Notebook';
 import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
-import { getUserAccessLevel } from '../db/pgsql/models/NotebookAccessLevel';
+import { assertReadAccessToNotebook } from '../db/pgsql/models/NotebookAccessLevel';
 import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
 
 type TEvent = TShallotHttpEvent<
@@ -36,13 +36,7 @@ const _handler: ShallotRawHandler<TEvent, NotebookContents> = async ({
     throw new createHTTPError.BadRequest('Must specify body.nb_id');
   }
 
-  const requestingUserAccessLevel = await getUserAccessLevel(
-    user.uid,
-    pathParameters.nb_id
-  );
-  if (requestingUserAccessLevel == null) {
-    throw new createHTTPError.Forbidden('Does not have access to notebook');
-  }
+  await assertReadAccessToNotebook(user.uid, pathParameters.nb_id);
 
   const notebook = await getNotebookContents(pathParameters.nb_id);
   if (notebook == null) {

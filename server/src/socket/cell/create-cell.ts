@@ -11,6 +11,7 @@ import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 import { broadcastToNotebook } from '../client-management';
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { createCell } from '../../db/pgsql/models/Cell';
+import { assertFullAccessToNotebook } from '../../db/pgsql/models/NotebookAccessLevel';
 
 interface TCreateCellEventBody {
   data: {
@@ -42,6 +43,7 @@ const _handler: ShallotRawHandler<TCreateCellEvent> = async ({
   if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
+  await assertFullAccessToNotebook(session.uid, data.nb_id);
 
   const cell = await createCell(session, data);
   if (cell == null) {

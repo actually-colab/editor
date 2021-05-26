@@ -9,6 +9,7 @@ import { ShallotAWSRestWrapper } from '@shallot/rest-wrapper';
 import createHTTPError from 'http-errors';
 
 import {
+  assertFullAccessToNotebook,
   getUserAccessLevel,
   grantAccessByEmail,
 } from '../db/pgsql/models/NotebookAccessLevel';
@@ -53,15 +54,7 @@ const _handler: ShallotRawHandler<TEvent, Notebook> = async ({
     throw new createHTTPError.BadRequest('Cannot grant access to yourself!');
   }
 
-  // Assert that the request user has full access
-  const requestingUserAccessLevel = await getUserAccessLevel(
-    user.uid,
-    pathParameters.nb_id
-  );
-
-  if (requestingUserAccessLevel !== 'Full Access') {
-    throw new createHTTPError.Forbidden('Must have Full Access to share a notebook');
-  }
+  await assertFullAccessToNotebook(user.uid, pathParameters.nb_id);
 
   await grantAccessByEmail(body.email, pathParameters.nb_id, body.access_level);
 
