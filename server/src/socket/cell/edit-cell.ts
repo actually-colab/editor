@@ -11,7 +11,7 @@ import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 import { broadcastToNotebook } from '../client-management';
 
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
-import { deleteCell, editCell } from '../../db/pgsql/models/Cell';
+import { assertLockAcquired, deleteCell, editCell } from '../../db/pgsql/models/Cell';
 
 interface TEditCellEventBody {
   data: {
@@ -41,6 +41,8 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
   if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
+
+  await assertLockAcquired(session, data.nb_id, data.cell_id);
 
   if (data.cellData == null) {
     // TODO: Check lock
