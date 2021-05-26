@@ -8,7 +8,7 @@ import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 import createHttpError from 'http-errors';
 
 import { closeNotebook } from '../../db/pgsql/models/ActiveSession';
-import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
+import { assertReadAccessToNotebook } from '../../db/pgsql/models/NotebookAccessLevel';
 
 import { broadcastToNotebook, emitToUser } from '../client-management';
 
@@ -35,13 +35,7 @@ const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
-  const access_level = await getUserAccessLevel(
-    requestContext.authorizer.uid,
-    data.nb_id
-  );
-  if (access_level == null) {
-    throw new createHttpError.Forbidden('Does not have access to notebook');
-  }
+  await assertReadAccessToNotebook(requestContext.authorizer.uid, data.nb_id);
 
   await closeNotebook(requestContext.connectionId, data.nb_id);
 

@@ -9,6 +9,7 @@ import ShallotSocketWrapper, {
 import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import {
+  assertFullAccessToNotebook,
   getUserAccessLevel,
   grantAccessByEmails,
   revokeAccessByEmails,
@@ -60,11 +61,7 @@ const _handler: ShallotRawHandler<TShareNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Cannot grant access to yourself!');
   }
 
-  // Assert that the request user has full access
-  const requestingUserAccessLevel = await getUserAccessLevel(user.uid, data.nb_id);
-  if (requestingUserAccessLevel !== 'Full Access') {
-    throw new createHttpError.Forbidden('Must have Full Access to share a notebook');
-  }
+  await assertFullAccessToNotebook(user.uid, data.nb_id);
 
   if (data.access_level === null) {
     const revoked = await revokeAccessByEmails(data.emails, data.nb_id);

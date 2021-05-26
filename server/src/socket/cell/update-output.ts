@@ -12,6 +12,7 @@ import { broadcastToNotebook } from '../client-management';
 
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { updateOutput } from '../../db/s3/models/Output';
+import { assertFullAccessToNotebook } from '../../db/pgsql/models/NotebookAccessLevel';
 
 type RealOmit<T, K extends PropertyKey> = { [P in keyof T as Exclude<P, K>]: T[P] };
 
@@ -42,6 +43,7 @@ const _handler: ShallotRawHandler<TUpdateOutputEvent> = async ({
   if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
+  await assertFullAccessToNotebook(session.uid, data.nb_id);
 
   const output: OOutput = {
     ...data,

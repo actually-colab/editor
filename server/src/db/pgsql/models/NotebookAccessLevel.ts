@@ -5,6 +5,7 @@ import type {
   DActiveSession,
   DCell,
 } from '@actually-colab/editor-types';
+import createHttpError from 'http-errors';
 import { QueryBuilder } from 'knex';
 
 import pgsql from '../connection';
@@ -192,4 +193,36 @@ export const getUserAccessLevel = async (
   }
 
   return accessLevels[0].access_level;
+};
+
+/**Asserts a user has 'Full Access' to a certain notebook
+ * or throws an error otherwise.
+ *
+ * @param uid the user to query
+ * @param nb_id the notebook to query
+ */
+export const assertFullAccessToNotebook = async (
+  uid: DUser['uid'],
+  nb_id: DNotebookAccessLevel['nb_id']
+): Promise<void> => {
+  const access_level = await getUserAccessLevel(uid, nb_id);
+  if (access_level !== 'Full Access') {
+    throw new createHttpError.Forbidden('Does not have Full Access to notebook');
+  }
+};
+
+/**Asserts a user has at least 'Read Only' access to a certain notebook
+ * or throws an error otherwise.
+ *
+ * @param uid the user to query
+ * @param nb_id the notebook to query
+ */
+export const assertReadAccessToNotebook = async (
+  uid: DUser['uid'],
+  nb_id: DNotebookAccessLevel['nb_id']
+): Promise<void> => {
+  const access_level = await getUserAccessLevel(uid, nb_id);
+  if (access_level == null) {
+    throw new createHttpError.Forbidden('Does not have access to notebook');
+  }
 };

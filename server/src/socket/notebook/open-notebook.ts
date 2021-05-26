@@ -9,7 +9,7 @@ import ShallotSocketWrapper, {
 import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import { getActiveSessionById, openNotebook } from '../../db/pgsql/models/ActiveSession';
-import { getUserAccessLevel } from '../../db/pgsql/models/NotebookAccessLevel';
+import { assertReadAccessToNotebook } from '../../db/pgsql/models/NotebookAccessLevel';
 import { getActiveNotebookContents } from '../../db/pgsql/models/Notebook';
 
 import { broadcastToNotebook, emitToUser } from '../client-management';
@@ -37,13 +37,7 @@ const _handler: ShallotRawHandler<TOpenNotebookEvent> = async ({
     throw new createHttpError.BadRequest('Invalid request body');
   }
 
-  const access_level = await getUserAccessLevel(
-    requestContext.authorizer.uid,
-    data.nb_id
-  );
-  if (access_level == null) {
-    throw new createHttpError.Forbidden('Does not have access to notebook');
-  }
+  await assertReadAccessToNotebook(requestContext.authorizer.uid, data.nb_id);
 
   const activeSession = await getActiveSessionById(
     requestContext.connectionId,

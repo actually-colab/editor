@@ -12,6 +12,7 @@ import { broadcastToNotebook } from '../client-management';
 
 import { getActiveSessionById } from '../../db/pgsql/models/ActiveSession';
 import { assertLockAcquired, deleteCell, editCell } from '../../db/pgsql/models/Cell';
+import { assertFullAccessToNotebook } from '../../db/pgsql/models/NotebookAccessLevel';
 
 interface TEditCellEventBody {
   data: {
@@ -41,11 +42,10 @@ const _handler: ShallotRawHandler<TEditCellEvent> = async ({ requestContext, bod
   if (session == null || session.nb_id != data.nb_id) {
     throw new createHttpError.Forbidden('Does not have access to notebook');
   }
-
+  await assertFullAccessToNotebook(session.uid, data.nb_id);
   await assertLockAcquired(session, data.nb_id, data.cell_id);
 
   if (data.cellData == null) {
-    // TODO: Check lock
     await deleteCell(session, data.nb_id, data.cell_id);
 
     await broadcastToNotebook(requestContext, session.nb_id, {
