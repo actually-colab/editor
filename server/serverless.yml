@@ -194,8 +194,8 @@ functions:
           cors: ${self:custom.restCorsPolicy}
           authorizer: ${self:custom.restAuthorizerConfig}
 
-  socket-connection:
-    handler: src/socket/connection.handler
+  socket-connect:
+    handler: src/socket/connection.connectHandler
 
     events:
       - websocket:
@@ -204,8 +204,17 @@ functions:
             name: socket-authorizer
             identitySource: route.request.querystring.sessionToken
 
+  socket-disconnect:
+    handler: src/socket/connection.disconnectHandler
+
+    events:
       - websocket:
           route: $disconnect
+
+  socket-default:
+    handler: src/socket/connection.defaultHandler
+
+    events:
       - websocket:
           route: $default
 
