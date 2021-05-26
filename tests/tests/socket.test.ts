@@ -125,7 +125,7 @@ describe('Connection', () => {
 
         expect(
           mainUser.socketClient.listeners('notebook_closed')[0]
-        ).not.toHaveBeenCalled();
+        ).toHaveBeenCalledTimes(1);
         expect(
           otherUser.socketClient.listeners('notebook_closed')[0]
         ).toHaveBeenCalledTimes(1);

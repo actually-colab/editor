@@ -37,15 +37,26 @@ const _handler: ShallotRawHandler<TCloseNotebookEvent> = async ({
 
   await assertReadAccessToNotebook(requestContext.authorizer.uid, data.nb_id);
 
-  await closeNotebook(requestContext.connectionId, data.nb_id);
+  const unlockedCells = await closeNotebook(requestContext.connectionId, data.nb_id);
 
-  const resEvent = {
+  const notebookClosedEvent = {
     action: 'notebook_closed',
     triggered_by: requestContext.authorizer.uid,
     data: { nb_id: data.nb_id, uid: requestContext.authorizer.uid },
   };
-  await broadcastToNotebook(requestContext, data.nb_id, resEvent);
-  await emitToUser(requestContext, resEvent);
+  await Promise.all([
+    broadcastToNotebook(requestContext, data.nb_id, notebookClosedEvent),
+    emitToUser(requestContext, notebookClosedEvent),
+    Promise.all(
+      unlockedCells.map((cell) =>
+        broadcastToNotebook(requestContext, cell.nb_id, {
+          action: 'cell_unlocked',
+          triggered_by: requestContext.authorizer.uid,
+          data: cell,
+        })
+      )
+    ),
+  ]);
 };
 
 export const handler = ShallotSocketWrapper(_handler, undefined, {

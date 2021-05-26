@@ -53,7 +53,7 @@ export const disconnect = async (
       .where({
         lock_held_by: sessions[0].uid,
       })
-      .returning(['cell_id', 'nb_id']);
+      .returning('*');
 
     const unlockedCells = cells.filter(
       (cell): cell is Required<DCell> => cell.cell_id != null
@@ -127,12 +127,12 @@ export const openNotebook = async (
  * @param connectionId Session connection ID that is disconnected.
  * @param time_disconnected epoch time
  *
- * @returns notebook sessions the user is now disconnected from
+ * @returns cells unlocked from the close
  */
 export const closeNotebook = async (
   connectionId: DActiveSession['connectionId'],
   nb_id: DActiveSession['nb_id']
-): Promise<void> => {
+): Promise<Required<DCell>[]> => {
   return pgsql.transaction(async (trx) => {
     const time_disconnected = Date.now();
     const sessions = await trx<DActiveSession>(tablenames.activeSessionsTableName)
@@ -144,17 +144,26 @@ export const closeNotebook = async (
       .andWhere({ connectionId, nb_id })
       .returning('*');
 
-    if (sessions.length > 0) {
-      await trx<DCell>(tablenames.cellsTableName)
-        .update({
-          lock_held_by: null,
-          cursor_col: null,
-          cursor_row: null,
-          time_modified: Date.now(),
-        })
-        .where({
-          lock_held_by: sessions[0].uid,
-        });
+    if (sessions.length === 0) {
+      return [];
     }
+
+    const cells = await trx<DCell>(tablenames.cellsTableName)
+      .update({
+        lock_held_by: null,
+        cursor_col: null,
+        cursor_row: null,
+        time_modified: Date.now(),
+      })
+      .where({
+        lock_held_by: sessions[0].uid,
+      })
+      .returning('*');
+
+    const unlockedCells = cells.filter(
+      (cell): cell is Required<DCell> => cell.cell_id != null
+    );
+
+    return unlockedCells;
   });
 };
