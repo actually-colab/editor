@@ -602,10 +602,10 @@
     uuid "^8.3.2"
     write-file-atomic "^3.0.3"
 
-"@shallot/aws-websocket-wrapper@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@shallot/aws-websocket-wrapper/-/aws-websocket-wrapper-1.0.9.tgz#3eeabc54ae208d0548bf2c6c64dfa14db47680a1"
-  integrity sha512-0gLd4/pQanbvMhJrokgA1gahZPlvtgHSpXGGK9hRfaxmOKNfwp4rHci9MINGfWzgpyznlcs+twpRHDowk5tauA==
+"@shallot/aws-websocket-wrapper@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@shallot/aws-websocket-wrapper/-/aws-websocket-wrapper-1.3.0.tgz#d22ceb0a32d45deabe7461d9623462b114112c33"
+  integrity sha512-zRJVGIyLZyRtE6quLtrXojeLoGgYZ9d4vBD24JlNhRtLjufQJsebUEOpc4oU9Q9dCGYK/E0VzGMWbhFNIJEa4g==
   dependencies:
     "@shallot/aws" "^1.0.6"
     "@shallot/http-error-handler" "^1.0.2"
