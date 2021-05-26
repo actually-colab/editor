@@ -1,6 +1,8 @@
 import type { QueryBuilder } from 'knex';
 import type { DCell, DActiveSession } from '@actually-colab/editor-types';
 
+import createHttpError from 'http-errors';
+
 import pgsql from '../connection';
 import tablenames from '../tablenames';
 
@@ -159,8 +161,31 @@ export const unlockCell = async (
           cursor_row: null,
           time_modified: Date.now(),
         })
-        .andWhere({ cell_id, nb_id, lock_held_by: session.uid })
+        .where({ cell_id, nb_id, lock_held_by: session.uid })
         .returning('*')
     )[0];
   });
+};
+
+/**Asserts a user has acquired the lock for a cell or throws an
+ * error otherwise.
+ *
+ * @param session The active user session initiating the request
+ * @param nb_id The notebook containing the cell
+ * @param cell_id The cell to check
+ */
+export const assertLockAcquired = async (
+  session: DActiveSession,
+  nb_id: DCell['nb_id'],
+  cell_id: DCell['cell_id']
+): Promise<void> => {
+  const cell = await pgsql<DCell, Pick<DCell, 'lock_held_by'>[]>(
+    tablenames.cellsTableName
+  )
+    .select('lock_held_by')
+    .where({ cell_id, nb_id });
+
+  if (cell.length === 0 || cell[0]?.lock_held_by !== session.uid) {
+    throw new createHttpError.Forbidden('Has not acquired cell lock');
+  }
 };
