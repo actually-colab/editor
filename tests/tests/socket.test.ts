@@ -447,11 +447,27 @@ describe('Collaboration', () => {
         expect(triggered_by).toEqual(mainUser.user.uid);
         expect(cell.language).toEqual('python');
 
-        mainUser.socketClient.deleteCell(cell.nb_id, cell.cell_id);
+        mainUser.socketClient.lockCell(cell.nb_id, cell.cell_id);
       })
     );
     otherUser.socketClient.on(
       'cell_created',
+      jest.fn((_, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+      })
+    );
+
+    mainUser.socketClient.on(
+      'cell_locked',
+      jest.fn((cell, triggered_by) => {
+        expect(triggered_by).toEqual(mainUser.user.uid);
+        expect(cell.lock_held_by).toEqual(mainUser.user.uid);
+
+        mainUser.socketClient.deleteCell(cell.nb_id, cell.cell_id);
+      })
+    );
+    otherUser.socketClient.on(
+      'cell_locked',
       jest.fn((_, triggered_by) => {
         expect(triggered_by).toEqual(mainUser.user.uid);
       })
