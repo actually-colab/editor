@@ -21,7 +21,10 @@ export const connect = async (newSession: DActiveSession): Promise<void> => {
 export const disconnect = async (
   connectionId: DActiveSession['connectionId'],
   time_disconnected: DActiveSession['time_disconnected']
-): Promise<Required<DActiveSession>[]> => {
+): Promise<{
+  disconnectedSessions: Required<DActiveSession>[];
+  unlockedCells: DCell[];
+}> => {
   return pgsql.transaction(async (trx) => {
     const sessions = await trx<DActiveSession>(tablenames.activeSessionsTableName)
       .update({
@@ -32,22 +35,31 @@ export const disconnect = async (
       .andWhere({ connectionId })
       .returning('*');
 
-    if (sessions.length > 0) {
-      await trx<DCell>(tablenames.cellsTableName)
-        .update({
-          lock_held_by: null,
-          cursor_col: null,
-          cursor_row: null,
-          time_modified: Date.now(),
-        })
-        .where({
-          lock_held_by: sessions[0].uid,
-        });
+    if (sessions.length === 0) {
+      return { disconnectedSessions: [], unlockedCells: [] };
     }
 
-    return sessions.filter(
+    const disconnectedSessions = sessions.filter(
       (session): session is Required<DActiveSession> => session.nb_id != null
     );
+
+    const cells = await trx<DCell>(tablenames.cellsTableName)
+      .update({
+        lock_held_by: null,
+        cursor_col: null,
+        cursor_row: null,
+        time_modified: Date.now(),
+      })
+      .where({
+        lock_held_by: sessions[0].uid,
+      })
+      .returning(['cell_id', 'nb_id']);
+
+    const unlockedCells = cells.filter(
+      (cell): cell is Required<DCell> => cell.cell_id != null
+    );
+
+    return { disconnectedSessions, unlockedCells };
   });
 };
 

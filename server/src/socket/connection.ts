@@ -68,20 +68,35 @@ export const handler: Handler = async (event: APIGatewayWebSocketEvent) => {
       return success;
     }
     case SocketEventTypes.Disconnect: {
-      const sessions = await disconnect(
+      const { disconnectedSessions, unlockedCells } = await disconnect(
         event.requestContext.connectionId,
         event.requestContext.requestTimeEpoch
       );
 
-      await Promise.all(
-        sessions.map((session) =>
-          broadcastToNotebook(event.requestContext, session.nb_id, {
-            action: 'notebook_closed',
-            triggered_by: session.uid,
-            data: { nb_id: session.nb_id, uid: session.uid },
-          })
-        )
-      );
+      if (disconnectedSessions.length > 0) {
+        const uid = disconnectedSessions[0].uid;
+
+        await Promise.all([
+          Promise.all(
+            disconnectedSessions.map((session) =>
+              broadcastToNotebook(event.requestContext, session.nb_id, {
+                action: 'notebook_closed',
+                triggered_by: session.uid,
+                data: { nb_id: session.nb_id, uid: session.uid },
+              })
+            )
+          ),
+          Promise.all(
+            unlockedCells.map((cell) =>
+              broadcastToNotebook(event.requestContext, cell.nb_id, {
+                action: 'cell_unlocked',
+                triggered_by: uid,
+                data: cell,
+              })
+            )
+          ),
+        ]);
+      }
 
       return success;
     }
