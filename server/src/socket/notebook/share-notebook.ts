@@ -10,7 +10,6 @@ import ShallotSocketAuthorizer from '../middleware/custom/authorizer';
 
 import {
   assertFullAccessToNotebook,
-  getUserAccessLevel,
   grantAccessByEmails,
   revokeAccessByEmails,
 } from '../../db/pgsql/models/NotebookAccessLevel';

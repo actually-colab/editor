@@ -10,7 +10,6 @@ import createHTTPError from 'http-errors';
 
 import {
   assertFullAccessToNotebook,
-  getUserAccessLevel,
   grantAccessByEmail,
 } from '../db/pgsql/models/NotebookAccessLevel';
 import { AC_REST_MIDDLEWARE_OPTS } from './route-helpers';
