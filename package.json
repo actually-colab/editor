@@ -24,7 +24,7 @@
     "lint-staged": "^10.5.4",
     "prettier": "https://github.com/prettier/prettier",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.3.2"
   },
   "lint-staged": {
     "**/*.ts": [
