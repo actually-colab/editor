@@ -37,7 +37,7 @@
     "aws-sdk": "^2.842.0",
     "google-auth-library": "^7.0.2",
     "http-errors": "^1.8.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^0.21.17",
     "nodemailer": "^6.5.0",
     "pg": "^8.5.1",
